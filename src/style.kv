@@ -1,0 +1,60 @@
+<KioskScreen>:
+    ItemLayout:
+        rows: 999
+        cols: 3
+        Button:
+            text: "Register"
+            on_press: self.parent.sm.current = "Register"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+        Button:
+            text: "2"
+<RegisterScreen>:
+    f_firstname: firstname
+    f_lastname: lastname
+    f_email: email
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            size: (800, 400)
+            rows: 3
+            cols: 2
+            padding: 20
+            spacing: 10
+            Label:
+                text: "Vorname"
+            TextInput:
+                id: firstname
+                multiline: False
+                focus: self.parent.parent.parent.onfocus
+                font_size: 40
+            Label:
+                text: "Nachname"
+            TextInput:
+                id: lastname
+                multiline: False
+                focus: self.parent.parent.parent.onfocus
+                font_size: 40
+            Label:
+                text: "E-Mail"
+            TextInput:
+                id: email
+                multiline: False
+                focus: self.parent.parent.parent.onfocus
+                font_size: 40
+        Keyboard:
+            size: (800, 200)
