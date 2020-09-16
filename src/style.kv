@@ -1,54 +1,57 @@
+<LoginScreen>:
+    FloatLayout:
+
 <KioskScreen>:
     ItemLayout:
-        rows: 999
-        cols: 3
+        rows: 5
+        cols: 4
         Button:
-            text: "Register"
-            on_press: self.parent.sm.current = "Register"
+            text: 'Register'
+            on_press:
+                self.parent.sm.current = 'Register'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
         Button:
-            text: "2"
+            text: '2'
 <RegisterScreen>:
-    f_firstname: firstname
-    f_lastname: lastname
-    f_email: email
     BoxLayout:
         orientation: 'vertical'
         GridLayout:
+            id: fields
             size: (800, 400)
             rows: 3
             cols: 2
             padding: 20
             spacing: 10
             Label:
-                text: "Vorname"
+                text: 'Vorname'
             DetailInput:
                 id: firstname
                 multiline: False
                 font_size: 35
+                focus: True
             Label:
-                text: "Nachname"
+                text: 'Nachname'
             DetailInput:
                 id: lastname
                 multiline: False
                 font_size: 35
             Label:
-                text: "E-Mail"
+                text: 'E-Mail'
             DetailInput:
                 id: email
                 multiline: False

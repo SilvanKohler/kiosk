@@ -38,7 +38,7 @@ def main(debug=False):
     x = 0
     while True:
         x += 1
-        # flash the red LED as "1-on 1-off 1-on 3-off"
+        # flash the red LED as '1-on 1-off 1-on 3-off'
         config.iRedLEDState = (x % 6 in (0, 2))
         # LED control is in page 2, so we can explicitly only configure this
         # page.
