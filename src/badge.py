@@ -4,7 +4,6 @@ import time
 
 
 def getProx():
-
     ### CONFIG
     ### You may need to change VENDER_ID and PRODUCT_ID corresponding to a reader model
     VENDER_ID = 0x0C27
@@ -41,14 +40,17 @@ def getProx():
 
 ### Main Loop
 prev = 0
+
+
 def run(callback):
     global prev
     print('Ready for Scan...')
 
     while True:
-        result = getProx()
-        if(result != prev):
-            if(result != 0):
+        try: result = getProx()
+        except: continue
+        if (result != prev):
+            if (result != 0):
                 print(result)
                 callback(result)
                 time.sleep(2)
