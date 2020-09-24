@@ -5,7 +5,7 @@ import time
 
 def getProx():
     ### CONFIG
-    ### You may need to change VENDER_ID and PRODUCT_ID corresponding to a reader model
+    ### change VENDER_ID and PRODUCT_ID corresponding to a reader model
     VENDER_ID = 0x0C27
     PRODUCT_ID = 0x3BFA
     PROX_END = 2
@@ -47,12 +47,12 @@ def run(callback):
     print('Ready for Scan...')
 
     while True:
-        try: result = getProx()
+        try: result = getProx() #Get badge id
         except: continue
         if (result != prev):
             if (result != 0):
                 print(result)
-                callback(result)
+                callback(result) # run callback function
                 time.sleep(2)
                 break
             prev = result
