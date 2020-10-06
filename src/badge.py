@@ -3,9 +3,9 @@ import usb.util
 import time
 
 
-def getProx():
-    ### CONFIG
-    ### change VENDER_ID and PRODUCT_ID corresponding to a reader model
+def get_prox():
+    # CONFIG
+    # change VENDER_ID and PRODUCT_ID corresponding to a reader model
     VENDER_ID = 0x0C27
     PRODUCT_ID = 0x3BFA
     PROX_END = 2
@@ -38,7 +38,7 @@ def getProx():
     return int(proxHex, 16)
 
 
-### Main Loop
+# Main Loop
 prev = 0
 
 
@@ -47,12 +47,14 @@ def run(callback):
     print('Ready for Scan...')
 
     while True:
-        try: result = getProx() #Get badge id
-        except: continue
-        if (result != prev):
-            if (result != 0):
+        try:
+            result = get_prox()  # Get badge id
+        except ValueError:
+            continue
+        if result != prev:
+            if result != 0:
                 print(result)
-                callback(result) # run callback function
+                callback(result)  # run callback function
                 time.sleep(2)
                 break
             prev = result

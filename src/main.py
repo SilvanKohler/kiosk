@@ -10,8 +10,9 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from threading import Thread
 from badge import run
-from data import register_customer, login_customer, customer_exists, blankprofile
 import time
+from data import register_customer, login_customer, customer_exists, blankprofile, get_drinks, get_drink, close
+import uuid
 
 style = Builder.load_file('style.kv')
 sm = ScreenManager(transition=NoTransition())
@@ -23,17 +24,27 @@ keys = [
 ]
 focused = None
 times = {}
+times2 = {}
 badge = None
 customer = None
 
+
+def refresh():
+    KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
+    KS.ids['name'].text = customer.get_firstname() + '\n' + customer.get_lastname()
+    KS.ids['avatar'].source = customer.get_avatar()
+
+
 def on_badge(b):
-    global badge, badgesensor
+    global badge, badgesensor, customer
     badge = b
     if customer_exists(b):
-        login_customer(b)
-        sm.current = 'Login'
+        customer = login_customer(b)
+        sm.current = 'Kiosk'
+        refresh()
     else:
         sm.current = 'Register'
+
 
 class Keyboard(BoxLayout):
     def __init__(self, *args, **kwargs):
@@ -73,7 +84,9 @@ class Keyboard(BoxLayout):
                         b.add_widget(Label(text='Bitte alle Felder ausfüllen!'))
                         btn = Button(text='Ok')
                         b.add_widget(btn)
-                        p = Popup(title='Fehler', content=b)
+                        p = Popup()
+                        p.title = 'Fehler'
+                        p.content = b
                         btn.bind(on_press=p.dismiss)
                         p.open()
                         return
@@ -100,17 +113,33 @@ class LoginScreen(Screen):
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    balance = 0
+
+    blank = blankprofile
+
     def get_balance(self):
         if customer is not None:
             return customer.get_avatar()
         else:
-            return self.balance
+            return 'Error'
+
     def get_avatar(self):
         if customer is not None:
             return customer.get_avatar()
         else:
             return blankprofile
+
+    def transactions(self):
+        c = 'Zeit\tArtikel\tPreis\n' + '\n'.join(
+            [f'{dt}\t{get_drink(FK_DID)[0]}\t{get_drink(FK_DID)[2]}' for PID, dt, FK_DID, FK_UID in
+             customer.get_transactions()])
+        b = BoxLayout()
+        b.orientation = 'vertical'
+        b.add_widget(Label(c))
+        btn = Button(text='Schliessen')
+        b.add_widget(btn)
+        p = Popup(title='Transaktionen', content=b)
+        btn.bind(on_press=p.dismiss)
+        p.open()
 
 
 class RegisterScreen(Screen):
@@ -118,10 +147,35 @@ class RegisterScreen(Screen):
         super().__init__(*args, **kwargs)
 
 
+class Item(Button):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.DID = 0
+        self.name = ""
+        self.stock = 0
+        self.price = 0
+        self.id = uuid.uuid1().hex
+
+    def on_press(self):
+        if time.time() - times2.get(self.id, time.time() - 100) > 1:
+            times2.update({self.id: time.time()})
+            customer.withdraw(self.DID)
+            refresh()
+
+
 class ItemLayout(GridLayout):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.sm = sm
+        self.items = get_drinks()
+        for item in self.items:
+            b = Item()
+            b.DID = item[0]
+            b.name = item[1]
+            b.stock = item[2]
+            b.price = item[3]
+            b.text = f'''{b.name}\n{b.price} CHF'''
+            self.add_widget(b)
 
 
 class DetailInput(TextInput):
@@ -141,7 +195,7 @@ RS = RegisterScreen(name='Register')
 sm.add_widget(LS)
 sm.add_widget(KS)
 sm.add_widget(RS)
-sm.current = 'Kiosk'
+sm.current = 'Login'
 
 
 class KioskApp(App):
@@ -149,7 +203,11 @@ class KioskApp(App):
         return sm
 
 
-badgesensor = Thread(target=run, args=[on_badge, ])
-badgesensor.start()
-app = KioskApp()
-app.run()
+try:
+    badgesensor = Thread(target=run, args=[on_badge, ])
+    badgesensor.start()
+    app = KioskApp()
+    app.run()
+except Exception as e:
+    print(e)
+    close()

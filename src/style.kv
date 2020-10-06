@@ -11,25 +11,20 @@
             Button:
                 id: balance
                 size_hint_x: 0.3
-                text: 'Ausgaben: ' + str(root.get_balance()) + ' CHF'
+                text: 'Fehler'
+                on_press: root.transactions()
             FloatLayout:
+            Label:
+                id: name
+                text: 'Fehler'
             AsyncImage:
+                id: avatar
                 size_hint_x: 0.173
-                source: root.get_avatar()
+                source: root.blank
         ItemLayout:
             rows: 5
             cols: 4
             size: (800, 410)
-            Button:
-                text: 'Kaffee'
-                on_press:
-                    root.balance -= .5
-                    root.ids['balance'].text = 'Ausgaben: ' + str(root.get_balance()) + ' CHF'
-            Button:
-                text: 'Cola'
-                on_press:
-                    root.balance -= 3
-                    root.ids['balance'].text = 'Ausgaben: ' + str(root.get_balance()) + ' CHF'
 <RegisterScreen>:
     BoxLayout:
         orientation: 'vertical'
