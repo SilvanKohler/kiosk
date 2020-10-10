@@ -3,6 +3,7 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
@@ -129,13 +130,22 @@ class KioskScreen(Screen):
             return blankprofile
 
     def transactions(self):
-        c = 'Zeit\tArtikel\tPreis\n' + '\n'.join(
-            [f'{dt}\t{get_drink(FK_DID)[0]}\t{get_drink(FK_DID)[2]}' for PID, dt, FK_DID, FK_UID in
-             customer.get_transactions()])
+        t = GridLayout(cols=3, size_hint_y=None)
+        t.bind(minimum_height=t.setter('height'))
+        hy = .1
+        t.add_widget(Label(text='Zeit', size_hint_y=hy))
+        t.add_widget(Label(text='Artikel', size_hint_y=hy))
+        t.add_widget(Label(text='Preis', size_hint_y=hy))
+        for PID, dt, FK_DID, FK_UID in customer.get_transactions()[::-1][:30]:
+            t.add_widget(Label(text=dt, size_hint_y=hy))
+            t.add_widget(Label(text=get_drink(FK_DID)[0], size_hint_y=hy))
+            t.add_widget(Label(text=str(get_drink(FK_DID)[2])+' CHF', size_hint_y=hy))
+        s = ScrollView(size_hint=(1, None))
+        s.add_widget(t)
         b = BoxLayout()
         b.orientation = 'vertical'
-        b.add_widget(Label(c))
-        btn = Button(text='Schliessen')
+        b.add_widget(s)
+        btn = Button(text='Schliessen', size_hint_y=.1)
         b.add_widget(btn)
         p = Popup(title='Transaktionen', content=b)
         btn.bind(on_press=p.dismiss)
