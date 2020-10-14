@@ -1,18 +1,14 @@
-import zodb
 import datetime
 import uuid
+import socket
+import pickle
 
+IP = '127.0.0.1'
+PORT = 12345
 blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
 
 # blankprofile = 'https://media.giphy.com/media/3o6fJ47Uq6jMb1OULu/giphy.gif'
-def sync():
-    customer_table.sync()
-    badge_table.sync()
-    drink_table.sync()
-    purchase_table.sync()
-    transaction_table.sync()
-    mail_table.sync()
 
 
 class Customer:
@@ -36,7 +32,6 @@ class Customer:
 
     def register(self):
         global customer_table, badge_table
-        # sync()
         exists = False
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if (firstname, lastname, email) == (self.firstname, self.lastname, self.email):
@@ -47,40 +42,39 @@ class Customer:
             uid = uuid.uuid1().hex
             customer_table[uid] = (self.firstname, self.lastname, self.email, 0, blankprofile)
         badge_table[uuid.uuid1().hex] = (self.badges[0], uid)
-        sync()
 
     def get_firstname(self):
-        # sync()
+
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return firstname
 
     def get_lastname(self):
-        # sync()
+
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return lastname
 
     def get_email(self):
-        # sync()
+
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return email
 
     def get_balance(self):
-        # sync()
+
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return balance
 
     def get_avatar(self):
-        # sync()
+
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return avatar
 
     def get_badges(self):
-        # sync()
+
         result = []
         for BID, (badge, FK_UID) in sorted(badge_table.items()):
             if FK_UID == self.uid:
@@ -88,13 +82,13 @@ class Customer:
         return result
 
     def get_uid(self):
-        # sync()
+
         for BID, (badge, FK_UID) in sorted(badge_table.items()):
             if badge == self.badges[0]:
                 return FK_UID
 
     def get_transactions(self):
-        # sync()
+
         result = []
         for PID, (dt, FK_DID, FK_UID) in sorted(purchase_table.items(), key=lambda x: x[1]):
             if FK_UID == self.uid:
@@ -103,7 +97,7 @@ class Customer:
 
     def withdraw(self, did):
         global drink_table, purchase_table, customer_table
-        # sync()
+        #
         price = drink_table[did][2]
         # print(customer_table[self.uid][3], price)
         customer_table[self.uid] = customer_table[self.uid][:3] + (customer_table[self.uid][3] + price,) + \
@@ -112,7 +106,6 @@ class Customer:
         d = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
         purchase_table[uuid.uuid1().hex] = (d, did, self.uid)
         drink_table[did] = (drink_table[did][0], drink_table[did][1] - 1, drink_table[did][2])
-        sync()
 
 
 def register_customer(firstname, lastname, email, badge):
@@ -126,7 +119,6 @@ def login_customer(badge):
 
 
 def get_drinks():
-    # sync()
     result = []
     for DID, (name, stock, price) in sorted(drink_table.items()):
         result.append((DID, name, stock, price))
@@ -135,53 +127,79 @@ def get_drinks():
 
 def add_drink(name, stock, price):
     global drink_table
-    # sync()
+
     drink_table[uuid.uuid1().hex] = (name, stock, price)
-    sync()
 
 
 def get_drink(did):
-    # sync()
     for DID, (name, stock, price) in sorted(drink_table.items()):
         if DID == did:
             return name, stock, price
 
 
 def customer_exists(b):
-    # sync()
     for BID, (badge, FK_UID) in sorted(badge_table.items()):
         if badge == b:
             return True
     return False
 
 
-customer_table = andydb.open('customer', 'c')  # UID: firstname, lastname, email, balance, avatar
-badge_table = andydb.open('badge', 'c')  # BID: badge, FK_UID
-drink_table = andydb.open('drink', 'c')  # DID: name, stock, price
-purchase_table = andydb.open('purchase', 'c')  # PID: datetime, FK_DID, FK_UID
-transaction_table = andydb.open('transaction', 'c')  # TID: datetime, FK_UID, amount
-mail_table = andydb.open('mail', 'c')  # MID: datetime, FK_UID, balance
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
-def close():
-    customer_table.close()
-    badge_table.close()
-    drink_table.close()
-    purchase_table.close()
-    transaction_table.close()
-    mail_table.close()
+def get_table(name):
+    s.connect((IP, PORT))
+    s.send(pickle.dumps(['get', name]))
+    size = int(str(s.recv(8), 'UTF-8'))
+    t = s.recv(size)
+    return pickle.loads(t)
 
 
-def init():
-    # drink_table.clear()
-    add_drink('Kaffee', 40, .5)
-    add_drink('Cola', 10, 1)
-    add_drink('Energy Drink', 10, 1)
+def setitem_table(name, key, value):
+    pass
 
 
-# init()
+def delitem_table(name, key):
+    pass
 
-#
+
+class table(dict):
+    def __init__(self, name):
+        self.name = name
+        super().__init__()
+
+    def __getitem__(self, item):
+        self.__dict__ = get_table(self.name)
+        return super().__getitem__(item)
+
+    def __setitem__(self, key, value):
+        setitem_table(self.name, key, value)
+        super().__setitem__(key, value)
+
+    def __delitem__(self, key):
+        delitem_table(self.name, key)
+        super().__delitem__(value)
+
+    def __iter__(self):
+        self.__dict__ = get_table(self.name)
+        return super().__iter__()
+
+    def __contains__(self, item):
+        self.__dict__ = get_table(self.name)
+        return super().__contains__(item)
+
+    def items(self):
+        self.__dict__ = get_table(self.name)
+        return self.__dict__.items()
+
+
+customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
+badge_table = table('badge')  # BID: badge, FK_UID
+drink_table = table('drink')  # DID: name, stock, price
+purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
+transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
+mail_table = table('mail')  # MID: datetime, FK_UID, balance
+
 # import shelve
 # import datetime
 # import uuid
@@ -190,6 +208,8 @@ def init():
 #
 #
 # # blankprofile = 'https://media.giphy.com/media/3o6fJ47Uq6jMb1OULu/giphy.gif'
+#
+#
 # def sync():
 #     customer_table.sync()
 #     badge_table.sync()
@@ -339,6 +359,7 @@ def init():
 #     return False
 #
 #
+#
 # customer_table = shelve.open('customer', writeback=True)  # UID: firstname, lastname, email, balance, avatar
 # badge_table = shelve.open('badge', writeback=True)  # BID: badge, FK_UID
 # drink_table = shelve.open('drink', writeback=True)  # DID: name, stock, price
@@ -348,6 +369,7 @@ def init():
 #
 #
 # def close():
+#     print('closing...')
 #     customer_table.close()
 #     badge_table.close()
 #     drink_table.close()
@@ -362,9 +384,8 @@ def init():
 #     add_drink('Cola', 10, 1)
 #     add_drink('Energy Drink', 10, 1)
 #
-#
 # # init()
-
+# #
 # import sqlite3
 # import datetime
 #
