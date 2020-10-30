@@ -148,19 +148,27 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
 def get_table(name):
+    print('get')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['get', name]))
     size = int(str(s.recv(8), 'UTF-8'))
     t = s.recv(size)
+    s.close()
     return pickle.loads(t)
 
 
 def setitem_table(name, key, value):
-    pass
+    print('set')
+    s.connect((IP, PORT))
+    s.send(pickle.dumps(['set', name, key, value]))
+    s.close()
 
 
 def delitem_table(name, key):
-    pass
+    print('del')
+    s.connect((IP, PORT))
+    s.send(pickle.dumps(['set', name, key]))
+    s.close()
 
 
 class table(dict):
@@ -168,9 +176,9 @@ class table(dict):
         self.name = name
         super().__init__()
 
-    def __getitem__(self, item):
+    def __getitem__(self, key):
         self.__dict__ = get_table(self.name)
-        return super().__getitem__(item)
+        return super().__getitem__(key)
 
     def __setitem__(self, key, value):
         setitem_table(self.name, key, value)
@@ -191,14 +199,26 @@ class table(dict):
     def items(self):
         self.__dict__ = get_table(self.name)
         return self.__dict__.items()
+    def update(self, *args):
+        self.__dict__ = update_table(self.name, *args)
+    def get(self, key, default):
+        return self.__getitem__(key)
 
 
-customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
-badge_table = table('badge')  # BID: badge, FK_UID
-drink_table = table('drink')  # DID: name, stock, price
-purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
-transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
-mail_table = table('mail')  # MID: datetime, FK_UID, balance
+test_table = table('test')
+# test_table.update({'test': 'test'})
+print(test_table.get('test', None))
+# customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
+# badge_table = table('badge')  # BID: badge, FK_UID
+# drink_table = table('drink')  # DID: name, stock, price
+# purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
+# transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
+# mail_table = table('mail')  # MID: datetime, FK_UID, balance
+
+
+
+
+
 
 # import shelve
 # import datetime
