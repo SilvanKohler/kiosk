@@ -2,6 +2,7 @@ import datetime
 import uuid
 import socket
 import pickle
+from math import ceil, log
 
 IP = '127.0.0.1'
 PORT = 12345
@@ -144,20 +145,27 @@ def customer_exists(b):
     return False
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-
 def get_table(name):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('get')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['get', name]))
-    size = int(str(s.recv(8), 'UTF-8'))
+    size = 2**ceil(log(int(str(s.recv(8), 'UTF-8')))/log(2))
     t = s.recv(size)
     s.close()
     return pickle.loads(t)
 
 
+def update_table(name, d):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('update')
+    s.connect((IP, PORT))
+    s.send(pickle.dumps(['update', name, d]))
+    s.close()
+
+
 def setitem_table(name, key, value):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('set')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['set', name, key, value]))
@@ -165,6 +173,7 @@ def setitem_table(name, key, value):
 
 
 def delitem_table(name, key):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('del')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['set', name, key]))
@@ -176,48 +185,56 @@ class table(dict):
         self.name = name
         super().__init__()
 
+    def __len__(self):
+        self.__dict__ = get_table(self.name)
+        return self.__dict__.__len__()
+
     def __getitem__(self, key):
         self.__dict__ = get_table(self.name)
-        return super().__getitem__(key)
+        return self.__dict__.__getitem__(key)
 
     def __setitem__(self, key, value):
         setitem_table(self.name, key, value)
-        super().__setitem__(key, value)
+        self.__dict__ = get_table(self.name)
 
     def __delitem__(self, key):
         delitem_table(self.name, key)
-        super().__delitem__(value)
+        self.__dict__ = get_table(self.name)
 
     def __iter__(self):
         self.__dict__ = get_table(self.name)
-        return super().__iter__()
+        return self.__dict__.__iter__()
 
     def __contains__(self, item):
         self.__dict__ = get_table(self.name)
-        return super().__contains__(item)
+        return self.__dict__.__contains__(item)
 
     def items(self):
         self.__dict__ = get_table(self.name)
         return self.__dict__.items()
-    def update(self, *args):
-        self.__dict__ = update_table(self.name, *args)
+
+    def update(self, d):
+        update_table(self.name, d)
+
     def get(self, key, default):
-        return self.__getitem__(key)
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return default
 
 
 test_table = table('test')
+print(1)
 # test_table.update({'test': 'test'})
+print(2)
 print(test_table.get('test', None))
+print(3)
 # customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
 # badge_table = table('badge')  # BID: badge, FK_UID
 # drink_table = table('drink')  # DID: name, stock, price
 # purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
 # transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
 # mail_table = table('mail')  # MID: datetime, FK_UID, balance
-
-
-
-
 
 
 # import shelve

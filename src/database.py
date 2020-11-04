@@ -13,11 +13,12 @@ purchase_table = shelve.open('purchase', writeback=True)  # PID: datetime, FK_DI
 transaction_table = shelve.open('transaction', writeback=True)  # TID: datetime, FK_UID, amount
 mail_table = shelve.open('mail', writeback=True)  # MID: datetime, FK_UID, balance
 
-test_table = {}
+test_table = shelve.open('test', writeback=True)
 
 tables = {'customer': customer_table, 'badge': badge_table, 'drink': drink_table, 'purchase': purchase_table,
           'transaction': transaction_table, 'mail': mail_table, 'test': test_table}
-
+for table in tables.values():
+    print('\n'.join(f'{x}: {y}' for x, y in table.items()))
 IP = '127.0.0.1'
 PORT = 12345
 CHUNK = 2048
@@ -33,15 +34,18 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 s = pickle.loads(s)
                 print(s)
                 if s[0] == 'get':
-                    id = uuid.uuid1().hex
-                    chain.put(['get', s[1], id])
-                    while not results.get(id, False):
+                    i = uuid.uuid1().hex
+                    chain.put(['get', s[1], i])
+                    while results.get(i, None) is None:
                         sleep(0.1)
-                    t = pickle.dumps(results.get(id, None))
-                    self.request.send(t.__sizeof__())
+                    t = pickle.dumps(results.get(i, None))
+                    self.request.send(bytes(str(t.__sizeof__()), 'UTF-8'))
+                    sleep(0.05)
                     self.request.send(t)
                 elif s[0] == 'set':
                     chain.put(['set', s[1], s[2], s[3]])
+                elif s[0] == 'update':
+                    chain.put(['update', s[1], s[2]])
                 elif s[0] == 'del':
                     chain.put(['del', s[1], s[2]])
             else:
@@ -52,23 +56,54 @@ class RequestHandler(socketserver.BaseRequestHandler):
 chain = queue.Queue()
 results = {}
 
+
 def process(request):
+    print(1, request)
     if request[0] == 'get':
-        results.update({request[2]: tables.get(request[1], None)})
+        print(2, {request[2]: dict(tables.get(request[1], None).items())})
+        results.update({request[2]: dict(tables.get(request[1], None).items())})
     elif request[0] == 'set':
         tables.get(request[1], None)[request[2]] = request[3]
-        tables.get(request[1], None).sync()
+        if isinstance(tables.get(request[1], None), shelve.Shelf):
+            tables.get(request[1], None).sync()
+    elif request[0] == 'update':
+        tables.get(request[1], {}).update(request[2])
+        if isinstance(tables.get(request[1], None), shelve.Shelf):
+            tables.get(request[1], None).sync()
     elif request[0] == 'del':
         del tables.get(request[1], None)[request[2]]
-        tables.get(request[1], None).sync()
-    print(tables.get(request[1], None))
+        if isinstance(tables.get(request[1], None), shelve.Shelf):
+            tables.get(request[1], None).sync()
+    print(3, dict(tables.get(request[1], None).items()))
 
 
 server = socketserver.ThreadingTCPServer((IP, PORT), RequestHandler)
-server.serve_forever()
-threading.Thread(target=server.serve_forever).start()
-while True:
-    while chain.unfinished_tasks > 0:
+# server.serve_forever()
+stopped = False
+
+
+def start():
+    global stopped
+    try:
+        server.serve_forever()
+    except Exception as e:
+        print(e)
+        stopped = True
+
+
+threading.Thread(target=start).start()
+print('Server gestartet.')
+while not stopped:
+    # print('Warteschlange abarbeiten.')
+    while chain.unfinished_tasks > 0 and not stopped:
+        print(f'Anfrage abarbeiten.')
         process(chain.get())
         chain.task_done()
-    sleep(0.05)
+        print(f'Anfrage fertig.')
+    # print('Warteschlange leer.')
+    sleep(0.1)
+server.shutdown()
+for table in tables.values():
+    if isinstance(table, shelve.Shelf):
+        table.sync()
+        table.close()
