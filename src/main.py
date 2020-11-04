@@ -12,7 +12,7 @@ from kivy.uix.textinput import TextInput
 from threading import Thread
 from badge import run
 import time
-from data import register_customer, login_customer, customer_exists, blankprofile, get_drinks, get_drink, close
+from data import register_customer, login_customer, customer_exists, blankprofile, get_drinks, get_drink
 import uuid
 
 style = Builder.load_file('style.kv')
@@ -139,7 +139,7 @@ class KioskScreen(Screen):
         for PID, dt, FK_DID, FK_UID in customer.get_transactions()[::-1][:30]:
             t.add_widget(Label(text=dt, size_hint_y=hy))
             t.add_widget(Label(text=get_drink(FK_DID)[0], size_hint_y=hy))
-            t.add_widget(Label(text=str(get_drink(FK_DID)[2])+' CHF', size_hint_y=hy))
+            t.add_widget(Label(text=str(get_drink(FK_DID)[2]) + ' CHF', size_hint_y=hy))
         s = ScrollView(size_hint=(1, None))
         s.add_widget(t)
         b = BoxLayout()
@@ -220,4 +220,3 @@ try:
     app.run()
 except Exception as e:
     print(e)
-    close()

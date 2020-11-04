@@ -150,7 +150,7 @@ def get_table(name):
     print('get')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['get', name]))
-    size = 2**ceil(log(int(str(s.recv(8), 'UTF-8')))/log(2))
+    size = 2 ** ceil(log(int(str(s.recv(8), 'UTF-8'))) / log(2))
     t = s.recv(size)
     s.close()
     return pickle.loads(t)
@@ -182,35 +182,38 @@ def delitem_table(name, key):
 
 class table(dict):
     def __init__(self, name):
-        self.name = name
         super().__init__()
+        self.name = name
 
     def __len__(self):
-        self.__dict__ = get_table(self.name)
+        self.sync()
         return self.__dict__.__len__()
 
     def __getitem__(self, key):
-        self.__dict__ = get_table(self.name)
+        self.sync()
         return self.__dict__.__getitem__(key)
 
     def __setitem__(self, key, value):
         setitem_table(self.name, key, value)
-        self.__dict__ = get_table(self.name)
+        self.sync()
 
     def __delitem__(self, key):
         delitem_table(self.name, key)
-        self.__dict__ = get_table(self.name)
+        self.sync()
 
     def __iter__(self):
-        self.__dict__ = get_table(self.name)
+        self.sync()
         return self.__dict__.__iter__()
 
     def __contains__(self, item):
-        self.__dict__ = get_table(self.name)
+        self.sync()
         return self.__dict__.__contains__(item)
 
-    def items(self):
+    def sync(self):
         self.__dict__ = get_table(self.name)
+
+    def items(self):
+        self.sync()
         return self.__dict__.items()
 
     def update(self, d):
@@ -223,20 +226,24 @@ class table(dict):
             return default
 
 
-test_table = table('test')
-print(1)
+# test_table = table('test')
+# print(1)
 # test_table.update({'test': 'test'})
-print(2)
-print(test_table.get('test', None))
-print(3)
-# customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
-# badge_table = table('badge')  # BID: badge, FK_UID
-# drink_table = table('drink')  # DID: name, stock, price
-# purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
-# transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
-# mail_table = table('mail')  # MID: datetime, FK_UID, balance
-
-
+# print(2)
+# print(test_table.get('test', None))
+# print(3)
+customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
+badge_table = table('badge')  # BID: badge, FK_UID
+drink_table = table('drink')  # DID: name, stock, price
+purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
+transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
+mail_table = table('mail')  # MID: datetime, FK_UID, balance
+# customer_table.items()
+# badge_table.items()
+# drink_table.items()
+# purchase_table.items()
+# transaction_table.items()
+# mail_table.items()
 # import shelve
 # import datetime
 # import uuid
