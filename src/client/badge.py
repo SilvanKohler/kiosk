@@ -39,11 +39,10 @@ def get_prox():
 
 
 # Main Loop
-prev = 0
 
 
 def run(callback):
-    global prev
+    prev = 0
     print('Ready for Scan...')
 
     while True:
@@ -55,8 +54,9 @@ def run(callback):
             if result != 0:
                 print(result)
                 callback(result)  # run callback function
+                print('after')
                 time.sleep(2)
-                break
+                prev = 0
             prev = result
 
-        time.sleep(0.3)
+        time.sleep(0.5)

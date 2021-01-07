@@ -9,7 +9,7 @@ PORT = 12345
 blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
 
-# blankprofile = 'https://media.giphy.com/media/3o6fJ47Uq6jMb1OULu/giphy.gif'
+blankprofile = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
 
 class Customer:
@@ -183,15 +183,16 @@ def delitem_table(name, key):
 class table(dict):
     def __init__(self, name):
         super().__init__()
+        self.__dict = dict()
         self.name = name
 
     def __len__(self):
         self.sync()
-        return self.__dict__.__len__()
+        return self.__dict.__len__()
 
     def __getitem__(self, key):
         self.sync()
-        return self.__dict__.__getitem__(key)
+        return self.__dict.__getitem__(key)
 
     def __setitem__(self, key, value):
         setitem_table(self.name, key, value)
@@ -203,21 +204,21 @@ class table(dict):
 
     def __iter__(self):
         self.sync()
-        return self.__dict__.__iter__()
+        return self.__dict.__iter__()
 
     def __contains__(self, item):
         self.sync()
-        return self.__dict__.__contains__(item)
+        return self.__dict.__contains__(item)
 
     def sync(self):
-        self.__dict__ = get_table(self.name)
+        self.__dict = get_table(self.name)
 
     def items(self):
         self.sync()
-        return self.__dict__.items()
+        return self.__dict.items()
 
     def update(self, d):
-        update_table(self.name, d)
+        self.table = update_table(self.name, d)
 
     def get(self, key, default):
         try:

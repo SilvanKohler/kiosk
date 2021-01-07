@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/menubar.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/">Kiosk WebGUI</a>
+        <a href="/settings">Einstellungen</a>
+        <a href="/management">Verwaltung</a>
+    </nav>
+    <br>
+    <br>
+    {% block content %} {% endblock %}
+</body>
+</html>

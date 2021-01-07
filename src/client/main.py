@@ -9,12 +9,15 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
+from kivy.logger import Logger
+from kivy.config import Config
 from threading import Thread
 from badge import run
 import time
 from data import register_customer, login_customer, customer_exists, blankprofile, get_drinks, get_drink
 import uuid
 
+config = Config.read('config.ini')
 style = Builder.load_file('style.kv')
 sm = ScreenManager(transition=NoTransition())
 keys = [
@@ -29,7 +32,13 @@ times2 = {}
 badge = None
 customer = None
 
-
+def login(b):
+    global customer
+    customer = login_customer(b)
+    sm.current = 'Kiosk'
+    refresh()
+def logout():
+    sm.current = 'Login'
 def refresh():
     KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
     KS.ids['name'].text = customer.get_firstname() + '\n' + customer.get_lastname()
@@ -37,12 +46,14 @@ def refresh():
 
 
 def on_badge(b):
-    global badge, badgesensor, customer
+    global badge
+    print(b, badge)
+    if sm.current == 'Kiosk' and b == badge:
+        logout()
+        return
     badge = b
     if customer_exists(b):
-        customer = login_customer(b)
-        sm.current = 'Kiosk'
-        refresh()
+        login(b)
     else:
         sm.current = 'Register'
 
@@ -66,10 +77,10 @@ class Keyboard(BoxLayout):
 
     def on_press(self, instance):
         global times, customer
-        # print(time.time() - times.get(instance.text, time.time() - 100))
+        # logger.debug('Application: '+time.time() - times.get(instance.text, time.time() - 100))
         if time.time() - times.get(instance.text, time.time() - 100) > .05:
             times.update({instance.text: time.time()})
-            # print(instance.text)
+            # logger.debug('Application: '+instance.text)
             if focused is not None:
                 if instance.text not in ('DEL', 'SPEICHERN'):
                     focused.text += instance.text
@@ -103,13 +114,6 @@ class Keyboard(BoxLayout):
 class LoginScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def on_enter(self, *args):
-        global badgesensor
-        badgesensor = Thread(target=run, args=[on_badge, ])
-        badgesensor.start()
-        super().on_enter(self, *args)
-
 
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
@@ -213,10 +217,11 @@ class KioskApp(App):
         return sm
 
 
-try:
-    badgesensor = Thread(target=run, args=[on_badge, ])
-    badgesensor.start()
-    app = KioskApp()
-    app.run()
-except Exception as e:
-    print(e)
+# try:
+badgesensor = Thread(target=run, args=[on_badge, ])
+badgesensor.start()
+
+app = KioskApp()
+app.run()
+# except Exception as e:
+#     logger.exception('Application: '+e)
