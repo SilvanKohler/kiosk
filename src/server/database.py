@@ -52,7 +52,6 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 print('Verbindung getrennt.')
                 break
 
-
 chain = queue.Queue()
 results = {}
 
@@ -90,20 +89,20 @@ def start():
         print(e)
         stopped = True
 
-
-threading.Thread(target=start).start()
-print('Server gestartet.')
-while not stopped:
-    # print('Warteschlange abarbeiten.')
-    while chain.unfinished_tasks > 0 and not stopped:
-        print(f'Anfrage abarbeiten.')
-        process(chain.get())
-        chain.task_done()
-        print(f'Anfrage fertig.')
-    # print('Warteschlange leer.')
-    sleep(0.1)
-server.shutdown()
-for table in tables.values():
-    if isinstance(table, shelve.Shelf):
-        table.sync()
-        table.close()
+def run():
+    threading.Thread(target=start).start()
+    print('Server gestartet.')
+    while not stopped:
+        # print('Warteschlange abarbeiten.')
+        while chain.unfinished_tasks > 0 and not stopped:
+            print(f'Anfrage abarbeiten.')
+            process(chain.get())
+            chain.task_done()
+            print(f'Anfrage fertig.')
+        # print('Warteschlange leer.')
+        sleep(0.1)
+    server.shutdown()
+    for table in tables.values():
+        if isinstance(table, shelve.Shelf):
+            table.sync()
+            table.close()

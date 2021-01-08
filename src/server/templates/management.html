@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
-<title>Kiosk WebGUI - Start</title>
+<title>{% block title %}Kiosk WebGUI - Verwaltung{% endblock %}</title>
 
 {% block content %}
-    <p>Verwaltung</p>
+    <form class="management-form" action="/management">
+        <input type="submit">Speichern</input>
+        <label></label>
+        <input type="submit">Speichern</input>
+    </form>
 {% endblock %}

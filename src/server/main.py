@@ -1,4 +1,7 @@
-from web import app
+import web, database, data
+from time import sleep
+from threading import Thread
 
-
-app.run("0.0.0.0", 80, debug=True)
+web.get_transactions = data.get_transactions
+Thread(target=database.run).start()
+Thread(target=web.app.run, args=("0.0.0.0", 80)).start()

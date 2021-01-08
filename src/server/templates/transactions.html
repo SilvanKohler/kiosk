@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+<title>{% block title %}Kiosk WebGUI - Transaktionen{% endblock %}</title>
+
+{% block content %}
+    <form class="transactions-form" action="/transactions">
+        <label>Anzahl:</label>
+        <input type="number" defaultValue={{ number_of_transactions }} name="number_of_transactions"/>
+    </form>
+    <div class="transactions-div">
+        <tr>
+            <th>Zeit</th>
+            <th>Person</th>
+            <th>Artikel</th>
+            <th>Preis</th>
+        </tr>
+        {% for transaction in transactions[:number_of_transactions] %}
+            <tr>
+                <td>{{ transaction[0] }}}</td>
+                <td>{{ transaction[1] }}}</td>
+                <td>{{ transaction[2] }}}</td>
+                <td>{{ transaction[3] }}}</td>
+            </tr>
+        {% endfor %}
+    </div>
+{% endblock %}
