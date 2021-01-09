@@ -3,9 +3,40 @@
 <title>{% block title %}Kiosk WebGUI - Verwaltung{% endblock %}</title>
 
 {% block content %}
-    <form class="management-form" action="/management">
-        <input type="submit">Speichern</input>
-        <label></label>
-        <input type="submit">Speichern</input>
+    <form id="drinks" class="management-form" action="/management">
+        <h3>Getränke</h3>
+        <input type="submit" value="Speichern"/>
+        <table class="management-table">
+            <tr>
+                <th>Name</th>
+                <th>Lager</th>
+                <th>Preis (CHF)</th>
+            </tr>
+            {% for drink, i in drinks|zip(range(drinks|length)) %}
+                <tr>
+                    <td>
+                        <input type="text" value="{{ drink[0] }}" name="name{{ i }}"/>
+                    </td>
+                    <td>
+                        <input type="number" value={{ drink[0] }} name="lager{{ i }}"/>
+                    </td>
+                    <td>
+                        <input type="number" value={{ drink[0] }} name="preis{{ i }}"/>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <input type="text" value="Name" name="name{{ i + 1 }}"/>
+                </td>
+                <td>
+                    <input type="number" value=0 name="lager{{ i + 1 }}"/>
+                </td>
+                <td>
+                    <input type="number" value=0 name="preis{{ i + 1 }}"/>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="Speichern"/>
     </form>
 {% endblock %}

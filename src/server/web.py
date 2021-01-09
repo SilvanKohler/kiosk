@@ -3,7 +3,10 @@ import random
 
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
+app.jinja_env.filters['zip'] = zip
+
 get_transactions = None
+get_drinks = None
 
 
 @app.route('/')
@@ -20,7 +23,7 @@ def root_settings():
 def root_management():
     if request.form:
         print(request.form)
-    return render_template('management.html')
+    return render_template('management.html', drinks=get_drinks(), i=0)
 
 
 @app.route('/transactions', methods=['GET', 'POST'])

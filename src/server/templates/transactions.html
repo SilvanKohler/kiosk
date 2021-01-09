@@ -5,22 +5,31 @@
 {% block content %}
     <form class="transactions-form" action="/transactions">
         <label>Anzahl:</label>
-        <input type="number" defaultValue={{ number_of_transactions }} name="number_of_transactions"/>
+        <input type="number" value={{ number_of_transactions }} name="number_of_transactions"/>
     </form>
-    <div class="transactions-div">
+    <table class="transactions-table">
         <tr>
             <th>Zeit</th>
             <th>Person</th>
             <th>Artikel</th>
-            <th>Preis</th>
+            <th>Preis (CHF)</th>
         </tr>
-        {% for transaction in transactions[:number_of_transactions] %}
+        {% if transactions: %}
+            {% for transaction in transactions[:number_of_transactions] %}
+                <tr>
+                    <td>{{ transaction[0] }}}</td>
+                    <td>{{ transaction[1] }}}</td>
+                    <td>{{ transaction[2] }}}</td>
+                    <td>{{ transaction[3] }}}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
             <tr>
-                <td>{{ transaction[0] }}}</td>
-                <td>{{ transaction[1] }}}</td>
-                <td>{{ transaction[2] }}}</td>
-                <td>{{ transaction[3] }}}</td>
+                <td>Fehler</td>
+                <td>Fehler</td>
+                <td>Fehler</td>
+                <td>Fehler</td>
             </tr>
-        {% endfor %}
-    </div>
+        {% endif %}
+    </table>
 {% endblock %}
