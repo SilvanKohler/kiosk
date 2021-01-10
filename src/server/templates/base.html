@@ -2,18 +2,38 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} {% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/menubar.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer="" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </head>
 <body>
-    <nav class="base-nav">
-        <a href="/">Kiosk WebGUI</a>
-        <a href="/settings">Einstellungen</a>
-        <a href="/management">Verwaltung</a>
-        <a href="/transactions">Transaktionen</a>
-    </nav>
-    <br>
-    <br>
-    {% block content %} {% endblock %}
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">Kiosk WebGUI</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation. We hide it in small screens. -->
+                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    <a class="mdl-navigation__link" href="/">Start</a>
+                    <a class="mdl-navigation__link" href="/settings">Einstellungen</a>
+                    <a class="mdl-navigation__link" href="/management">Verwaltung</a>
+                    <a class="mdl-navigation__link" href="/transactions">Transaktionen</a>
+                    <a class="mdl-navigation__link" href="/billing">Abrechnung</a>
+                </nav>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content mdl-grid">
+                <div class="mdl-layout-spacer"></div>
+                {% block content %} {% endblock %}
+                <div class="mdl-layout-spacer"></div>
+            </div>
+
+        </main>
+    </div>
 </body>
 </html>

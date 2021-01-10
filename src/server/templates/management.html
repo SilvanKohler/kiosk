@@ -3,40 +3,102 @@
 <title>{% block title %}Kiosk WebGUI - Verwaltung{% endblock %}</title>
 
 {% block content %}
-    <form id="drinks" class="management-form" action="/management">
-        <h3>Getränke</h3>
-        <input type="submit" value="Speichern"/>
-        <table class="management-table">
-            <tr>
-                <th>Name</th>
-                <th>Lager</th>
-                <th>Preis (CHF)</th>
-            </tr>
-            {% for drink, i in drinks|zip(range(drinks|length)) %}
-                <tr>
-                    <td>
-                        <input type="text" value="{{ drink[0] }}" name="name{{ i }}"/>
-                    </td>
-                    <td>
-                        <input type="number" value={{ drink[0] }} name="lager{{ i }}"/>
-                    </td>
-                    <td>
-                        <input type="number" value={{ drink[0] }} name="preis{{ i }}"/>
-                    </td>
-                </tr>
-            {% endfor %}
-            <tr>
-                <td>
-                    <input type="text" value="Name" name="name{{ i + 1 }}"/>
-                </td>
-                <td>
-                    <input type="number" value=0 name="lager{{ i + 1 }}"/>
-                </td>
-                <td>
-                    <input type="number" value=0 name="preis{{ i + 1 }}"/>
-                </td>
-            </tr>
-        </table>
-        <input type="submit" value="Speichern"/>
-    </form>
+<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__title"><h3>Getränkeverwaltung</h3></div>
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__supporting-text mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <form id="drinks" class="management-form" action="/management">
+            <!-- Accent-colored raised button -->
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                   value="Speichern und ausgewählte löschen" style="margin-bottom: 1%"/>
+            <table class="mdl-data-table mdl-shadow--2dp">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-data-table__select"
+                                   for="select-all-checkbox">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-all" id="select-all-checkbox"/>
+                            </label>
+                        </th>
+                        <th>Name</th>
+                        <th>Lager</th>
+                        <th>Preis (CHF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drink, i in drinks|zip(range(drinks|length)) %}
+                    <tr>
+                        <td>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select{{ i }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select{{ i }}" id="select{{ i }}"/>
+                            </label>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" name="name{{ i }}" id="name{{ i }}">
+                                <label class="mdl-textfield__label" for="name{{ i }}">{{ drink[0] }}</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="lager{{ i }}"
+                                       id="lager{{ i }}">
+                                <label class="mdl-textfield__label" for="lager{{ i }}">{{ drink[1] }}</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="preis{{ i }}"
+                                       id="preis{{ i }}">
+                                <label class="mdl-textfield__label" for="preis{{ i }}">{{ drink[2] }}</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select{{ i + 1 }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select{{ i + 1 }}"
+                                       id="select{{ i + 1 }}"/>
+                            </label>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" name="name{{ i + 1 }}" id="name{{ i + 1 }}">
+                                <label class="mdl-textfield__label" for="name{{ i + 1 }}">Name</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="lager{{ i + 1}}"
+                                       id="lager{{ i + 1 }}">
+                                <label class="mdl-textfield__label" for="lager{{ i + 1 }}">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="preis{{ i + 1 }}" id="preis{{ i + 1 }}">
+                                <label class="mdl-textfield__label" for="preis{{ i + 1 }}">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Accent-colored raised button -->
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                   value="Speichern und ausgewählte löschen" style="margin-top: 1%"/>
+        </form>
+        <div class="mdl-layout-spacer"></div>
+    </div>
+</div>
 {% endblock %}
