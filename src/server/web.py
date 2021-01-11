@@ -7,7 +7,7 @@ app.jinja_env.filters['zip'] = zip
 
 get_transactions = None
 get_drinks = None
-
+add_drink = None
 
 @app.route('/')
 def root():
@@ -33,3 +33,7 @@ def root_transactions():
         number_of_transactions = request.form['number_of_transactions']
     return render_template('transactions.html', transactions=get_transactions(),
                            number_of_transactions=number_of_transactions)
+
+@app.route('/billing')
+def root_billing():
+    return render_template('billing.html')
