@@ -151,6 +151,11 @@ def get_drink(did):
         if DID == did:
             return name, stock, price
 
+def update_drink(DID, name, stock, price):
+    global drink_table
+
+    drink_table[DID] = (name, stock, price)
+
 
 def customer_exists(b):
     for BID, (badge, FK_UID) in sorted(badge_table.items()):

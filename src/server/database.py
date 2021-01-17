@@ -19,7 +19,7 @@ tables = {'customer': customer_table, 'badge': badge_table, 'drink': drink_table
           'transaction': transaction_table, 'mail': mail_table, 'test': test_table}
 for table in tables.values():
     print('\n'.join(f'{x}: {y}' for x, y in table.items()))
-IP = '127.0.0.1'
+IP = '0.0.0.0'
 PORT = 12345
 CHUNK = 2048
 

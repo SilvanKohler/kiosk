@@ -1,5 +1,6 @@
 from flask import Flask, redirect, session, render_template, request
 import random
+import uuid
 
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
@@ -7,7 +8,7 @@ app.jinja_env.filters['zip'] = zip
 
 get_transactions = None
 get_drinks = None
-add_drink = None
+update_drink = None
 
 @app.route('/')
 def root():
@@ -21,9 +22,32 @@ def root_settings():
 
 @app.route('/management', methods=['GET', 'POST'])
 def root_management():
-    if request.form:
-        print(request.form)
-    return render_template('management.html', drinks=get_drinks(), i=0)
+    print(request.args)
+    if request.args:
+        changes = {}
+        for key, value in request.args.items():
+            if key == 'select-all':
+                pass
+            elif 'select-' in key:
+                did = key.replace('select-', '')
+            elif 'name-' in key:
+                did = key.replace('name-', '')
+                if not changes.get(did):
+                    changes[did] = {}
+                changes[did].update({'name': value})
+            elif 'lager-' in key:
+                did = key.replace('lager-', '')
+                if not changes.get(did):
+                    changes[did] = {}
+                changes[did].update({'lager': int(value)})
+            elif 'preis-' in key:
+                did = key.replace('preis-', '')
+                if not changes.get(did):
+                    changes[did] = {}
+                changes[did].update({'preis': int(value)})
+        for did, values in changes.items():
+            update_drink(did, values['name'], values['lager'], values['preis'],)
+    return render_template('management.html', drinks=get_drinks(), new_uuid=uuid.uuid1().hex)
 
 
 @app.route('/transactions', methods=['GET', 'POST'])

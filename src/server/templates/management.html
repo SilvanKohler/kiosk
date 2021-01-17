@@ -28,34 +28,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for drink, i in drinks|zip(range(drinks|length)) %}
+                    {% for drink in drinks %}
                     <tr>
                         <td>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select{{ i }}">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select{{ i }}" id="select{{ i }}"/>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ drink[0] }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ drink[0] }}" id="select-{{ drink[0] }}"/>
                             </label>
                         </td>
                         <td class="mdl-data-table__cell--non-numeric">
                             <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" name="name{{ i }}" id="name{{ i }}">
-                                <label class="mdl-textfield__label" for="name{{ i }}">{{ drink[0] }}</label>
+                                <input class="mdl-textfield__input" type="text" name="name-{{ drink[0] }}" id="name-{{ drink[0] }}" value="{{ drink[1] }}">
+                                <label class="mdl-textfield__label" for="name-{{ drink[0] }}">{{ drink[1] }}</label>
                             </div>
                         </td>
                         <td>
                             <div class="mdl-textfield mdl-js-textfield">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="lager{{ i }}"
-                                       id="lager{{ i }}">
-                                <label class="mdl-textfield__label" for="lager{{ i }}">{{ drink[1] }}</label>
+                                       name="lager-{{ drink[0] }}"
+                                       id="lager-{{ drink[0] }}" value={{ drink[2] }}>
+                                <label class="mdl-textfield__label" for="lager-{{ drink[0] }}">{{ drink[2] }}</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
                         <td>
                             <div class="mdl-textfield mdl-js-textfield">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="preis{{ i }}"
-                                       id="preis{{ i }}">
-                                <label class="mdl-textfield__label" for="preis{{ i }}">{{ drink[2] }}</label>
+                                       name="preis-{{ drink[0] }}"
+                                       id="preis-{{ drink[0] }}" value={{ drink[3] }}>
+                                <label class="mdl-textfield__label" for="preis-{{ drink[0] }}">{{ drink[3] }}</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
@@ -63,31 +63,31 @@
                     {% endfor %}
                     <tr>
                         <td>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select{{ i + 1 }}">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select{{ i + 1 }}"
-                                       id="select{{ i + 1 }}"/>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ new_uuid }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ new_uuid }}"
+                                       id="select-{{ new_uuid }}"/>
                             </label>
                         </td>
                         <td class="mdl-data-table__cell--non-numeric">
                             <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" name="name{{ i + 1 }}" id="name{{ i + 1 }}">
-                                <label class="mdl-textfield__label" for="name{{ i + 1 }}">Name</label>
+                                <input class="mdl-textfield__input" type="text" name="name-{{ new_uuid }}" id="name-{{ new_uuid }}">
+                                <label class="mdl-textfield__label" for="name-{{ new_uuid }}">Name</label>
                             </div>
                         </td>
                         <td>
                             <div class="mdl-textfield mdl-js-textfield">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="lager{{ i + 1}}"
-                                       id="lager{{ i + 1 }}">
-                                <label class="mdl-textfield__label" for="lager{{ i + 1 }}">0</label>
+                                       name="lager-{{ new_uuid }}"
+                                       id="lager-{{ new_uuid }}">
+                                <label class="mdl-textfield__label" for="lager-{{ new_uuid }}">0</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
                         <td>
                             <div class="mdl-textfield mdl-js-textfield">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="preis{{ i + 1 }}" id="preis{{ i + 1 }}">
-                                <label class="mdl-textfield__label" for="preis{{ i + 1 }}">0</label>
+                                       name="preis-{{ new_uuid }}" id="preis-{{ new_uuid }}">
+                                <label class="mdl-textfield__label" for="preis-{{ new_uuid }}">0</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
