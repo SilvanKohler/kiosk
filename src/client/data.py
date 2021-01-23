@@ -4,7 +4,7 @@ import socket
 import pickle
 from math import ceil, log
 
-IP = '192.168.137.1'
+IP = '127.0.0.1'
 PORT = 12345
 blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 

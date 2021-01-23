@@ -1,8 +1,7 @@
-kivy~=1.11.1
+kivy
 Flask~=1.0.2
 Werkzeug~=0.14.1
 Cython~=0.29.21
 pillow~=7.2.0
 pyusb~=1.1.0
-Flask-Security
-Flask-WTF
+kivyMD
