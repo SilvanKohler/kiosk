@@ -1,4 +1,4 @@
-kivy~=1.11.1
+kivy
 Flask~=1.0.2
 Werkzeug~=0.14.1
 Cython~=0.29.21
