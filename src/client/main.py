@@ -39,10 +39,13 @@ def login(b):
     refresh()
 def logout():
     sm.current = 'Login'
-def refresh():
-    KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
-    KS.ids['name'].text = customer.get_firstname() + '\n' + customer.get_lastname()
-    KS.ids['avatar'].source = customer.get_avatar()
+def refresh(content='all'):
+    if content == 'balance':
+        KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
+    else:
+        KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
+        KS.ids['name'].text = customer.get_firstname() + '\n' + customer.get_lastname()
+        KS.ids['avatar'].source = customer.get_avatar()
 
 
 def on_badge(b):
@@ -174,7 +177,7 @@ class Item(Button):
         if time.time() - times2.get(self.id, time.time() - 100) > 1:
             times2.update({self.id: time.time()})
             customer.withdraw(self.DID)
-            refresh()
+            refresh('balance')
 
 
 class ItemLayout(GridLayout):
