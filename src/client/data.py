@@ -6,8 +6,9 @@ from math import ceil, log
 
 IP = '127.0.0.1'
 PORT = 12345
-blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
 blankprofile = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
@@ -63,7 +64,6 @@ class Customer:
                 return email
 
     def get_balance(self):
-
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return balance
@@ -102,8 +102,7 @@ class Customer:
         price = drink_table[did][2]
         # print(customer_table[self.uid][3], price)
         customer_table[self.uid] = customer_table[self.uid][:3] + (customer_table[self.uid][3] + price,) + \
-                                   customer_table[self.uid][
-                                   4:]
+                                   customer_table[self.uid][4:]
         d = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
         purchase_table[uuid.uuid1().hex] = (d, did, self.uid)
         drink_table[did] = (drink_table[did][0], drink_table[did][1] - 1, drink_table[did][2])
@@ -146,38 +145,42 @@ def customer_exists(b):
 
 
 def get_table(name):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('get')
-    s.connect((IP, PORT))
-    s.send(pickle.dumps(['get', name]))
+    try:
+        s.send(pickle.dumps(['get', name]))
+    except:
+        s.connect((IP, PORT))
+        s.send(pickle.dumps(['get', name]))
     size = 2 ** ceil(log(int(str(s.recv(8), 'UTF-8'))) / log(2))
     t = s.recv(size)
-    s.close()
     return pickle.loads(t)
 
 
 def update_table(name, d):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('update')
-    s.connect((IP, PORT))
-    s.send(pickle.dumps(['update', name, d]))
-    s.close()
+    try:
+        s.send(pickle.dumps(['update', name, d]))
+    except:
+        s.connect((IP, PORT))
+        s.send(pickle.dumps(['update', name, d]))
 
 
 def setitem_table(name, key, value):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('set')
-    s.connect((IP, PORT))
-    s.send(pickle.dumps(['set', name, key, value]))
-    s.close()
+    try:
+        s.send(pickle.dumps(['set', name, key, value]))
+    except:
+        s.connect((IP, PORT))
+        s.send(pickle.dumps(['set', name, key, value]))
 
 
 def delitem_table(name, key):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('del')
-    s.connect((IP, PORT))
-    s.send(pickle.dumps(['set', name, key]))
-    s.close()
+    try:
+        s.send(pickle.dumps(['set', name, key]))
+    except:
+        s.connect((IP, PORT))
+        s.send(pickle.dumps(['set', name, key]))
 
 
 class table(dict):
