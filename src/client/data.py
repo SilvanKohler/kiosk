@@ -46,19 +46,16 @@ class Customer:
         badge_table[uuid.uuid1().hex] = (self.badges[0], uid)
 
     def get_firstname(self):
-
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return firstname
 
     def get_lastname(self):
-
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return lastname
 
     def get_email(self):
-
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return email
@@ -69,13 +66,11 @@ class Customer:
                 return balance
 
     def get_avatar(self):
-
         for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
             if UID == self.uid:
                 return avatar
 
     def get_badges(self):
-
         result = []
         for BID, (badge, FK_UID) in sorted(badge_table.items()):
             if FK_UID == self.uid:
@@ -83,13 +78,12 @@ class Customer:
         return result
 
     def get_uid(self):
-
         for BID, (badge, FK_UID) in sorted(badge_table.items()):
             if badge == self.badges[0]:
                 return FK_UID
 
     def get_transactions(self):
-
+        print('get_transactions')
         result = []
         for PID, (dt, FK_DID, FK_UID) in sorted(purchase_table.items(), key=lambda x: x[1]):
             if FK_UID == self.uid:
@@ -145,19 +139,23 @@ def customer_exists(b):
 
 
 def get_table(name):
-    print('get')
+    print('get: ' + name)
     try:
         s.send(pickle.dumps(['get', name]))
     except:
         s.connect((IP, PORT))
         s.send(pickle.dumps(['get', name]))
-    size = 2 ** ceil(log(int(str(s.recv(8), 'UTF-8'))) / log(2))
-    t = s.recv(size)
+    size = int(str(s.recv(128), 'UTF-8'))
+    size_2 = 2 ** ceil(log(size) / log(2))
+    # print(size, size_2)
+    t = s.recv(size_2)
+    print("------------------")
+    print(t)
     return pickle.loads(t)
 
 
 def update_table(name, d):
-    print('update')
+    print('update: ' + name + '; ' + d)
     try:
         s.send(pickle.dumps(['update', name, d]))
     except:
@@ -166,7 +164,7 @@ def update_table(name, d):
 
 
 def setitem_table(name, key, value):
-    print('set')
+    print('set: ' + name + '; ' + str(key) + '; ' + str(value))
     try:
         s.send(pickle.dumps(['set', name, key, value]))
     except:
@@ -175,7 +173,7 @@ def setitem_table(name, key, value):
 
 
 def delitem_table(name, key):
-    print('del')
+    print('del: ' + name + '; ' + key)
     try:
         s.send(pickle.dumps(['set', name, key]))
     except:

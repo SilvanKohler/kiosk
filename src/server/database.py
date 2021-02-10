@@ -29,20 +29,23 @@ CHUNK = 2048
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         addr = self.client_address[0]
-        # print('Verbindung hergestellt.')
+        print('Verbindung hergestellt.')
         while True:
             s = self.request.recv(CHUNK)
             if s:
                 s = pickle.loads(s)
-                # print(s)
+                print(s)
                 if s[0] == 'get':
                     i = uuid.uuid1().hex
                     chain.put(['get', s[1], i])
                     while results.get(i, None) is None:
-                        sleep(0.1)
+                        sleep(0.05)
                     t = pickle.dumps(results.get(i, None))
                     self.request.send(bytes(str(t.__sizeof__()), 'UTF-8'))
-                    sleep(0.05)
+                    # print(bytes(str(t.__sizeof__()), 'UTF-8'))
+                    sleep(0.1)
+                    print("----------------------------")
+                    print(t)
                     self.request.send(t)
                 elif s[0] == 'set':
                     chain.put(['set', s[1], s[2], s[3]])
@@ -51,7 +54,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
                 elif s[0] == 'del':
                     chain.put(['del', s[1], s[2]])
             else:
-                # print('Verbindung getrennt.')
+                print('Verbindung getrennt.')
                 break
 
 chain = queue.Queue()
@@ -59,9 +62,9 @@ results = {}
 
 
 def process(request):
-    # print(1, request)
+    print(1, request)
     if request[0] == 'get':
-        # print(2, {request[2]: dict(tables.get(request[1], None).items())})
+        print(2, {request[2]: dict(tables.get(request[1], None).items())})
         results.update({request[2]: dict(tables.get(request[1], None).items())})
     elif request[0] == 'set':
         tables.get(request[1], None)[request[2]] = request[3]
@@ -75,7 +78,7 @@ def process(request):
         del tables.get(request[1], None)[request[2]]
         if isinstance(tables.get(request[1], None), shelve.Shelf):
             tables.get(request[1], None).sync()
-    # print(3, dict(tables.get(request[1], None).items()))
+    print(3, dict(tables.get(request[1], None).items()))
 
 
 server = socketserver.ThreadingTCPServer((IP, PORT), RequestHandler)
@@ -90,6 +93,10 @@ def start():
     except Exception as e:
         print(e)
         stopped = True
+    for table in tables.values():
+        if isinstance(table, shelve.Shelf):
+            table.sync()
+            table.close()
 
 def run():
     threading.Thread(target=start).start()
@@ -102,9 +109,5 @@ def run():
             chain.task_done()
             print(f'Anfrage fertig.')
         # print('Warteschlange leer.')
-        sleep(0.1)
+        sleep(0.05)
     server.shutdown()
-    for table in tables.values():
-        if isinstance(table, shelve.Shelf):
-            table.sync()
-            table.close()
