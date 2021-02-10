@@ -174,6 +174,7 @@ class Item(Button):
         self.id = uuid.uuid1().hex
 
     def on_press(self):
+        print(time.time())
         if time.time() - times2.get(self.id, time.time() - 100) > 1:
             times2.update({self.id: time.time()})
             customer.withdraw(self.DID)
