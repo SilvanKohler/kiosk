@@ -166,7 +166,7 @@ def customer_exists(b):
 
 def get_table(name):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('get')
+    # print('get')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['get', name]))
     size = 2 ** ceil(log(int(str(s.recv(8), 'UTF-8'))) / log(2))
@@ -177,7 +177,7 @@ def get_table(name):
 
 def update_table(name, d):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('update')
+    # print('update')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['update', name, d]))
     s.close()
@@ -185,7 +185,7 @@ def update_table(name, d):
 
 def setitem_table(name, key, value):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('set')
+    # print('set')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['set', name, key, value]))
     s.close()
@@ -193,7 +193,7 @@ def setitem_table(name, key, value):
 
 def delitem_table(name, key):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('del')
+    # print('del')
     s.connect((IP, PORT))
     s.send(pickle.dumps(['set', name, key]))
     s.close()
