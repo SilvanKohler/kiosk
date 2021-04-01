@@ -1,9 +1,11 @@
-from flask import Flask, redirect, session, render_template, request, jsonify
-from flask_restful import Resource, Api
 import random
+import re
 import uuid
-from time import sleep
 from threading import Thread
+from time import sleep
+
+from flask import Flask, render_template, request, jsonify
+from flask_restful import Api
 
 from tables import chain, results, run
 
@@ -15,6 +17,14 @@ api = Api(app)
 get_transactions = None
 get_drinks = None
 update_drink = None
+specs = {
+    'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
+    'badge': ('bid', ('badge', 'uid')),
+    'drink': ('did', ('name', 'stock', 'price')),
+    'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
+    'transaction': ('tid', ('datetime', 'uid', 'amount')),
+    'mail': ('mid', ('datetime', 'uid', 'balance'))
+}
 
 
 @app.route('/')
@@ -72,38 +82,80 @@ def root_billing():
 
 
 ############### API #################
-@app.route('/api/customer/<uid>', methods=['GET'])
-def root_api_customer_uid(uid):
+
+@app.route('/api/<table>/get', methods=['POST'])
+def root_api_get(table):
     content = {'success': False}
+    parameters = {
+        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+        key, value in request.form.items()
+    }
     i = uuid.uuid1().hex
-    chain.put(['get', 'customer', i])
+    chain.put(['get', table, i])
     while results.get(i) is None:
         sleep(0.05)
-    print(dict(results.get(i)).items())
-    for UID, (firstname, lastname, email, balance, avatar) in dict(results.get(i)).items():
-        if UID == uid or uid == '0':
-            content.update({
-                'success': True,
-                UID: {
-                    'firstname': firstname,
-                    'lastname': lastname,
-                    'email': email,
-                    'balance': balance,
-                    'avatar': avatar
-                }
-            })
+    for entry in dict(results.get(i)).items():
+        try:
+            for parameter in parameters.items():
+                if parameter[0] == specs[table][0] and not re.match(str(parameter[1]), str(entry[0])) or not re.match(
+                        str(parameter[1]), str(entry[1][parameter[0]])):
+                    break
+            else:
+                content.update({
+                    entry[0]: {
+                        key: value for key, value in entry[1].items()
+                    }
+                })
+                content['success'] = True
+        except (KeyError, re.error):
+            pass
     return jsonify(content), 200 if content['success'] else 406
-@app.route('/api/customer', methods=['POST'])
-def root_api_customer():
+
+
+@app.route('/api/<table>/create', methods=['POST'])
+def root_api_create(table):
     content = {'success': False}
+    parameters = {
+        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+        key, value in request.form.items()
+    }
     try:
-        uid = uuid.uuid1().hex
-        attributes = request.form
-        chain.put(['update', 'customer', {
-            uid: (attributes['firstname'].upper(), attributes['lastname'].upper(), attributes['email'].upper(), attributes['balance'], attributes['avatar'])
+        i = uuid.uuid1().hex
+        chain.put(['update', table, {
+            i: {
+                spec: parameters[spec] for spec in specs[table][1]
+            }
         }])
-    finally:
         content['success'] = True
+    except KeyError:
+        pass
     return jsonify(content), 200 if content['success'] else 406
+
+
+@app.route('/api/<table>/edit', methods=['POST'])
+def root_api_edit(table):
+    content = {'success': False}
+    parameters = {
+        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+        key, value in request.form.items()
+    }
+    try:
+        pos = tuple(parameters.keys()).index(specs[table][0])
+        i = uuid.uuid1().hex
+        chain.put(['get', table, i])
+        while results.get(i) is None:
+            sleep(0.05)
+        d = results.get(i)
+        d[parameters[specs[table][0]]].update({
+            parameter[0]: parameter[1] for parameter in
+            tuple(parameters.items())[:pos] + tuple(parameters.items())[pos + 1:]
+        })
+        chain.put(['update', table, d])
+        content['success'] = True
+    except KeyError:
+        pass
+    return jsonify(content), 200 if content['success'] else 406
+
+
 Thread(target=run).start()
 app.run("0.0.0.0", 80, debug=True)

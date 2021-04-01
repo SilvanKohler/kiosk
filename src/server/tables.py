@@ -1,7 +1,6 @@
 import queue
 import socketserver
 import threading
-import pickle
 import shelve
 import uuid
 from time import sleep
@@ -9,17 +8,21 @@ from time import sleep
 
 data_directory = 'data/'
 
-customer_table = shelve.open(data_directory + 'customer', writeback=True)  # UID: firstname, lastname, email, balance, avatar
-badge_table = shelve.open(data_directory + 'badge', writeback=True)  # BID: badge, FK_UID
-drink_table = shelve.open(data_directory + 'drink', writeback=True)  # DID: name, stock, price
-purchase_table = shelve.open(data_directory + 'purchase', writeback=True)  # PID: datetime, FK_DID, FK_UID
-transaction_table = shelve.open(data_directory + 'transaction', writeback=True)  # TID: datetime, FK_UID, amount
-mail_table = shelve.open(data_directory + 'mail', writeback=True)  # MID: datetime, FK_UID, balance
+customer_table = shelve.open(data_directory + 'user', writeback=True)
+badge_table = shelve.open(data_directory + 'badge', writeback=True)
+drink_table = shelve.open(data_directory + 'drink', writeback=True)
+purchase_table = shelve.open(data_directory + 'purchase', writeback=True)
+transaction_table = shelve.open(data_directory + 'transaction', writeback=True)
+mail_table = shelve.open(data_directory + 'mail', writeback=True)
 
-test_table = shelve.open(data_directory + 'test', writeback=True)
-
-tables = {'customer': customer_table, 'badge': badge_table, 'drink': drink_table, 'purchase': purchase_table,
-          'transaction': transaction_table, 'mail': mail_table, 'test': test_table}
+tables = {
+    'user': customer_table,
+    'badge': badge_table,
+    'drink': drink_table,
+    'purchase': purchase_table,
+    'transaction': transaction_table,
+    'mail': mail_table
+}
 for table in tables.values():
     print('\n'.join(f'{x}: {y}' for x, y in table.items()))
 
