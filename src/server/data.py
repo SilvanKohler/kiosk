@@ -1,12 +1,11 @@
 import datetime
 import uuid
+from api import API
 
-IP = '127.0.0.1'
-PORT = 80
+default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
-blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
+# default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
-# blankprofile = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
 specs = {
     'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
@@ -17,6 +16,7 @@ specs = {
     'mail': ('mid', ('datetime', 'uid', 'balance'))
 }
 
+api = API('127.0.0.1', 80, 'http')
 
 class User:
     def __init__(self, badge=None, firstname=None, lastname=None, email=None, uid=None):
@@ -38,31 +38,56 @@ class User:
         self.badges = self.get_badges()
 
     def register(self):
-        pass
+        api.create('user', {
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'email': self.email,
+            'balance': 0.0,
+            'avatar': default_avatar
+        })
 
     def get_firstname(self):
-        pass
+        return api.get('user', {
+            'uid': self.uid
+        })['firstname']
 
     def get_lastname(self):
-        pass
+        return api.get('user', {
+            'uid': self.uid
+        })['lastname']
 
     def get_email(self):
-        pass
+        return api.get('user', {
+            'uid': self.uid
+        })['email']
 
     def get_balance(self):
-        pass
+        return api.get('user', {
+            'uid': self.uid
+        })['balance']
 
     def get_avatar(self):
-        pass
+        return api.get('user', {
+            'uid': self.uid
+        })['avatar']
 
     def get_badges(self):
-        pass
+        badges = api.get('badge', {
+            'uid': self.uid
+        })
+        return [x['badgenumber'] for x in dict(filter(lambda x: x[0] != 'success', badges.items())).values()]
 
     def get_uid(self):  # From badge number
-        pass
+        badges = api.get('badge', {
+            'uid': self.uid
+        })
+        return dict(filter(lambda x: x[0] != 'success', badges.items())).values()[0]['uid']
 
     def get_purchases(self):
-        pass
+        purchases = api.get('purchase', {
+            'uid': self.uid
+        })
+        return dict(filter(lambda x: x[0] != 'success', purchases.items())).values()
 
     def get_transactions(self):
         pass
@@ -99,5 +124,5 @@ def update_drink(DID, name, stock, price):
     pass
 
 
-def customer_exists(b):
+def user_exists(b):
     pass

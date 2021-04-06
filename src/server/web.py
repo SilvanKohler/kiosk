@@ -19,7 +19,7 @@ get_drinks = None
 update_drink = None
 specs = {
     'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
-    'badge': ('bid', ('badge', 'uid')),
+    'badge': ('bid', ('badgenumber', 'uid')),
     'drink': ('did', ('name', 'stock', 'price')),
     'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
     'transaction': ('tid', ('datetime', 'uid', 'amount')),
@@ -94,11 +94,12 @@ def root_api_get(table):
     chain.put(['get', table, i])
     while results.get(i) is None:
         sleep(0.05)
+    print(parameters)
     for entry in dict(results.get(i)).items():
         try:
             for parameter in parameters.items():
-                if parameter[0] == specs[table][0] and not re.match(str(parameter[1]), str(entry[0])) or not re.match(
-                        str(parameter[1]), str(entry[1][parameter[0]])):
+                print(parameter, specs[table], str(entry))
+                if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(parameter[1]) == str(entry[1][parameter[0]]):
                     break
             else:
                 content.update({
@@ -153,6 +154,22 @@ def root_api_edit(table):
         chain.put(['update', table, d])
         content['success'] = True
     except KeyError:
+        pass
+    return jsonify(content), 200 if content['success'] else 406
+
+
+@app.route('/api/<table>/delete', methods=['POST'])
+def root_api_delete(table):
+    content = {'success': False}
+    parameters = {
+        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+        key, value in request.form.items()
+    }
+    try:
+        i = uuid.uuid1().hex
+        chain.put(['del', table, parameters[specs[table][0]]])
+        content['success'] = True
+    except:
         pass
     return jsonify(content), 200 if content['success'] else 406
 
