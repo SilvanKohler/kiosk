@@ -6,16 +6,6 @@ default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/prof
 
 # default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
-
-specs = {
-    'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
-    'badge': ('bid', ('badgenumber', 'uid')),
-    'drink': ('did', ('name', 'stock', 'price')),
-    'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
-    'transaction': ('tid', ('datetime', 'uid', 'amount')),
-    'mail': ('mid', ('datetime', 'uid', 'balance'))
-}
-
 api = API('127.0.0.1', 80, 'http')
 
 
@@ -158,3 +148,4 @@ def user_exists(badgenumber):
     badge = api.get('badge', {
         'badgenumber': badgenumber
     })
+    return badge['success']

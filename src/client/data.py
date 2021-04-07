@@ -1,30 +1,26 @@
 import datetime
-import uuid
-import socket
-import pickle
-from math import ceil, log
 
-IP = '127.0.0.1'
-PORT = 12345
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+from api import API
 
-blankprofile = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
+default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
-blankprofile = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
+# default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
+
+api = API('192.168.137.1', 80, 'http')
 
 
-class Customer:
-    def __init__(self, badge=None, firstname=None, lastname=None, email=None, UID=None):
+class User:
+    def __init__(self, badgenumber=None, firstname=None, lastname=None, email=None, uid=None):
         if firstname is not None:
             self.firstname = firstname
             self.lastname = lastname
             self.email = email
-            self.badges = [badge]
+            self.badges = [badgenumber]
             self.register()
-        if UID is not None:
-            self.uid = UID
+        if uid is not None:
+            self.uid = uid
         else:
-            self.badges = [badge]
+            self.badges = [badgenumber]
             self.uid = self.get_uid()
         self.firstname = self.get_firstname()
         self.lastname = self.get_lastname()
@@ -33,217 +29,123 @@ class Customer:
         self.badges = self.get_badges()
 
     def register(self):
-        global customer_table, badge_table
-        exists = False
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if (firstname, lastname, email) == (self.firstname, self.lastname, self.email):
-                exists = True
-                uid = UID
-                break
-        if not exists:
-            uid = uuid.uuid1().hex
-            customer_table[uid] = (self.firstname, self.lastname, self.email, 0, blankprofile)
-        badge_table[uuid.uuid1().hex] = (self.badges[0], uid)
+        api.create('user', {
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'email': self.email,
+            'balance': 0.0,
+            'avatar': default_avatar
+        })
 
     def get_firstname(self):
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if UID == self.uid:
-                return firstname
+        return api.get('user', {
+            'uid': self.uid
+        })['firstname']
 
     def get_lastname(self):
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if UID == self.uid:
-                return lastname
+        return api.get('user', {
+            'uid': self.uid
+        })['lastname']
 
     def get_email(self):
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if UID == self.uid:
-                return email
+        return api.get('user', {
+            'uid': self.uid
+        })['email']
 
     def get_balance(self):
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if UID == self.uid:
-                return balance
+        return api.get('user', {
+            'uid': self.uid
+        })['balance']
 
     def get_avatar(self):
-        for UID, (firstname, lastname, email, balance, avatar) in sorted(customer_table.items()):
-            if UID == self.uid:
-                return avatar
+        return api.get('user', {
+            'uid': self.uid
+        })['avatar']
 
     def get_badges(self):
-        result = []
-        for BID, (badge, FK_UID) in sorted(badge_table.items()):
-            if FK_UID == self.uid:
-                result.append(badge)
-        return result
+        badges = api.get('badge', {
+            'uid': self.uid
+        })
+        return [x['badgenumber'] for x in dict(filter(lambda x: x[0] != 'success', badges.items())).values()]
 
-    def get_uid(self):
-        for BID, (badge, FK_UID) in sorted(badge_table.items()):
-            if badge == self.badges[0]:
-                return FK_UID
+    def get_uid(self):  # From badge number
+        badges = api.get('badge', {
+            'uid': self.uid
+        })
+        return dict(filter(lambda x: x[0] != 'success', badges.items())).values()[0]['uid']
+
+    def get_purchases(self):
+        purchases = api.get('purchase', {
+            'uid': self.uid
+        })
+        return dict(filter(lambda x: x[0] != 'success', purchases.items()))
 
     def get_transactions(self):
-        print('get_transactions')
-        result = []
-        for PID, (dt, FK_DID, FK_UID) in sorted(purchase_table.items(), key=lambda x: x[1]):
-            if FK_UID == self.uid:
-                result.append((PID, dt, FK_DID, FK_UID))
-        return result
+        transactions = api.get('transaction', {
+            'uid': self.uid
+        })
+        return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
     def withdraw(self, did):
-        global drink_table, purchase_table, customer_table
-        #
-        price = drink_table[did][2]
-        # print(customer_table[self.uid][3], price)
-        customer_table[self.uid] = customer_table[self.uid][:3] + (customer_table[self.uid][3] + price,) + \
-                                   customer_table[self.uid][4:]
-        d = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-        purchase_table[uuid.uuid1().hex] = (d, did, self.uid)
-        drink_table[did] = (drink_table[did][0], drink_table[did][1] - 1, drink_table[did][2])
+        drink = get_drink(did)
+        price = drink['price']
+        api.edit('user', {'uid': self.uid}, {
+            'balance': self.get_balance() - price
+        })
+        date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+        api.create('purchase', {
+            'datetime': date,
+            'did': did,
+            'uid': self.uid,
+            'amount': price
+        })
 
 
-def register_customer(firstname, lastname, email, badge):
-    customer = Customer(firstname=firstname, lastname=lastname, email=email, badge=badge)
-    return customer
+def get_all_transactions():
+    transactions = api.get('transaction', {})
+    return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
 
-def login_customer(badge):
-    customer = Customer(badge=badge)
-    return customer
+def register_user(firstname, lastname, email, badgenumber):
+    user = User(firstname=firstname, lastname=lastname, email=email, badgenumber=badgenumber)
+    return user
+
+
+def login_user(badgenumber):
+    user = User(badgenumber=badgenumber)
+    return user
 
 
 def get_drinks():
-    result = []
-    for DID, (name, stock, price) in sorted(drink_table.items()):
-        result.append((DID, name, stock, price))
-    return result
+    drinks = api.get('drink', {})
+    return dict(filter(lambda x: x[0] != 'success', drinks.items()))
 
 
 def add_drink(name, stock, price):
-    global drink_table
-
-    drink_table[uuid.uuid1().hex] = (name, stock, price)
+    api.create('drink', {
+        'name': name,
+        'stock': stock,
+        'price': price
+    })
 
 
 def get_drink(did):
-    for DID, (name, stock, price) in sorted(drink_table.items()):
-        if DID == did:
-            return name, stock, price
+    drink = api.get('drink', {
+        'did': did
+    })
+    return drink
 
 
-def customer_exists(b):
-    for BID, (badge, FK_UID) in sorted(badge_table.items()):
-        if badge == b:
-            return True
-    return False
+def update_drink(did, name, stock, price):
+    api.edit('drink', {'did': did}, {
+        'name': name,
+        'stock': stock,
+        'price': price
+    })
 
 
-def get_table(name):
-    print('get: ' + name)
-    try:
-        s.send(pickle.dumps(['get', name]))
-    except:
-        s.connect((IP, PORT))
-        s.send(pickle.dumps(['get', name]))
-    size = int(str(s.recv(128), 'UTF-8'))
-    size_2 = 2 ** ceil(log(size) / log(2))
-    # print(size, size_2)
-    t = s.recv(size_2)
-    print("------------------")
-    print(t)
-    return pickle.loads(t)
-
-
-def update_table(name, d):
-    print('update: ' + name + '; ' + d)
-    try:
-        s.send(pickle.dumps(['update', name, d]))
-    except:
-        s.connect((IP, PORT))
-        s.send(pickle.dumps(['update', name, d]))
-
-
-def setitem_table(name, key, value):
-    print('set: ' + name + '; ' + str(key) + '; ' + str(value))
-    try:
-        s.send(pickle.dumps(['set', name, key, value]))
-    except:
-        s.connect((IP, PORT))
-        s.send(pickle.dumps(['set', name, key, value]))
-
-
-def delitem_table(name, key):
-    print('del: ' + name + '; ' + key)
-    try:
-        s.send(pickle.dumps(['set', name, key]))
-    except:
-        s.connect((IP, PORT))
-        s.send(pickle.dumps(['set', name, key]))
-
-
-class table(dict):
-    def __init__(self, name):
-        super().__init__()
-        self.__dict = dict()
-        self.name = name
-
-    def __len__(self):
-        self.sync()
-        return self.__dict.__len__()
-
-    def __getitem__(self, key):
-        self.sync()
-        return self.__dict.__getitem__(key)
-
-    def __setitem__(self, key, value):
-        setitem_table(self.name, key, value)
-        self.sync()
-
-    def __delitem__(self, key):
-        delitem_table(self.name, key)
-        self.sync()
-
-    def __iter__(self):
-        self.sync()
-        return self.__dict.__iter__()
-
-    def __contains__(self, item):
-        self.sync()
-        return self.__dict.__contains__(item)
-
-    def sync(self):
-        self.__dict = get_table(self.name)
-
-    def items(self):
-        self.sync()
-        return self.__dict.items()
-
-    def update(self, d):
-        self.table = update_table(self.name, d)
-
-    def get(self, key, default):
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            return default
-
-
-# test_table = table('test')
-# print(1)
-# test_table.update({'test': 'test'})
-# print(2)
-# print(test_table.get('test', None))
-# print(3)
-customer_table = table('customer')  # UID: firstname, lastname, email, balance, avatar
-badge_table = table('badge')  # BID: badge, FK_UID
-drink_table = table('drink')  # DID: name, stock, price
-purchase_table = table('purchase')  # PID: datetime, FK_DID, FK_UID
-transaction_table = table('transaction')  # TID: datetime, FK_UID, amount
-mail_table = table('mail')  # MID: datetime, FK_UID, balance
-# customer_table.items()
-# badge_table.items()
-# drink_table.items()
-# purchase_table.items()
-# transaction_table.items()
-# mail_table.items()
-
+def user_exists(badgenumber):
+    badge = api.get('badge', {
+        'badgenumber': badgenumber
+    })
+    return badge['success']

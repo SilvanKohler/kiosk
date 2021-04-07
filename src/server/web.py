@@ -7,16 +7,14 @@ from time import sleep
 from flask import Flask, render_template, request, jsonify
 from flask_restful import Api
 
-from tables import chain, results, run
+import data
+import tables
 
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 api = Api(app)
 
-get_transactions = None
-get_drinks = None
-update_drink = None
 specs = {
     'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
     'badge': ('bid', ('badgenumber', 'uid')),
@@ -63,8 +61,8 @@ def root_management():
                     changes[did] = {}
                 changes[did].update({'preis': int(value)})
         for did, values in changes.items():
-            update_drink(did, values['name'], values['lager'], values['preis'], )
-    return render_template('management.html', drinks=get_drinks(), new_uuid=uuid.uuid1().hex)
+            data.update_drink(did, values['name'], values['lager'], values['preis'], )
+    return render_template('management.html', drinks=data.get_drinks(), new_uuid=uuid.uuid1().hex)
 
 
 @app.route('/transactions', methods=['GET', 'POST'])
@@ -72,7 +70,7 @@ def root_transactions():
     number_of_transactions = 10
     if request.form:
         number_of_transactions = request.form['number_of_transactions']
-    return render_template('transactions.html', transactions=get_transactions(),
+    return render_template('transactions.html', transactions=data.get_all_transactions(),
                            number_of_transactions=number_of_transactions)
 
 
@@ -91,15 +89,16 @@ def root_api_get(table):
         key, value in request.form.items()
     }
     i = uuid.uuid1().hex
-    chain.put(['get', table, i])
-    while results.get(i) is None:
+    tables.chain.put(['get', table, i])
+    while tables.results.get(i) is None:
         sleep(0.05)
     print(parameters)
-    for entry in dict(results.get(i)).items():
+    for entry in dict(tables.results.get(i)).items():
         try:
             for parameter in parameters.items():
                 print(parameter, specs[table], str(entry))
-                if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(parameter[1]) == str(entry[1][parameter[0]]):
+                if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(
+                        parameter[1]) == str(entry[1][parameter[0]]):
                     break
             else:
                 content.update({
@@ -122,7 +121,7 @@ def root_api_create(table):
     }
     try:
         i = uuid.uuid1().hex
-        chain.put(['update', table, {
+        tables.chain.put(['update', table, {
             i: {
                 spec: parameters[spec] for spec in specs[table][1]
             }
@@ -143,15 +142,15 @@ def root_api_edit(table):
     try:
         pos = tuple(parameters.keys()).index(specs[table][0])
         i = uuid.uuid1().hex
-        chain.put(['get', table, i])
-        while results.get(i) is None:
+        tables.chain.put(['get', table, i])
+        while tables.results.get(i) is None:
             sleep(0.05)
-        d = results.get(i)
+        d = tables.results.get(i)
         d[parameters[specs[table][0]]].update({
             parameter[0]: parameter[1] for parameter in
             tuple(parameters.items())[:pos] + tuple(parameters.items())[pos + 1:]
         })
-        chain.put(['update', table, d])
+        tables.chain.put(['update', table, d])
         content['success'] = True
     except KeyError:
         pass
@@ -167,12 +166,13 @@ def root_api_delete(table):
     }
     try:
         i = uuid.uuid1().hex
-        chain.put(['del', table, parameters[specs[table][0]]])
+        tables.chain.put(['del', table, parameters[specs[table][0]]])
         content['success'] = True
     except:
         pass
     return jsonify(content), 200 if content['success'] else 406
 
 
-Thread(target=run).start()
-app.run("0.0.0.0", 80, debug=True)
+if __name__ == "__main__":
+    Thread(target=tables.run).start()
+    app.run("0.0.0.0", 80, debug=True)

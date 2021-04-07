@@ -1,10 +1,6 @@
 import queue
-import socketserver
-import threading
 import shelve
-import uuid
 from time import sleep
-
 
 data_directory = 'data/'
 
@@ -30,6 +26,7 @@ chain = queue.Queue()
 results = {}
 running = True
 
+
 def process(request):
     print(1, request)
     if request[0] == 'get':
@@ -48,6 +45,7 @@ def process(request):
         if isinstance(tables.get(request[1], None), shelve.Shelf):
             tables.get(request[1], None).sync()
     print(3, dict(tables.get(request[1], None).items()))
+
 
 def run():
     print('Server gestartet.')

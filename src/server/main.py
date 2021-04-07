@@ -1,9 +1,13 @@
-import web, database, data
-from time import sleep
+import time
 from threading import Thread
 
-web.get_transactions = data.get_transactions
-web.get_drinks = data.get_drinks
-web.update_drink = data.update_drink
-Thread(target=database.run).start()
-Thread(target=web.app.run, args=("0.0.0.0", 80)).start()
+import web
+
+t1 = Thread(target=web.tables.run)
+t1.start()
+t2 = Thread(target=web.app.run, args=("192.168.137.1", 80))
+t2.start()
+
+while True:
+    web.tables.running = t2.is_alive()
+    time.sleep(0.1)
