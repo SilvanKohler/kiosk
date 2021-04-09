@@ -6,7 +6,7 @@ default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/prof
 
 # default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
-api = API('127.0.0.1', 80, 'http')
+api = API('localhost', 80, 'http')
 
 
 class User:
@@ -29,38 +29,42 @@ class User:
         self.badges = self.get_badges()
 
     def register(self):
-        api.create('user', {
+        uid = api.create('user', {
             'firstname': self.firstname,
             'lastname': self.lastname,
             'email': self.email,
             'balance': 0.0,
             'avatar': default_avatar
+        })['uid']
+        api.create('badge', {
+            'badgenumber': self.badges[0],
+            'uid': uid
         })
 
     def get_firstname(self):
         return api.get('user', {
             'uid': self.uid
-        })['firstname']
+        })[self.uid]['firstname']
 
     def get_lastname(self):
         return api.get('user', {
             'uid': self.uid
-        })['lastname']
+        })[self.uid]['lastname']
 
     def get_email(self):
         return api.get('user', {
             'uid': self.uid
-        })['email']
+        })[self.uid]['email']
 
     def get_balance(self):
         return api.get('user', {
             'uid': self.uid
-        })['balance']
+        })[self.uid]['balance']
 
     def get_avatar(self):
         return api.get('user', {
             'uid': self.uid
-        })['avatar']
+        })[self.uid]['avatar']
 
     def get_badges(self):
         badges = api.get('badge', {
@@ -68,11 +72,11 @@ class User:
         })
         return [x['badgenumber'] for x in dict(filter(lambda x: x[0] != 'success', badges.items())).values()]
 
-    def get_uid(self):  # From badge number
+    def get_uid(self):
         badges = api.get('badge', {
-            'uid': self.uid
+            'badgenumber': self.badges[0]
         })
-        return dict(filter(lambda x: x[0] != 'success', badges.items())).values()[0]['uid']
+        return list(dict(filter(lambda x: x[0] != 'success', dict(badges).items())).values())[0]['uid']
 
     def get_purchases(self):
         purchases = api.get('purchase', {

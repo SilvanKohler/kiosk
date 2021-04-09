@@ -14,7 +14,7 @@ from kivy.config import Config
 from threading import Thread
 from badge import run
 import time
-from data import register_customer, login_customer, customer_exists, blankprofile, get_drinks, get_drink
+from data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
 
 config = Config.read('config.ini')
@@ -30,22 +30,22 @@ focused = None
 times = {}
 times2 = {}
 badge = None
-customer = None
+user = None
 
 def login(b):
-    global customer
-    customer = login_customer(b)
+    global user
+    user = login_user(b)
     sm.current = 'Kiosk'
     refresh()
 def logout():
     sm.current = 'Login'
 def refresh(content='all'):
     if content == 'balance':
-        KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
+        KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
     else:
-        KS.ids['balance'].text = str(customer.get_balance()) + ' CHF'
-        KS.ids['name'].text = customer.get_firstname() + '\n' + customer.get_lastname()
-        KS.ids['avatar'].source = customer.get_avatar()
+        KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
+        KS.ids['name'].text = user.get_firstname() + '\n' + user.get_lastname()
+        KS.ids['avatar'].source = user.get_avatar()
 
 
 def on_badge(b):
@@ -55,7 +55,7 @@ def on_badge(b):
         logout()
         return
     badge = b
-    if customer_exists(b):
+    if user_exists(b):
         login(b)
     else:
         sm.current = 'Register'
@@ -79,7 +79,7 @@ class Keyboard(BoxLayout):
             self.add_widget(row)
 
     def on_press(self, instance):
-        global times, customer
+        global times, user
         # logger.debug('Application: '+time.time() - times.get(instance.text, time.time() - 100))
         if time.time() - times.get(instance.text, time.time() - 100) > .05:
             times.update({instance.text: time.time()})
@@ -105,8 +105,8 @@ class Keyboard(BoxLayout):
                         btn.bind(on_press=p.dismiss)
                         p.open()
                         return
-                    # Create customer
-                    customer = register_customer(firstname.text, lastname.text, email.text, badge)
+                    # Create user
+                    user = register_user(firstname.text, lastname.text, email.text, badge)
                     # Clear fields
                     firstname.text = ''
                     lastname.text = ''
@@ -122,19 +122,19 @@ class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    blank = blankprofile
+    blank = default_avatar
 
     def get_balance(self):
-        if customer is not None:
-            return customer.get_avatar()
+        if user is not None:
+            return user.get_avatar()
         else:
             return 'Error'
 
     def get_avatar(self):
-        if customer is not None:
-            return customer.get_avatar()
+        if user is not None:
+            return user.get_avatar()
         else:
-            return blankprofile
+            return default_avatar
 
     def transactions(self):
         t = GridLayout(cols=3, size_hint_y=None)
@@ -143,7 +143,7 @@ class KioskScreen(Screen):
         t.add_widget(Label(text='Zeit', size_hint_y=hy))
         t.add_widget(Label(text='Artikel', size_hint_y=hy))
         t.add_widget(Label(text='Preis', size_hint_y=hy))
-        for PID, dt, FK_DID, FK_UID in customer.get_transactions()[::-1][:30]:
+        for PID, dt, FK_DID, FK_UID in user.get_transactions()[::-1][:30]:
             t.add_widget(Label(text=dt, size_hint_y=hy))
             t.add_widget(Label(text=get_drink(FK_DID)[0], size_hint_y=hy))
             t.add_widget(Label(text=str(get_drink(FK_DID)[2]) + ' CHF', size_hint_y=hy))
@@ -177,7 +177,7 @@ class Item(Button):
         print(time.time())
         if time.time() - times2.get(self.id, time.time() - 100) > 1:
             times2.update({self.id: time.time()})
-            customer.withdraw(self.DID)
+            user.withdraw(self.DID)
             refresh('balance')
 
 

@@ -5,7 +5,6 @@ from threading import Thread
 from time import sleep
 
 from flask import Flask, render_template, request, jsonify
-from flask_restful import Api
 
 import data
 import tables
@@ -13,7 +12,6 @@ import tables
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
-api = Api(app)
 
 specs = {
     'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
@@ -126,6 +124,7 @@ def root_api_create(table):
                 spec: parameters[spec] for spec in specs[table][1]
             }
         }])
+        content[specs[table][0]] = i
         content['success'] = True
     except KeyError:
         pass

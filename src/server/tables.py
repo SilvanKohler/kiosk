@@ -19,8 +19,9 @@ tables = {
     'transaction': transaction_table,
     'mail': mail_table
 }
-for table in tables.values():
-    print('\n'.join(f'{x}: {y}' for x, y in table.items()))
+for table in tables.items():
+    print(table[0] + ':')
+    print('\n'.join(f'{x}: {y}' for x, y in table[1].items()))
 
 chain = queue.Queue()
 results = {}
