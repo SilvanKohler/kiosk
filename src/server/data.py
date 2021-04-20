@@ -148,6 +148,14 @@ def update_drink(did, name, stock, price):
     })
 
 
+def create_drink(name, stock, price):
+    api.create('drink', {
+        'name': name,
+        'stock': stock,
+        'price': price
+    })
+
+
 def user_exists(badgenumber):
     badge = api.get('badge', {
         'badgenumber': badgenumber

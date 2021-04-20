@@ -48,19 +48,32 @@ def root_management():
                 if not changes.get(did):
                     changes[did] = {}
                 changes[did].update({'name': value})
-            elif 'lager-' in key:
-                did = key.replace('lager-', '')
+            elif 'stock-' in key:
+                did = key.replace('stock-', '')
                 if not changes.get(did):
                     changes[did] = {}
-                changes[did].update({'lager': int(value)})
-            elif 'preis-' in key:
-                did = key.replace('preis-', '')
+                try:
+                    changes[did].update({'stock': int(value)})
+                except ValueError:
+                    break
+            elif 'price-' in key:
+                did = key.replace('price-', '')
                 if not changes.get(did):
                     changes[did] = {}
-                changes[did].update({'preis': int(value)})
-        for did, values in changes.items():
-            data.update_drink(did, values['name'], values['lager'], values['preis'], )
-    return render_template('management.html', drinks=data.get_drinks(), new_uuid=uuid.uuid1().hex)
+                try:
+                    changes[did].update({'price': float(value)})
+                except ValueError:
+                    break
+                finally:
+                    if float(value) + abs(float(value)) == 0: # Check if positive.
+                        break
+        else:
+            for did, values in changes.items():
+                if did == 'new':
+                    data.create_drink(values['name'], values['stock'], values['price'])
+                else:
+                    data.update_drink(did, values['name'], values['stock'], values['price'])
+    return render_template('management.html', drinks=data.get_drinks())
 
 
 @app.route('/transactions', methods=['GET', 'POST'])
