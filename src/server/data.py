@@ -125,14 +125,6 @@ def get_drinks():
     return dict(filter(lambda x: x[0] != 'success', drinks.items()))
 
 
-def add_drink(name, stock, price):
-    api.create('drink', {
-        'name': name,
-        'stock': stock,
-        'price': price
-    })
-
-
 def get_drink(did):
     drink = api.get('drink', {
         'did': did
@@ -154,6 +146,10 @@ def create_drink(name, stock, price):
         'stock': stock,
         'price': price
     })
+
+
+def delete_drink(did):
+    api.delete('drink', {'did': did})
 
 
 def user_exists(badgenumber):

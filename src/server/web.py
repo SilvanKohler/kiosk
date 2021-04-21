@@ -38,11 +38,16 @@ def root_management():
     print(request.args)
     if request.args:
         changes = {}
+        deletions = []
         for key, value in request.args.items():
+            print(key, value)
             if key == 'select-all':
                 pass
             elif 'select-' in key:
                 did = key.replace('select-', '')
+                print(value, value == 'on')
+                if not did == 'new' and value == 'on':
+                    deletions.append(did)
             elif 'name-' in key:
                 did = key.replace('name-', '')
                 if not changes.get(did):
@@ -73,6 +78,9 @@ def root_management():
                     data.create_drink(values['name'], values['stock'], values['price'])
                 else:
                     data.update_drink(did, values['name'], values['stock'], values['price'])
+            print(deletions)
+            for did in deletions:
+                data.delete_drink(did)
     return render_template('management.html', drinks=data.get_drinks())
 
 
