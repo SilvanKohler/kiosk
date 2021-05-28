@@ -136,28 +136,6 @@ class KioskScreen(Screen):
         else:
             return default_avatar
 
-    def transactions(self):
-        t = GridLayout(cols=3, size_hint_y=None)
-        t.bind(minimum_height=t.setter('height'))
-        hy = .1
-        t.add_widget(Label(text='Zeit', size_hint_y=hy))
-        t.add_widget(Label(text='Artikel', size_hint_y=hy))
-        t.add_widget(Label(text='Preis', size_hint_y=hy))
-        for purchase in user.get_purchases().values():
-            t.add_widget(Label(text=purchase['datetime'], size_hint_y=hy))
-            t.add_widget(Label(text=get_drink(purchase['did'])[purchase['did']]['name'], size_hint_y=hy))
-            t.add_widget(Label(text=str(get_drink(purchase['did'])[purchase['did']]['price']) + ' CHF', size_hint_y=hy))
-        s = ScrollView(size_hint=(1, None))
-        s.add_widget(t)
-        b = BoxLayout()
-        b.orientation = 'vertical'
-        b.add_widget(s)
-        btn = Button(text='Schliessen', size_hint_y=.1)
-        b.add_widget(btn)
-        p = Popup(title='Transaktionen', content=b)
-        btn.bind(on_press=p.dismiss)
-        p.open()
-
 
 class RegisterScreen(Screen):
     def __init__(self, *args, **kwargs):
