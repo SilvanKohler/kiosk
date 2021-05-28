@@ -143,10 +143,10 @@ class KioskScreen(Screen):
         t.add_widget(Label(text='Zeit', size_hint_y=hy))
         t.add_widget(Label(text='Artikel', size_hint_y=hy))
         t.add_widget(Label(text='Preis', size_hint_y=hy))
-        for PID, dt, FK_DID, FK_UID in user.get_transactions()[::-1][:30]:
-            t.add_widget(Label(text=dt, size_hint_y=hy))
-            t.add_widget(Label(text=get_drink(FK_DID)[0], size_hint_y=hy))
-            t.add_widget(Label(text=str(get_drink(FK_DID)[2]) + ' CHF', size_hint_y=hy))
+        for purchase in user.get_purchases().values():
+            t.add_widget(Label(text=purchase['datetime'], size_hint_y=hy))
+            t.add_widget(Label(text=get_drink(purchase['did'])[purchase['did']]['name'], size_hint_y=hy))
+            t.add_widget(Label(text=str(get_drink(purchase['did'])[purchase['did']]['price']) + ' CHF', size_hint_y=hy))
         s = ScrollView(size_hint=(1, None))
         s.add_widget(t)
         b = BoxLayout()
