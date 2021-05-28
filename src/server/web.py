@@ -103,93 +103,97 @@ def root_billing():
 @app.route('/api/<table>/get', methods=['POST'])
 def root_api_get(table):
     content = {'success': False}
-    parameters = {
-        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
-        key, value in request.form.items()
-    }
-    i = uuid.uuid1().hex
-    tables.chain.put(['get', table, i])
-    while tables.results.get(i) is None:
-        sleep(0.05)
-    print(parameters)
-    for entry in dict(tables.results.get(i)).items():
-        try:
-            for parameter in parameters.items():
-                print(parameter, specs[table], str(entry))
-                if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(
-                        parameter[1]) == str(entry[1][parameter[0]]):
-                    break
-            else:
-                content.update({
-                    entry[0]: {
-                        key: value for key, value in entry[1].items()
-                    }
-                })
-                content['success'] = True
-        except (KeyError, re.error):
-            pass
+    if table in tables.tables.keys():
+        parameters = {
+            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key, value in request.form.items()
+        }
+        i = uuid.uuid1().hex
+        tables.chain.put(['get', table, i])
+        while tables.results.get(i) is None:
+            sleep(0.05)
+        print(parameters)
+        for entry in dict(tables.results.get(i)).items():
+            try:
+                for parameter in parameters.items():
+                    print(parameter, specs[table], str(entry))
+                    if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(
+                            parameter[1]) == str(entry[1][parameter[0]]):
+                        break
+                else:
+                    content.update({
+                        entry[0]: {
+                            key: value for key, value in entry[1].items()
+                        }
+                    })
+                    content['success'] = True
+            except (KeyError, re.error):
+                pass
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/create', methods=['POST'])
 def root_api_create(table):
     content = {'success': False}
-    parameters = {
-        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
-        key, value in request.form.items()
-    }
-    try:
-        i = uuid.uuid1().hex
-        tables.chain.put(['update', table, {
-            i: {
-                spec: parameters[spec] for spec in specs[table][1]
-            }
-        }])
-        content[specs[table][0]] = i
-        content['success'] = True
-    except KeyError:
-        pass
+    if table in tables.tables.keys():
+        parameters = {
+            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key, value in request.form.items()
+        }
+        try:
+            i = uuid.uuid1().hex
+            tables.chain.put(['update', table, {
+                i: {
+                    spec: parameters[spec] for spec in specs[table][1]
+                }
+            }])
+            content[specs[table][0]] = i
+            content['success'] = True
+        except KeyError:
+            pass
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/edit', methods=['POST'])
 def root_api_edit(table):
     content = {'success': False}
-    parameters = {
-        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
-        key, value in request.form.items()
-    }
-    try:
-        pos = tuple(parameters.keys()).index(specs[table][0])
-        i = uuid.uuid1().hex
-        tables.chain.put(['get', table, i])
-        while tables.results.get(i) is None:
-            sleep(0.05)
-        d = tables.results.get(i)
-        d[parameters[specs[table][0]]].update({
-            parameter[0]: parameter[1] for parameter in
-            tuple(parameters.items())[:pos] + tuple(parameters.items())[pos + 1:]
-        })
-        tables.chain.put(['update', table, d])
-        content['success'] = True
-    except KeyError:
-        pass
+    if table in tables.tables.keys():
+        parameters = {
+            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key, value in request.form.items()
+        }
+        try:
+            pos = tuple(parameters.keys()).index(specs[table][0])
+            i = uuid.uuid1().hex
+            tables.chain.put(['get', table, i])
+            while tables.results.get(i) is None:
+                sleep(0.05)
+            d = tables.results.get(i)
+            d[parameters[specs[table][0]]].update({
+                parameter[0]: parameter[1] for parameter in
+                tuple(parameters.items())[:pos] + tuple(parameters.items())[pos + 1:]
+            })
+            tables.chain.put(['update', table, d])
+            content['success'] = True
+        except KeyError:
+            pass
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/delete', methods=['POST'])
 def root_api_delete(table):
     content = {'success': False}
-    parameters = {
-        key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
-        key, value in request.form.items()
-    }
-    try:
-        i = uuid.uuid1().hex
-        tables.chain.put(['del', table, parameters[specs[table][0]]])
-        content['success'] = True
-    except:
-        pass
+    if table in tables.tables.keys():
+        parameters = {
+            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key, value in request.form.items()
+        }
+        try:
+            i = uuid.uuid1().hex
+            tables.chain.put(['del', table, parameters[specs[table][0]]])
+            content['success'] = True
+        except:
+            pass
     return jsonify(content), 200 if content['success'] else 406
 
 
