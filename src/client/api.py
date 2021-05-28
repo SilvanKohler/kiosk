@@ -31,4 +31,3 @@ if __name__ == '__main__':
     print(users)
     user = input('delete: ')
     print(api.delete('user', {'uid': user}))
-

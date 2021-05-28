@@ -1,0 +1,1 @@
+Start-Process -FilePath "C:\Windows\System32\cmd.exe" -ArgumentList "/k py main.py"

@@ -91,7 +91,7 @@ class User:
         return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
     def withdraw(self, did):
-        drink = get_drink(did)
+        drink = get_drink(did)[did]
         price = drink['price']
         api.edit('user', {'uid': self.uid}, {
             'balance': self.get_balance() - price

@@ -167,17 +167,16 @@ class RegisterScreen(Screen):
 class Item(Button):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.DID = 0
+        self.did = 0
         self.name = ""
         self.stock = 0
         self.price = 0
         self.id = uuid.uuid1().hex
 
     def on_press(self):
-        print(time.time())
         if time.time() - times2.get(self.id, time.time() - 100) > 1:
             times2.update({self.id: time.time()})
-            user.withdraw(self.DID)
+            user.withdraw(self.did)
             refresh('balance')
 
 
@@ -185,13 +184,13 @@ class ItemLayout(GridLayout):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.sm = sm
-        self.items = get_drinks()
-        for item in self.items:
+        self.drinks = get_drinks()
+        for drink in self.drinks.items():
             b = Item()
-            b.DID = item[0]
-            b.name = item[1]
-            b.stock = item[2]
-            b.price = item[3]
+            b.did = drink[0]
+            b.name = drink[1]['name']
+            b.stock = drink[1]['stock']
+            b.price = drink[1]['price']
             b.text = f'''{b.name}\n{b.price} CHF'''
             self.add_widget(b)
 
