@@ -4,7 +4,7 @@ from time import sleep
 
 data_directory = 'data/'
 
-customer_table = shelve.open(data_directory + 'user', writeback=True)
+user_table = shelve.open(data_directory + 'user', writeback=True)
 badge_table = shelve.open(data_directory + 'badge', writeback=True)
 drink_table = shelve.open(data_directory + 'drink', writeback=True)
 purchase_table = shelve.open(data_directory + 'purchase', writeback=True)
@@ -12,7 +12,7 @@ transaction_table = shelve.open(data_directory + 'transaction', writeback=True)
 mail_table = shelve.open(data_directory + 'mail', writeback=True)
 
 tables = {
-    'user': customer_table,
+    'user': user_table,
     'badge': badge_table,
     'drink': drink_table,
     'purchase': purchase_table,
