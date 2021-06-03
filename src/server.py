@@ -1,7 +1,7 @@
 import time
 from threading import Thread
 
-import web
+import server.web as web
 
 t1 = Thread(target=web.tables.run)
 t1.start()

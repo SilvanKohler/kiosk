@@ -3,11 +3,12 @@ import re
 import uuid
 from threading import Thread
 from time import sleep
+import datetime
 
 from flask import Flask, render_template, request, jsonify
 
-import data
-import tables
+import shared.data as data
+import server.tables as tables
 
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
@@ -41,11 +42,10 @@ def root_management():
         deletions = []
         for key, value in request.args.items():
             print(key, value)
-            if key == 'select-all':
+            if key == 'select-all' or value == '':
                 pass
             elif 'select-' in key:
                 did = key.replace('select-', '')
-                print(value, value == 'on')
                 if not did == 'new' and value == 'on':
                     deletions.append(did)
             elif 'name-' in key:
@@ -59,7 +59,8 @@ def root_management():
                     changes[did] = {}
                 try:
                     changes[did].update({'stock': int(value)})
-                except ValueError:
+                except ValueError as e:
+                    print('stock======================================================', key, value)
                     break
             elif 'price-' in key:
                 did = key.replace('price-', '')
@@ -68,9 +69,11 @@ def root_management():
                 try:
                     changes[did].update({'price': float(value)})
                 except ValueError:
+                    print('price======================================================')
                     break
                 finally:
                     if float(value) + abs(float(value)) == 0: # Check if positive.
+                        print('priceprice======================================================')
                         break
         else:
             for did, values in changes.items():
@@ -78,6 +81,7 @@ def root_management():
                     data.create_drink(values['name'], values['stock'], values['price'])
                 else:
                     data.update_drink(did, values['name'], values['stock'], values['price'])
+            print(changes)
             print(deletions)
             for did in deletions:
                 data.delete_drink(did)
@@ -89,9 +93,20 @@ def root_transactions():
     number_of_transactions = 10
     if request.form:
         number_of_transactions = request.form['number_of_transactions']
-    return render_template('transactions.html', transactions=data.get_all_transactions(),
+    return render_template('transactions.html', transactions=data.get_transactions(),
                            number_of_transactions=number_of_transactions)
 
+@app.route('/purchases', methods=['GET', 'POST'])
+def root_purchases():
+    if request.args.get('number_of_purchases', None) is not None:
+        try:
+            number_of_purchases = int(request.args['number_of_purchases'])
+        except ValueError:
+            number_of_purchases = 10
+    else:
+        number_of_purchases = 10
+    return render_template('purchases.html', purchases=sorted(data.get_purchases().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
+                           number_of_purchases=number_of_purchases, list=list, users=data.get_users(), drinks=data.get_drinks())
 
 @app.route('/billing')
 def root_billing():

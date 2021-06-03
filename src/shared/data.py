@@ -1,12 +1,12 @@
 import datetime
 
-from api import API
+from shared.api import API
 
 default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
 # default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
-api = API('192.168.137.1', 80, 'http')
+api = API('localhost', 80, 'http')
 
 
 class User:
@@ -104,12 +104,6 @@ class User:
             'amount': price
         })
 
-
-def get_all_transactions():
-    transactions = api.get('transaction', {})
-    return dict(filter(lambda x: x[0] != 'success', transactions.items()))
-
-
 def register_user(firstname, lastname, email, badgenumber):
     user = User(firstname=firstname, lastname=lastname, email=email, badgenumber=badgenumber)
     return user
@@ -119,6 +113,21 @@ def login_user(badgenumber):
     user = User(badgenumber=badgenumber)
     return user
 
+def get_transactions():
+    transactions = api.get('transaction', {})
+    return dict(filter(lambda x: x[0] != 'success', transactions.items()))
+
+def get_purchases():
+    purchases = api.get('purchase', {})
+    return dict(filter(lambda x: x[0] != 'success', purchases.items()))
+
+def get_users():
+    users = api.get('user', {})
+    return dict(filter(lambda x: x[0] != 'success', users.items()))
+
+def get_badges():
+    badges = api.get('badge', {})
+    return dict(filter(lambda x: x[0] != 'success', badges.items()))
 
 def get_drinks():
     drinks = api.get('drink', {})
@@ -147,6 +156,16 @@ def update_drink(did, name, stock, price):
         'price': price
     })
 
+def create_drink(name, stock, price):
+    api.create('drink', {
+        'name': name,
+        'stock': stock,
+        'price': price
+    })
+
+
+def delete_drink(did):
+    api.delete('drink', {'did': did})
 
 def user_exists(badgenumber):
     badge = api.get('badge', {

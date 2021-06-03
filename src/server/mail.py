@@ -3,7 +3,7 @@ import smtplib
 from email.message import EmailMessage
 from multiprocessing import Pool, Process
 from threading import Thread
-from data import Customer
+from shared.data import User
 import time
 
 
@@ -11,15 +11,15 @@ sender = 'Kassensystem@Kassensystem'
 
 
 def sendmail(UID):
-    c = Customer(UID=UID)
+    u = User(UID=UID)
     msg = EmailMessage()
     msg.set_content(
         f'''
-Hallo {c.firstname} {c.lastname}
-Du hast im letzten Monat {c.balance} CHF ausgegeben.''')
+Hallo {u.firstname} {u.lastname}
+Du hast im letzten Monat {u.balance} CHF ausgegeben.''')
     msg['Subject'] = f'Ausgaben des letzten Monats'
     msg['From'] = sender
-    msg['To'] = c.email
+    msg['To'] = u.email
     s = smtplib.SMTP('raspberrypi', port=1025)
     s.send_message(msg)
 

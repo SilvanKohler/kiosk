@@ -12,9 +12,9 @@ from kivy.uix.textinput import TextInput
 from kivy.logger import Logger
 from kivy.config import Config
 from threading import Thread
-from badge import run
+from client.badge import run
 import time
-from data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
+from shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
 
 config = Config.read('config.ini')
@@ -31,6 +31,7 @@ times = {}
 times2 = {}
 badge = None
 user = None
+itemlayout = None
 
 def login(b):
     global user
@@ -42,10 +43,16 @@ def logout():
 def refresh(content='all'):
     if content == 'balance':
         KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
-    else:
+    elif content == 'userinformation':
         KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
         KS.ids['name'].text = user.get_firstname() + '\n' + user.get_lastname()
         KS.ids['avatar'].source = user.get_avatar()
+    elif content == 'drinks':
+        itemlayout.refresh()
+    elif content == 'all':
+        refresh('balance')
+        refresh('userinformation')
+        refresh('drinks')
 
 
 def on_badge(b):
@@ -160,10 +167,14 @@ class Item(Button):
 
 class ItemLayout(GridLayout):
     def __init__(self, *args, **kwargs):
+        global itemlayout
         super().__init__(*args, **kwargs)
         self.sm = sm
-        self.drinks = get_drinks()
-        for drink in self.drinks.items():
+        self.refresh()
+        itemlayout = self
+    def refresh(self):
+        self.clear_widgets()
+        for drink in get_drinks().items():
             b = Item()
             b.did = drink[0]
             b.name = drink[1]['name']
