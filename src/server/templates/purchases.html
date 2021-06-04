@@ -20,35 +20,49 @@
     </div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <table class="mdl-data-table mdl-shadow--2dp">
-            <thead>
-                <tr>
-                    <th class="mdl-data-table__cell--non-numeric">Zeit</th>
-                    <th class="mdl-data-table__cell--non-numeric">Person</th>
-                    <th class="mdl-data-table__cell--non-numeric">Artikel</th>
-                    <th>Preis (CHF)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if purchases: %}
-                    {% for purchase in purchases[:number_of_purchases] %}
+        <form id="drinks" class="drinks-form" action="/purchases" onsubmit="loading()">
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                   value="Ausgewählte löschen" style="margin-bottom: 1%"/>
+                   <table class="mdl-data-table mdl-shadow--2dp">
+                    <thead>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">{{ purchase[1]['datetime'] }}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ users[purchase[1]['uid']]['firstname'] }} {{ users[purchase[1]['uid']]['lastname'] }}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ drinks[purchase[1]['did']]['name'] }}</td>
-                            <td>{{ purchase[1]['amount'] }}</td>
+                            <th>Auswahl</th>
+                            <th>Zeit</th>
+                            <th>Person</th>
+                            <th>Artikel</th>
+                            <th>Preis (CHF)</th>
                         </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        {% if purchases: %}
+                            {% for purchase in purchases[:number_of_purchases] %}
+                                <tr>
+                                    <td>
+                                        <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ purchase[0] }}">
+                                            <input class="mdl-checkbox__input" type="checkbox" name="select-{{ purchase[0] }}"
+                                                   id="select-{{ purchase[0] }}"/>
+                                        </label>
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ purchase[1]['datetime'] }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ users[purchase[1]['uid']]['firstname'] }} {{ users[purchase[1]['uid']]['lastname'] }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ drinks[purchase[1]['did']]['name'] }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ purchase[1]['amount'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td>Fehler</td>
+                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
+                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
+                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
+                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                   value="Ausgewählte löschen" style="margin-top: 1%"/>
+        </form>
         <div class="mdl-layout-spacer"></div>
     </div>
 </div>

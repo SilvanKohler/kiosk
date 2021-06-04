@@ -36,12 +36,10 @@ def root_settings():
 
 @app.route('/drinks', methods=['GET', 'POST'])
 def root_management():
-    print(request.args)
     if request.args:
         changes = {}
         deletions = []
         for key, value in request.args.items():
-            print(key, value)
             if key == 'select-all' or value == '':
                 pass
             elif 'select-' in key:
@@ -60,7 +58,6 @@ def root_management():
                 try:
                     changes[did].update({'stock': int(value)})
                 except ValueError as e:
-                    print('stock======================================================', key, value)
                     break
             elif 'price-' in key:
                 did = key.replace('price-', '')
@@ -69,11 +66,9 @@ def root_management():
                 try:
                     changes[did].update({'price': float(value)})
                 except ValueError:
-                    print('price======================================================')
                     break
                 finally:
                     if float(value) + abs(float(value)) == 0: # Check if positive.
-                        print('priceprice======================================================')
                         break
         else:
             for did, values in changes.items():
@@ -81,8 +76,6 @@ def root_management():
                     data.create_drink(values['name'], values['stock'], values['price'])
                 else:
                     data.update_drink(did, values['name'], values['stock'], values['price'])
-            print(changes)
-            print(deletions)
             for did in deletions:
                 data.delete_drink(did)
         return redirect('/drinks')
@@ -99,13 +92,24 @@ def root_transactions():
 
 @app.route('/purchases', methods=['GET', 'POST'])
 def root_purchases():
-    if request.args.get('number_of_purchases', None) is not None:
-        try:
-            number_of_purchases = int(request.args['number_of_purchases'])
-        except ValueError:
-            number_of_purchases = 10
-    else:
-        number_of_purchases = 10
+    number_of_purchases = 10
+    if request.args:
+        deletions = []
+        for key, value in request.args.items():
+            if 'select-' in key:
+                    pid = key.replace('select-', '')
+                    if value == 'on':
+                        deletions.append(pid)
+        else:
+            for pid in deletions:
+                data.revert_purchase(pid)
+        if request.args.get('number_of_purchases', None) is not None:
+            try:
+                number_of_purchases = int(request.args['number_of_purchases'])
+            except ValueError:
+                pass
+        else:
+            return redirect('/purchases')
     return render_template('purchases.html', purchases=sorted(data.get_purchases().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
                            number_of_purchases=number_of_purchases, list=list, users=data.get_users(), drinks=data.get_drinks())
 

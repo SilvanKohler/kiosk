@@ -28,6 +28,37 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-new">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-new"
+                                       id="select-new"/>
+                            </label>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" name="name-new" id="name-new">
+                                <label class="mdl-textfield__label" for="name-new">Name</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="stock-new"
+                                       id="stock-new">
+                                <label class="mdl-textfield__label" for="stock-new">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       name="price-new" id="price-new">
+                                <label class="mdl-textfield__label" for="price-new">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                    </tr>
                     {% for drink in drinks.items() %}
                     <tr>
                         <td>
@@ -61,37 +92,6 @@
                         </td>
                     </tr>
                     {% endfor %}
-                    <tr>
-                        <td>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-new">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select-new"
-                                       id="select-new"/>
-                            </label>
-                        </td>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" name="name-new" id="name-new">
-                                <label class="mdl-textfield__label" for="name-new">Name</label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="stock-new"
-                                       id="stock-new">
-                                <label class="mdl-textfield__label" for="stock-new">0</label>
-                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       name="price-new" id="price-new">
-                                <label class="mdl-textfield__label" for="price-new">0</label>
-                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
             <!-- Accent-colored raised button -->

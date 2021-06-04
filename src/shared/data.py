@@ -103,11 +103,14 @@ class User:
             'uid': self.uid,
             'amount': price
         })
+    def credit(self, amount):
+        api.edit('user', {'uid': self.uid}, {
+            'balance': self.get_balance() + amount
+        })
 
 def register_user(firstname, lastname, email, badgenumber):
     user = User(firstname=firstname, lastname=lastname, email=email, badgenumber=badgenumber)
     return user
-
 
 def login_user(badgenumber):
     user = User(badgenumber=badgenumber)
@@ -133,6 +136,9 @@ def get_drinks():
     drinks = api.get('drink', {})
     return dict(filter(lambda x: x[0] != 'success', drinks.items()))
 
+def get_purchase(pid):
+    purchase = api.get('purchase', {'pid': pid})
+    return purchase
 
 def add_drink(name, stock, price):
     api.create('drink', {
@@ -163,9 +169,23 @@ def create_drink(name, stock, price):
         'price': price
     })
 
-
 def delete_drink(did):
     api.delete('drink', {'did': did})
+
+def revert_purchase(pid):
+    purchase = get_purchase(pid)[pid]
+    user = User(uid=purchase['uid'])
+    # TODO: MAKE TRANSACTION
+    user.credit(purchase['amount'])
+    # TODO: MAKE TRANSACTION
+    api.edit('drink', {'did': purchase['did']}, {
+        'stock': get_drink(purchase['did'])[purchase['did']]['stock'] + 1
+    })
+    delete_purchase(pid)
+
+
+def delete_purchase(pid):
+    api.delete('purchase', {'pid': pid})
 
 def user_exists(badgenumber):
     badge = api.get('badge', {
