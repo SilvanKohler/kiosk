@@ -5,7 +5,7 @@ from threading import Thread
 from time import sleep
 import datetime
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 
 import shared.data as data
 import server.tables as tables
@@ -34,7 +34,7 @@ def root_settings():
     return render_template('settings.html')
 
 
-@app.route('/management', methods=['GET', 'POST'])
+@app.route('/drinks', methods=['GET', 'POST'])
 def root_management():
     print(request.args)
     if request.args:
@@ -85,7 +85,8 @@ def root_management():
             print(deletions)
             for did in deletions:
                 data.delete_drink(did)
-    return render_template('management.html', drinks=data.get_drinks())
+        return redirect('/drinks')
+    return render_template('drinks.html', drinks=data.get_drinks())
 
 
 @app.route('/transactions', methods=['GET', 'POST'])

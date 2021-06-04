@@ -4,12 +4,10 @@
 
 {% block content %}
 <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title"><h3>Transaktionsverlauf</h3></div>
-    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__title" style="width: 100%;"><div class="mdl-layout-spacer"></div><h3 style="width:auto;">Transaktionen</h3><div class="mdl-layout-spacer"></div></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form class="transactions-form" action="/transactions">
+        <form class="transactions-form" action="/transactions" onsubmit="loading()">
             <div class="mdl-textfield mdl-js-textfield">
                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="number_of_transactions">
                 <label class="mdl-textfield__label" for="number_of_transactions">Anzahl</label>

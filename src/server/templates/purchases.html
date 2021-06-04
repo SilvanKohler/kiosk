@@ -5,11 +5,11 @@
 {% block content %}
 <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
     <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title"><h3>Kaufverlauf</h3></div>
+    <div class="mdl-card__title" style="width: 100%;"><h3>Käufe</h3></div>
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form class="purchases-form" action="/purchases">
+        <form class="purchases-form" action="/purchases" onsubmit="loading()">
             <div class="mdl-textfield mdl-js-textfield">
                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases" id="number_of_purchases" value="{{ number_of_purchases }}">
                 <label class="mdl-textfield__label" for="number_of_purchases">Anzahl</label>
