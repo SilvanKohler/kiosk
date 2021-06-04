@@ -17,8 +17,8 @@ import time
 from shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
 
-config = Config.read('config.ini')
-style = Builder.load_file('style.kv')
+config = Config.read('client/config.ini')
+style = Builder.load_file('client/style.kv')
 sm = ScreenManager(transition=NoTransition())
 keys = [
     'q,w,e,r,t,z,u,i,o,p',
