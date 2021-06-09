@@ -71,12 +71,6 @@ def on_badge(b):
 class Keyboard(BoxLayout):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.rows = len(keys)
-        # self.cols = len(keys[0].split(','))
-        # for i, y in enumerate(keys):
-        #     for x in range(self.cols):
-        #         self.add_widget(Button(text=y.upper().split(',')[x], font_size=30, on_press=self.on_press) if x < len(
-        #             y.split(',')) else Label())
         self.orientation = 'vertical'
         for i, y in enumerate(keys):
             row = BoxLayout()
@@ -161,7 +155,7 @@ class Item(Button):
     def on_press(self):
         if time.time() - times2.get(self.id, time.time() - 100) > 1:
             times2.update({self.id: time.time()})
-            user.withdraw(self.did)
+            user.buy(self.did)
             refresh('balance')
 
 

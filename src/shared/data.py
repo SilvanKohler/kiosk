@@ -6,7 +6,7 @@ default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/prof
 
 # default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 
-api = API('localhost', 80, 'http')
+api = API('192.168.137.1', 80, 'http')
 
 
 class User:
@@ -90,7 +90,7 @@ class User:
         })
         return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
-    def withdraw(self, did):
+    def buy(self, did):
         drink = get_drink(did)[did]
         price = drink['price']
         api.edit('user', {'uid': self.uid}, {
@@ -103,7 +103,14 @@ class User:
             'uid': self.uid,
             'amount': price
         })
-    def credit(self, amount):
+    def credit(self, amount, method='Unbekannt'):
+        date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+        api.create('transaction', {
+            'datetime': date,
+            'uid': self.uid,
+            'amount': amount,
+            'method': method
+        })
         api.edit('user', {'uid': self.uid}, {
             'balance': self.get_balance() + amount
         })
@@ -175,9 +182,7 @@ def delete_drink(did):
 def revert_purchase(pid):
     purchase = get_purchase(pid)[pid]
     user = User(uid=purchase['uid'])
-    # TODO: MAKE TRANSACTION
     user.credit(purchase['amount'])
-    # TODO: MAKE TRANSACTION
     api.edit('drink', {'did': purchase['did']}, {
         'stock': get_drink(purchase['did'])[purchase['did']]['stock'] + 1
     })
