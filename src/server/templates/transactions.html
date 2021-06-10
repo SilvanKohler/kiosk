@@ -5,7 +5,7 @@
 {% block content %}
 <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
     <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title" style="width: 100%;"><h3>Käufe</h3></div>
+    <div class="mdl-card__title" style="width: 100%;"><h3>Transaktionen</h3></div>
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
@@ -47,7 +47,7 @@
                                     <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['datetime'] }}</td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ users[transaction[1]['uid']]['firstname'] }} {{ users[transaction[1]['uid']]['lastname'] }}</td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['amount'] }}</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['method'] }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['reason'] }}</td>
                                 </tr>
                             {% endfor %}
                         {% else %}

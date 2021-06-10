@@ -19,7 +19,7 @@ specs = {
     'badge': ('bid', ('badgenumber', 'uid')),
     'drink': ('did', ('name', 'stock', 'price')),
     'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
-    'transaction': ('tid', ('datetime', 'uid', 'amount')),
+    'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason')),
     'mail': ('mid', ('datetime', 'uid', 'balance'))
 }
 
@@ -100,7 +100,7 @@ def root_transactions():
     #     else:
     #         for pid in deletions:
     #             data.revert_transaction(pid)
-        return redirect(f'/transactions?number_of_transactions={number_of_transactions}')
+    #     return redirect(f'/transactions?number_of_transactions={number_of_transactions}')
     return render_template('transactions.html', transactions=sorted(data.get_transactions().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
                            number_of_transactions=number_of_transactions, list=list, users=data.get_users())
 
@@ -127,10 +127,26 @@ def root_purchases():
     return render_template('purchases.html', purchases=sorted(data.get_purchases().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
                            number_of_purchases=number_of_purchases, list=list, users=data.get_users(), drinks=data.get_drinks())
 
-@app.route('/billing')
+@app.route('/billing', methods=['GET', 'POST'])
 def root_billing():
-    return render_template('billing.html')
-
+    # number_of_transactions = 10
+    # if request.args.get('number_of_transactions', None) is not None:
+    #     try:
+    #         number_of_transactions = int(request.args['number_of_transactions'])
+    #     except ValueError:
+    #         pass
+    # if any('select' in key for key in list(request.args.keys())):
+    #     deletions = []
+    #     for key, value in request.args.items():
+    #         if 'select-' in key:
+    #                 pid = key.replace('select-', '')
+    #                 if value == 'on':
+    #                     deletions.append(pid)
+    #     else:
+    #         for pid in deletions:
+    #             data.revert_transaction(pid)
+    #     return redirect(f'/transactions?number_of_transactions={number_of_transactions}')
+    return render_template('billing.html', list=list, users=data.get_users())
 
 ############### API #################
 

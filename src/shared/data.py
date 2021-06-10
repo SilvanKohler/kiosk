@@ -1,12 +1,17 @@
 import datetime
-
+import os
 from shared.api import API
 
 default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
 
 # default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
-
-api = API('192.168.137.1', 80, 'http')
+if os.name == 'nt':
+    host = '127.0.0.1'
+else:
+    host = '192.168.137.1'
+port = 80
+protocol = 'http'
+api = API(host, port, protocol)
 
 
 class User:
@@ -103,49 +108,53 @@ class User:
             'uid': self.uid,
             'amount': price
         })
-    def credit(self, amount, method='Unbekannt'):
-        date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-        api.create('transaction', {
-            'datetime': date,
-            'uid': self.uid,
-            'amount': amount,
-            'method': method
-        })
-        api.edit('user', {'uid': self.uid}, {
-            'balance': self.get_balance() + amount
-        })
+
 
 def register_user(firstname, lastname, email, badgenumber):
-    user = User(firstname=firstname, lastname=lastname, email=email, badgenumber=badgenumber)
+    user = User(firstname=firstname, lastname=lastname,
+                email=email, badgenumber=badgenumber)
     return user
+
 
 def login_user(badgenumber):
     user = User(badgenumber=badgenumber)
     return user
 
+
 def get_transactions():
     transactions = api.get('transaction', {})
     return dict(filter(lambda x: x[0] != 'success', transactions.items()))
+
 
 def get_purchases():
     purchases = api.get('purchase', {})
     return dict(filter(lambda x: x[0] != 'success', purchases.items()))
 
+
 def get_users():
     users = api.get('user', {})
     return dict(filter(lambda x: x[0] != 'success', users.items()))
+
 
 def get_badges():
     badges = api.get('badge', {})
     return dict(filter(lambda x: x[0] != 'success', badges.items()))
 
+
 def get_drinks():
     drinks = api.get('drink', {})
     return dict(filter(lambda x: x[0] != 'success', drinks.items()))
 
+
 def get_purchase(pid):
     purchase = api.get('purchase', {'pid': pid})
     return purchase
+
+
+def get_transaction(tid):
+    transaction = api.get('transaction', {'tid': tid})
+    return transaction
+
 
 def add_drink(name, stock, price):
     api.create('drink', {
@@ -169,6 +178,7 @@ def update_drink(did, name, stock, price):
         'price': price
     })
 
+
 def create_drink(name, stock, price):
     api.create('drink', {
         'name': name,
@@ -176,21 +186,44 @@ def create_drink(name, stock, price):
         'price': price
     })
 
+
+def create_transaction(uid, amount, reason):
+    date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+
+    api.create('transaction', {
+        'datetime': date,
+        'uid': uid,
+        'amount': amount,
+        'reason': reason
+    })
+
+
 def delete_drink(did):
     api.delete('drink', {'did': did})
+
 
 def revert_purchase(pid):
     purchase = get_purchase(pid)[pid]
     user = User(uid=purchase['uid'])
-    user.credit(purchase['amount'])
+    create_transaction(purchase['uid'], purchase['amount'], 'Kauferstattung')
+    api.edit('user', {'uid': purchase['uid']}, {
+        'balance': user.get_balance() + purchase['amount']
+    })
     api.edit('drink', {'did': purchase['did']}, {
         'stock': get_drink(purchase['did'])[purchase['did']]['stock'] + 1
     })
     delete_purchase(pid)
 
 
+def revert_transaction(tid):
+    transaction = get_transaction(tid)
+    api.edit('user', {'uid': transaction['uid']}, {
+        'balance': user.get_balance() + purchase['amount']
+    })
+
 def delete_purchase(pid):
     api.delete('purchase', {'pid': pid})
+
 
 def user_exists(badgenumber):
     badge = api.get('badge', {

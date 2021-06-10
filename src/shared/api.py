@@ -15,6 +15,7 @@ class API:
         return requests.post(f'{self.url}/{table}/get', data=filters).json()
 
     def create(self, table, properties):
+        print(table, properties)
         return requests.post(f'{self.url}/{table}/create', data=properties).json()
 
     def edit(self, table, filters, properties):
