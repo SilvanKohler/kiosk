@@ -3,14 +3,15 @@ import usb.util
 import time
 
 
-def get_prox():
-    # CONFIG
-    # change VENDER_ID and PRODUCT_ID corresponding to a reader model
-    VENDER_ID = 0x0C27
-    PRODUCT_ID = 0x3BFA
-    PROX_END = 2
-    INTERFACE = 0
+# CONFIG
+# change VENDER_ID and PRODUCT_ID corresponding to a reader model
+VENDER_ID = 0x0C27
+PRODUCT_ID = 0x3BFA
+PROX_END = 2
+INTERFACE = 0
 
+
+def get_prox():
     # Detect the device
     dev = usb.core.find(idVendor=VENDER_ID, idProduct=PRODUCT_ID)
     if dev is None:
@@ -20,7 +21,6 @@ def get_prox():
     if dev.is_kernel_driver_active(INTERFACE):
         print('Detach Kernel Driver')
         dev.detach_kernel_driver(INTERFACE)
-
     # Set a mode
     # ctrl_transfer is used to control endpoint0
     dev.set_configuration(1)
@@ -43,6 +43,7 @@ def get_prox():
 
 def run(callback):
     prev = 0
+    last = time.time()
     # print('Ready for Scan...')
 
     while True:
@@ -50,7 +51,7 @@ def run(callback):
             result = get_prox()  # Get badge id
         except ValueError:
             continue
-        if result != prev:
+        if result != prev or time.time()-last >= 5:
             if result != 0:
                 # print(result)
                 callback(result)  # run callback function
