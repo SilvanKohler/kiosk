@@ -5,13 +5,16 @@
 {% block content %}
 <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
     <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title" style="width: 100%;"><h3>Transaktionen</h3></div>
+    <div class="mdl-card__title" style="width: 100%;">
+        <h3>Transaktionen</h3>
+    </div>
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
         <form class="transactions-form" action="/transactions" onsubmit="loading()">
             <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions" id="number_of_transactions" value="{{ number_of_transactions }}">
+                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                    name="number_of_transactions" id="number_of_transactions" value="{{ number_of_transactions }}">
                 <label class="mdl-textfield__label" for="number_of_transactions">Anzahl</label>
                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
             </div>
@@ -21,49 +24,39 @@
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
         <form id="drinks" class="drinks-form" action="/transactions" onsubmit="loading()">
-            <input class=""" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions" id="number_of_transactions" value="{{ number_of_transactions }}">
-            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                   value="Ausgewählte löschen" style="margin-bottom: 1%"/>
-                   <table class="mdl-data-table mdl-shadow--2dp">
-                    <thead>
-                        <tr>
-                            <th>Auswahl</th>
-                            <th>Zeit</th>
-                            <th>Person</th>
-                            <th>Betrag</th>
-                            <th>Methode</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if transactions: %}
-                            {% for transaction in transactions[:number_of_transactions] %}
-                                <tr>
-                                    <td>
-                                        <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ transaction[0] }}">
-                                            <input class="mdl-checkbox__input" type="checkbox" name="select-{{ transaction[0] }}"
-                                                   id="select-{{ transaction[0] }}"/>
-                                        </label>
-                                    </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['datetime'] }}</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ users[transaction[1]['uid']]['firstname'] }} {{ users[transaction[1]['uid']]['lastname'] }}</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['amount'] }}</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ transaction[1]['reason'] }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td>Fehler</td>
-                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                                <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                   value="Ausgewählte löschen" style="margin-top: 1%"/>
+            <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions"
+                id="number_of_transactions" value="{{ number_of_transactions }}">
         </form>
+        <table class="mdl-data-table mdl-shadow--2dp">
+            <thead>
+                <tr>
+                    <th>Zeit</th>
+                    <th>Person</th>
+                    <th>Betrag</th>
+                    <th>Methode</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if transactions: %}
+                {% for transaction in transactions[:number_of_transactions] %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['datetime'] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{
+                        users[transaction[1]['uid']]['firstname'] }} {{ users[transaction[1]['uid']]['lastname'] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['amount'] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['reason'] }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
         <div class="mdl-layout-spacer"></div>
     </div>
 </div>

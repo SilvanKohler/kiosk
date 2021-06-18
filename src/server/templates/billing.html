@@ -11,10 +11,10 @@
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form id="drinks" class="drinks-form" action="/drinks" onsubmit="loading()">
+        <form id="drinks" class="drinks-form" action="/billing" onsubmit="loading()">
             <!-- Accent-colored raised button -->
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Speichern und ausgewählte löschen" style="margin-bottom: 1%" />
+                value="Speichern" style="margin-bottom: 1%" />
             <table class="mdl-data-table mdl-shadow--2dp">
                 <thead>
                     <tr>
@@ -29,29 +29,28 @@
                     {% if users: %}
                     {% for user in users.items() %}
                     <tr>
-                        <td class="mdl-data-table__cell--non-numeric">{{ user[1]['firstname'] }} {{ user[1]['lastname']
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['firstname'] }} {{
+                            user[1]['lastname']
                             }}</td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ user[1]['email'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ user[1]['balance'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['email'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['balance'] }}</td>
                         <td class="mdl-data-table__cell--non-numeric">
-                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
                                 <select class="mdl-textfield__input" id="action-{{ user[0] }}"
                                     name="action-{{ user[0] }}">
                                     <option>Keine</option>
-                                    <option value="85">85</option>
-                                    <option value="87">87</option>
-                                    <option value="89">89</option>
-                                    <option value="91">91</option>
-                                    <option value="diesel">Diesel</option>
+                                    <option value="TWINT">TWINT</option>
+                                    <option value="BAR">BAR</option>
+                                    <option value="KORREKTUR">KORREKTUR</option>
+                                    <option value="SONSTIG">SONSTIG</option>
                                 </select>
-                                <label class="mdl-textfield__label" for="action-{{ user[0] }}">Aktion</label>
                             </div>
                         </td>
-                        <td>
-                            <div class="mdl-textfield mdl-js-textfield">
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                    name="price-new" id="price-new">
-                                <label class="mdl-textfield__label" for="price-new">0</label>
+                                    name="value-{{ user[0] }}" id="value-{{ user[0] }}">
+                                <label class="mdl-textfield__label" for="value-{{ user[0] }}">0</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
@@ -59,18 +58,18 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
-                        <td class="mdl-data-table__cell--non-numeric">Fehler</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
                     </tr>
                     {% endif %}
                 </tbody>
             </table>
             <!-- Accent-colored raised button -->
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Speichern und ausgewählte löschen" style="margin-top: 1%" />
+                value="Speichern" style="margin-top: 1%" />
         </form>
         <div class="mdl-layout-spacer"></div>
     </div>
