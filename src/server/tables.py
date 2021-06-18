@@ -32,7 +32,8 @@ def process(request):
     # print(1, request)
     if request[0] == 'get':
         # print(2, {request[2]: dict(tables.get(request[1], None).items())})
-        results.update({request[2]: dict(tables.get(request[1], None).items())})
+        results.update(
+            {request[2]: dict(tables.get(request[1], None).items())})
     elif request[0] == 'set':
         tables.get(request[1], None)[request[2]] = request[3]
         if isinstance(tables.get(request[1], None), shelve.Shelf):
