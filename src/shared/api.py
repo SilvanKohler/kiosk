@@ -25,11 +25,16 @@ class API:
     def delete(self, table, filters):
         return requests.post(f'{self.url}/{table}/delete', data=filters).json()
 
-
 if __name__ == '__main__':
+    import datetime
     api = API('localhost', 80, 'http')
-    users = api.get('user', {})
-    print(users)
-    user = input('delete: ')
-    print(api.delete('user', {'uid': user}))
-
+    for x in range(1000):
+        print(x)
+        date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+        api.create('transaction', {
+            'datetime': date,
+            'uid': 'b378fb5dd03b11eb848918cc18e03914',
+            'amount': 1,
+            'reason': 'performance-test'
+        })
+        

@@ -15,14 +15,15 @@ app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 
 specs = {
-    'user': ('uid', ('firstname', 'lastname', 'email', 'balance', 'avatar')),
+    'user': ('uid', ('firstname', 'lastname', 'email', 'avatar')),
     'badge': ('bid', ('badgenumber', 'uid')),
     'drink': ('did', ('name', 'stock', 'price')),
     'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
     'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason')),
     'mail': ('mid', ('datetime', 'uid', 'balance'))
 }
-
+floats = ['amount', 'price']
+ints = ['stock', 'badgenumber']
 
 @app.route('/')
 def root():
@@ -68,14 +69,17 @@ def root_management():
                 except ValueError:
                     break
                 finally:
-                    if float(value) + abs(float(value)) == 0: # Check if positive.
+                    # Check if positive.
+                    if float(value) + abs(float(value)) == 0:
                         break
         else:
             for did, values in changes.items():
                 if did == 'new':
-                    data.create_drink(values['name'], values['stock'], values['price'])
+                    data.create_drink(
+                        values['name'], values['stock'], values['price'])
                 else:
-                    data.update_drink(did, values['name'], values['stock'], values['price'])
+                    data.update_drink(
+                        did, values['name'], values['stock'], values['price'])
             for did in deletions:
                 data.delete_drink(did)
         return redirect('/drinks')
@@ -87,20 +91,10 @@ def root_transactions():
     number_of_transactions = 10
     if request.args.get('number_of_transactions', None) is not None:
         try:
-            number_of_transactions = int(request.args['number_of_transactions'])
+            number_of_transactions = int(
+                request.args['number_of_transactions'])
         except ValueError:
             pass
-    # if any('select' in key for key in list(request.args.keys())):
-    #     deletions = []
-    #     for key, value in request.args.items():
-    #         if 'select-' in key:
-    #                 pid = key.replace('select-', '')
-    #                 if value == 'on':
-    #                     deletions.append(pid)
-    #     else:
-    #         for pid in deletions:
-    #             data.revert_transaction(pid)
-    #     return redirect(f'/transactions?number_of_transactions={number_of_transactions}')
     return render_template('transactions.html', transactions=sorted(data.get_transactions().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
                            number_of_transactions=number_of_transactions, list=list, users=data.get_users())
 
@@ -117,9 +111,9 @@ def root_purchases():
         deletions = []
         for key, value in request.args.items():
             if 'select-' in key:
-                    pid = key.replace('select-', '')
-                    if value == 'on':
-                        deletions.append(pid)
+                pid = key.replace('select-', '')
+                if value == 'on':
+                    deletions.append(pid)
         else:
             for pid in deletions:
                 data.revert_purchase(pid)
@@ -127,48 +121,54 @@ def root_purchases():
     return render_template('purchases.html', purchases=sorted(data.get_purchases().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
                            number_of_purchases=number_of_purchases, list=list, users=data.get_users(), drinks=data.get_drinks())
 
+
 @app.route('/billing', methods=['GET', 'POST'])
 def root_billing():
-    # number_of_transactions = 10
-    # if request.args.get('number_of_transactions', None) is not None:
-    #     try:
-    #         number_of_transactions = int(request.args['number_of_transactions'])
-    #     except ValueError:
-    #         pass
-    # if any('select' in key for key in list(request.args.keys())):
-    #     deletions = []
-    #     for key, value in request.args.items():
-    #         if 'select-' in key:
-    #                 pid = key.replace('select-', '')
-    #                 if value == 'on':
-    #                     deletions.append(pid)
-    #     else:
-    #         for pid in deletions:
-    #             data.revert_transaction(pid)
-    #     return redirect(f'/transactions?number_of_transactions={number_of_transactions}')
+    if request.args:
+        changes = {}
+        for key, value in request.args.items():
+            if 'action-' in key:
+                uid = key.replace('action-', '')
+                if not changes.get(uid):
+                    changes[uid] = {}
+                changes[uid].update({'action': value})
+            elif 'value-' in key:
+                uid = key.replace('value-', '')
+                if not changes.get(uid):
+                    changes[uid] = {}
+                try:
+                    changes[uid].update({'value': float(value)})
+                except ValueError:
+                    break
+        else:
+            for uid, values in changes.items():
+                data.create_transaction(uid, values['value'], values['action'])
+        return redirect('/billing')
     return render_template('billing.html', list=list, users=data.get_users())
 
 ############### API #################
+
 
 @app.route('/api/<table>/get', methods=['POST'])
 def root_api_get(table):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
-            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in request.form.items()
         }
         i = uuid.uuid1().hex
         tables.chain.put(['get', table, i])
         while tables.results.get(i) is None:
             sleep(0.05)
-        print(parameters)
         for entry in dict(tables.results.get(i)).items():
             try:
                 for parameter in parameters.items():
-                    print(parameter, specs[table], str(entry))
-                    if parameter[0] == specs[table][0] and not str(parameter[1]) == str(entry[0]) and not str(
-                            parameter[1]) == str(entry[1][parameter[0]]):
+                    print(parameter, specs[table], entry[1])
+                    print(parameter[0] in specs[table][1] and str(parameter[1]).lower() == str(entry[1][parameter[0]]).lower())
+                    print(parameter[0] == specs[table][0] and str(parameter[1]).lower() == str(entry[0]).lower())
+                    if not ((parameter[0] == specs[table][0] and str(parameter[1]).lower() == str(entry[0]).lower()) or (parameter[0] in specs[table][1] and str(
+                            parameter[1]).lower() == str(entry[1][parameter[0]]).lower())):
                         break
                 else:
                     content.update({
@@ -187,7 +187,7 @@ def root_api_create(table):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
-            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in request.form.items()
         }
         try:
@@ -209,7 +209,7 @@ def root_api_edit(table):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
-            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in request.form.items()
         }
         try:
@@ -221,7 +221,8 @@ def root_api_edit(table):
             d = tables.results.get(i)
             d[parameters[specs[table][0]]].update({
                 parameter[0]: parameter[1] for parameter in
-                tuple(parameters.items())[:pos] + tuple(parameters.items())[pos + 1:]
+                tuple(parameters.items())[:pos] +
+                tuple(parameters.items())[pos + 1:]
             })
             tables.chain.put(['update', table, d])
             content['success'] = True
@@ -235,7 +236,7 @@ def root_api_delete(table):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
-            key: (float(value) if key in ['balance', 'amount', 'price'] else int(value) if key == 'stock' else value) for
+            key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in request.form.items()
         }
         try:
