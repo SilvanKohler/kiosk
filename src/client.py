@@ -17,14 +17,15 @@ import time
 from shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
 
-config = Config.read('client/config.ini')
+Config.read('client/config.ini')
 style = Builder.load_file('client/style.kv')
 sm = ScreenManager(transition=NoTransition())
 keys = [
+    '1,2,3,4,5,6,7,8,9,0',
     'q,w,e,r,t,z,u,i,o,p',
     'a,s,d,f,d,g,h,j,k,l',
     'y,x,c,v,b,n,m',
-    '.,@,del,SPEICHERN'
+    '.,@,-,del,SPEICHERN'
 ]
 focused = None
 times = {}
@@ -33,20 +34,28 @@ badge = None
 user = None
 itemlayout = None
 
+
 def login(b):
     global user
     user = login_user(b)
     sm.current = 'Kiosk'
     refresh()
+
+
 def logout():
+    global user, badge
+    user = None
+    badge = None
     sm.current = 'Login'
+
+
 def refresh(content='all'):
     if content == 'balance':
-        KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
+        KS.ids['balance'].text = str(user.balance) + ' CHF'
     elif content == 'userinformation':
-        KS.ids['balance'].text = str(user.get_balance()) + ' CHF'
-        KS.ids['name'].text = user.get_firstname() + '\n' + user.get_lastname()
-        KS.ids['avatar'].source = user.get_avatar()
+        KS.ids['balance'].text = str(user.balance) + ' CHF'
+        KS.ids['name'].text = user.firstname + '\n' + user.lastname
+        KS.ids['avatar'].source = user.avatar
     elif content == 'drinks':
         itemlayout.refresh()
     elif content == 'all':
@@ -57,8 +66,9 @@ def refresh(content='all'):
 
 def on_badge(b):
     global badge
+    sm.current = 'Login'
     print(b, badge)
-    if sm.current == 'Kiosk' and b == badge:
+    if b == badge:
         logout()
         return
     badge = b
@@ -76,7 +86,8 @@ class Keyboard(BoxLayout):
             row = BoxLayout()
             row.orientation = 'horizontal'
             for x in y.upper().split(','):
-                row.add_widget(Button(text=x, font_size=30, on_press=self.on_press))
+                row.add_widget(
+                    Button(text=x, font_size=30, on_press=self.on_press))
             self.add_widget(row)
 
     def on_press(self, instance):
@@ -97,7 +108,8 @@ class Keyboard(BoxLayout):
                     if '' in (firstname.text, lastname.text, email.text):
                         b = BoxLayout()
                         b.orientation = 'vertical'
-                        b.add_widget(Label(text='Bitte alle Felder ausfüllen!'))
+                        b.add_widget(
+                            Label(text='Bitte alle Felder ausfüllen!'))
                         btn = Button(text='Ok')
                         b.add_widget(btn)
                         p = Popup()
@@ -107,7 +119,8 @@ class Keyboard(BoxLayout):
                         p.open()
                         return
                     # Create user
-                    user = register_user(firstname.text, lastname.text, email.text, badge)
+                    user = register_user(
+                        firstname.text, lastname.text, email.text, badge)
                     # Clear fields
                     firstname.text = ''
                     lastname.text = ''
@@ -119,6 +132,7 @@ class LoginScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -127,13 +141,13 @@ class KioskScreen(Screen):
 
     def get_balance(self):
         if user is not None:
-            return user.get_avatar()
+            return user.balance
         else:
             return 'Error'
 
     def get_avatar(self):
         if user is not None:
-            return user.get_avatar()
+            return user.avatar
         else:
             return default_avatar
 
@@ -166,6 +180,7 @@ class ItemLayout(GridLayout):
         self.sm = sm
         self.refresh()
         itemlayout = self
+
     def refresh(self):
         self.clear_widgets()
         for drink in get_drinks().items():
