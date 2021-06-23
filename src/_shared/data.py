@@ -4,10 +4,7 @@ from _shared.api import API
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 
-if os.name == 'nt':
-    host = '127.0.0.1'
-else:
-    host = '192.168.137.1'
+host = '127.0.0.1'
 port = 80
 protocol = 'http'
 api = API(host, port, protocol)

@@ -7,7 +7,9 @@ from flask import Flask, render_template, request, jsonify, redirect
 
 import _shared.data as data
 import _server.tables as tables
-    
+
+data.host = '127.0.0.1'
+
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
