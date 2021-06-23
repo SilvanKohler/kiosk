@@ -25,6 +25,7 @@ class API:
     def delete(self, table, filters):
         return requests.post(f'{self.url}/{table}/delete', data=filters).json()
 
+
 if __name__ == '__main__':
     import datetime
     api = API('localhost', 80, 'http')
@@ -37,4 +38,3 @@ if __name__ == '__main__':
             'amount': 1,
             'reason': 'performance-test'
         })
-        
