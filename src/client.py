@@ -66,23 +66,21 @@ def refresh(content='all'):
 
 def on_badge(b):
     global badge
-    sm.current = 'Login'
+    logout()
     print(b, badge)
-    if b == badge:
-        logout()
-        return
-    badge = b
-    if user_exists(b):
-        login(b)
-    else:
-        sm.current = 'Register'
+    if b != badge:
+        badge = b
+        if user_exists(b):
+            login(b)
+        else:
+            sm.current = 'Register'
 
 
 class Keyboard(BoxLayout):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = 'vertical'
-        for i, y in enumerate(keys):
+        for y in keys:
             row = BoxLayout()
             row.orientation = 'horizontal'
             for x in y.upper().split(','):
