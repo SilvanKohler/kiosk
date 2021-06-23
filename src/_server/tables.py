@@ -2,9 +2,9 @@ from collections import deque
 import shelve
 from time import sleep
 import uuid
-from os import cwd, path
+from os import getcwd, path
 
-data_directory = path.join(cwd, 'data/')
+data_directory = path.join(getcwd(), 'data/')
 user_table = shelve.open(path.join(data_directory, 'user'), writeback=True)
 badge_table = shelve.open(path.join(data_directory, 'badge'), writeback=True)
 drink_table = shelve.open(path.join(data_directory, 'drink'), writeback=True)
