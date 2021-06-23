@@ -32,7 +32,7 @@ def test():
     Du hast im letzten Monat {100} CHF ausgegeben.''')
     msg['Subject'] = f'Ausgaben des letzten Monats'
     msg['From'] = sender
-    msg['To'] = 'edu.silvan.kohler@gmail.com'
+    msg['To'] = 'silvankohler@protonmail.com'
     time.sleep(2)
     s = smtplib.SMTP('localhost', port=1025)
     s.send_message(msg)
