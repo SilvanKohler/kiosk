@@ -2,14 +2,14 @@ from collections import deque
 import shelve
 from time import sleep
 import uuid
-data_directory = 'data/'
+from os import cwd, path
 
-user_table = shelve.open(data_directory + 'user', writeback=True)
-badge_table = shelve.open(data_directory + 'badge', writeback=True)
-drink_table = shelve.open(data_directory + 'drink', writeback=True)
-purchase_table = shelve.open(data_directory + 'purchase', writeback=True)
-transaction_table = shelve.open(data_directory + 'transaction', writeback=True)
-mail_table = shelve.open(data_directory + 'mail', writeback=True)
+data_directory = path.join(cwd, 'data/')
+user_table = shelve.open(path.join(data_directory, 'user'), writeback=True)
+badge_table = shelve.open(path.join(data_directory, 'badge'), writeback=True)
+drink_table = shelve.open(path.join(data_directory, 'drink'), writeback=True)
+purchase_table = shelve.open(path.join(data_directory, 'purchase'), writeback=True)
+transaction_table = shelve.open(path.join(data_directory, 'transaction'), writeback=True)
 
 tables = {
     'user': user_table,
@@ -17,7 +17,6 @@ tables = {
     'drink': drink_table,
     'purchase': purchase_table,
     'transaction': transaction_table,
-    'mail': mail_table
 }
 for table in tables.items():
     print(table[0] + ':')

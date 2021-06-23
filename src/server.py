@@ -17,8 +17,7 @@ specs = {
     'badge': ('bid', ('badgenumber', 'uid')),
     'drink': ('did', ('name', 'stock', 'price')),
     'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
-    'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason')),
-    'mail': ('mid', ('datetime', 'uid', 'balance'))
+    'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason'))
 }
 floats = ['amount', 'price']
 ints = ['stock', 'badgenumber']
