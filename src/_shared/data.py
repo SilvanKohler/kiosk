@@ -1,6 +1,6 @@
 import datetime
 import os
-from shared.api import API
+from _shared.api import API
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 

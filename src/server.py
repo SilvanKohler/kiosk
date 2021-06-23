@@ -5,8 +5,8 @@ import datetime
 
 from flask import Flask, render_template, request, jsonify, redirect
 
-import shared.data as data
-import server.tables as tables
+import _shared.data as data
+import _server.tables as tables
     
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))

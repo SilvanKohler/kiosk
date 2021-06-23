@@ -12,9 +12,9 @@ from kivy.uix.textinput import TextInput
 from kivy.logger import Logger
 from kivy.config import Config
 from threading import Thread
-from client.badge import run
+from _client.badge import run
 import time
-from shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
+from _shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
 
 Config.read('client/config.ini')
