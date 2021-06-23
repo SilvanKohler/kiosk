@@ -1,3 +1,4 @@
+#Environment
 .idea
 .vscode
 venv/
@@ -11,4 +12,6 @@ linuxvenv/
 
 #Cache files
 *.pyc
-src/client/pcprox/
+
+#Modules
+src/_client/pcprox/
