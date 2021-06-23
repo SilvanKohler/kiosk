@@ -1,63 +1,86 @@
-import usb.core
-import usb.util
+from client.pcprox import pcprox
 import time
 
-
-# CONFIG
-# change VENDER_ID and PRODUCT_ID corresponding to a reader model
-VENDER_ID = 0x0C27
-PRODUCT_ID = 0x3BFA
-PROX_END = 2
-INTERFACE = 0
-
-
-def get_prox():
-    # Detect the device
-    dev = usb.core.find(idVendor=VENDER_ID, idProduct=PRODUCT_ID)
-    if dev is None:
-        raise ValueError('Card reader is not connected')
-
-    # Make sure libusb handles the device
-    if dev.is_kernel_driver_active(INTERFACE):
-        print('Detach Kernel Driver')
-        dev.detach_kernel_driver(INTERFACE)
-    # Set a mode
-    # ctrl_transfer is used to control endpoint0
-    dev.set_configuration(1)
-    usb.util.claim_interface(dev, INTERFACE)
-    dev.ctrl_transfer(0x21, 9, 0x0300, 0, [0x008d])
-
-    # Pull the status
-    output = dev.ctrl_transfer(0xA1, 1, 0x0300, 0, PROX_END)
-
-    # Convert output into integers
-    proxHex = '0x'
-    for h in reversed(output):
-        proxHex += hex(h)[2:]
-
-    return int(proxHex, 16)
-
-
-# Main Loop
+# https://github.com/micolous/pcprox
 
 
 def run(callback):
-    prev = 0
-    last = time.time()
-    # print('Ready for Scan...')
+    try:
+        dev = pcprox.open_pcprox(debug=False)
 
-    while True:
-        try:
-            result = get_prox()  # Get badge id
-        except ValueError:
-            continue
-        if result != prev or time.time()-last >= 5:
-            if result != 0:
-                # print(result)
-                callback(result)  # run callback function
-                # print('after')
-                time.sleep(2)
-                prev = 0
-            prev = result
+        # Show the device info
+        print(repr(dev.get_device_info()))
 
-        time.sleep(0.5)
+        # Dump the configuration from the device.
+        config = dev.get_config()
+        config.print_config()
+
+        # Disable sending keystrokes, as we want direct control
+        config.bHaltKBSnd = True
+
+        # Turn off the red LED, turn on the green LED
+        config.iRedLEDState = False
+        config.iGrnLEDState = True
+
+        # Tells pcProx that the LEDs are under application control
+        config.bAppCtrlsLED = True
+
+        # Send the updated configuration to the device
+        config.set_config(dev)
+
+        # Exit configuration mode
+        dev.end_config()
+
+        # Wait half a second
+        time.sleep(.5)
+        # Turn off the green LED
+        config.iGrnLEDState = False
+        print('Waiting for a card... (red light should pulse)')
+        x = 0
+        last_tag = None
+        last_time = 0
+        while True:
+            x += 1
+            x %= 6
+            # flash the red LED as "1-on 1-off 1-on 3-off"
+            config.iRedLEDState = (x in (0, 2))
+            # LED control is in page 2, so we can explicitly only configure this
+            # page.
+            config.set_config(dev, [2])
+            dev.end_config()
+            tag = dev.get_tag()
+
+            if tag is not None and (last_tag != tag or time.time()-last_time > 5):
+                last_tag = tag
+                last_time = time.time()
+                # We got a card!
+                # Turn off the red LED
+                config.iRedLEDState = False
+                config.set_config(dev, [2])
+                dev.end_config()
+
+                # Print the tag ID on screen
+                bid = int(''.join(['%02x' % c for c in tag[0]]), 16)
+                # print(bid)
+                callback(bid)
+                for x in range(20):
+                    config.iGrnLEDState = x & 0x01 == 0
+                    config.iRedLEDState = x & 0x02 > 0
+                    config.set_config(dev, [2])
+                    dev.end_config()
+                    time.sleep(.1)
+
+            # No card in the field, sleep
+            time.sleep(.2)
+    except KeyboardInterrupt:
+        # Re-enable sending keystrokes
+        config.bHaltKBSnd = True
+
+        # Place the LEDs back under pcProx control
+        config.iRedLEDState = config.iGrnLEDState = config.bAppCtrlsLED = False
+
+        # Send the updated configuration
+        config.set_config(dev)
+        dev.end_config()
+
+        dev.close()
