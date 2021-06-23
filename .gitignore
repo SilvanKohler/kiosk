@@ -11,3 +11,4 @@ linuxvenv/
 
 #Cache files
 *.pyc
+src/client/pcprox/
