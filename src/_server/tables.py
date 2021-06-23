@@ -1,16 +1,19 @@
-from collections import deque
 import shelve
-from time import sleep
 import uuid
-from os import getcwd, path
+from collections import deque
+from os import getcwd, mkdir, path
+from time import sleep
 
 data_directory = path.join(getcwd(), 'data/')
-print(data_directory)
+if not path.exists(data_directory):
+    mkdir(data_directory)
 user_table = shelve.open(path.join(data_directory, 'user'), writeback=True)
 badge_table = shelve.open(path.join(data_directory, 'badge'), writeback=True)
 drink_table = shelve.open(path.join(data_directory, 'drink'), writeback=True)
-purchase_table = shelve.open(path.join(data_directory, 'purchase'), writeback=True)
-transaction_table = shelve.open(path.join(data_directory, 'transaction'), writeback=True)
+purchase_table = shelve.open(
+    path.join(data_directory, 'purchase'), writeback=True)
+transaction_table = shelve.open(
+    path.join(data_directory, 'transaction'), writeback=True)
 
 tables = {
     'user': user_table,
