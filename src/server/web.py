@@ -25,6 +25,7 @@ specs = {
 floats = ['amount', 'price']
 ints = ['stock', 'badgenumber']
 
+
 @app.route('/')
 def root():
     return render_template('index.html')
@@ -126,6 +127,7 @@ def root_purchases():
 def root_billing():
     if request.args:
         changes = {}
+        print(list(request.args.items()))
         for key, value in request.args.items():
             if 'action-' in key:
                 uid = key.replace('action-', '')
@@ -139,12 +141,23 @@ def root_billing():
                 try:
                     changes[uid].update({'value': float(value)})
                 except ValueError:
-                    break
+                    if value == '':
+                        changes[uid].update({'value': float(0)})
+                    else:
+                        break
         else:
             for uid, values in changes.items():
-                data.create_transaction(uid, values['value'], values['action'])
+                if str(values['action']).lower() in ('twint', 'bar', 'korrektur', 'sonstig') and values['value'] != 0:
+                    data.create_transaction(
+                        uid, values['value'], values['action'])
         return redirect('/billing')
-    return render_template('billing.html', list=list, users=data.get_users())
+    users = data.get_users()
+    for user in users.keys():
+        transactions = data.get_transactions(user)
+        purchases = data.get_purchases(user)
+        users[user]['balance'] = sum(map(lambda x: x[1]['amount'], transactions.items(
+        ))) - sum(map(lambda x: x[1]['amount'], purchases.items()))
+    return render_template('billing.html', list=list, users=users)
 
 ############### API #################
 
@@ -164,9 +177,6 @@ def root_api_get(table):
         for entry in dict(tables.results.get(i)).items():
             try:
                 for parameter in parameters.items():
-                    print(parameter, specs[table], entry[1])
-                    print(parameter[0] in specs[table][1] and str(parameter[1]).lower() == str(entry[1][parameter[0]]).lower())
-                    print(parameter[0] == specs[table][0] and str(parameter[1]).lower() == str(entry[0]).lower())
                     if not ((parameter[0] == specs[table][0] and str(parameter[1]).lower() == str(entry[0]).lower()) or (parameter[0] in specs[table][1] and str(
                             parameter[1]).lower() == str(entry[1][parameter[0]]).lower())):
                         break
@@ -246,7 +256,6 @@ def root_api_delete(table):
         except:
             pass
     return jsonify(content), 200 if content['success'] else 406
-
 
 if __name__ == "__main__":
     Thread(target=tables.run).start()

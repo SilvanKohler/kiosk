@@ -2,9 +2,8 @@ import datetime
 import os
 from shared.api import API
 
-default_avatar = 'https://murwillumbahvet.com.au/wp-content/uploads/2019/08/profile-blank.png'
+default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 
-# default_avatar = 'https://media.giphy.com/media/QuPrp3BI6cMe2lErCb/giphy.gif'
 if os.name == 'nt':
     host = '127.0.0.1'
 else:
@@ -33,13 +32,14 @@ class User:
         for user in users.items():
             if user[1]['firstname'] == firstname and user[1]['lastname'] == lastname and user[1]['email'] == email:
                 self.uid = user[0]
-                return
-        self.uid = api.create('user', {
-            'firstname': firstname,
-            'lastname': lastname,
-            'email': email,
-            'avatar': default_avatar
-        })['uid']
+                break
+        else:
+            self.uid = api.create('user', {
+                'firstname': firstname,
+                'lastname': lastname,
+                'email': email,
+                'avatar': default_avatar
+            })['uid']
         api.create('badge', {
             'badgenumber': badgenumber,
             'uid': self.uid
@@ -141,13 +141,14 @@ def login_user(badgenumber):
     return user
 
 
-def get_transactions():
-    transactions = api.get('transaction', {})
+def get_transactions(uid=None):
+    transactions = api.get(
+        'transaction', {'uid': uid} if uid is not None else {})
     return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
 
-def get_purchases():
-    purchases = api.get('purchase', {})
+def get_purchases(uid=None):
+    purchases = api.get('purchase', {'uid': uid} if uid is not None else {})
     return dict(filter(lambda x: x[0] != 'success', purchases.items()))
 
 
