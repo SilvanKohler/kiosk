@@ -5,6 +5,7 @@ import uuid
 from os import getcwd, path
 
 data_directory = path.join(getcwd(), 'data/')
+print(data_directory)
 user_table = shelve.open(path.join(data_directory, 'user'), writeback=True)
 badge_table = shelve.open(path.join(data_directory, 'badge'), writeback=True)
 drink_table = shelve.open(path.join(data_directory, 'drink'), writeback=True)
