@@ -1,7 +1,7 @@
-import queue
+from collections import deque
 import shelve
 from time import sleep
-
+import uuid
 data_directory = 'data/'
 
 user_table = shelve.open(data_directory + 'user', writeback=True)
@@ -23,40 +23,50 @@ for table in tables.items():
     print(table[0] + ':')
     print('\n'.join(f'{x}: {y}' for x, y in table[1].items()))
 
-chain = queue.Queue()
-results = {}
-running = True
+queue = deque()
 
 
-def process(request):
-    # print(1, request)
-    if request[0] == 'get':
-        # print(2, {request[2]: dict(tables.get(request[1], None).items())})
-        results.update(
-            {request[2]: dict(tables.get(request[1], None).items())})
-    elif request[0] == 'set':
-        tables.get(request[1], None)[request[2]] = request[3]
-        if isinstance(tables.get(request[1], None), shelve.Shelf):
-            tables.get(request[1], None).sync()
-    elif request[0] == 'update':
-        tables.get(request[1], {}).update(request[2])
-        if isinstance(tables.get(request[1], None), shelve.Shelf):
-            tables.get(request[1], None).sync()
-    elif request[0] == 'del':
-        del tables.get(request[1], None)[request[2]]
-        if isinstance(tables.get(request[1], None), shelve.Shelf):
-            tables.get(request[1], None).sync()
-    # print(3, dict(tables.get(request[1], None).items()))
+def sync(table):
+    if isinstance(tables.get(table, None), shelve.Shelf):
+        tables.get(table, None).sync()
 
 
-def run():
-    print('Server gestartet.')
-    while running:
-        # print('Warteschlange abarbeiten.')
-        while chain.unfinished_tasks > 0:
-            print(f'Anfrage abarbeiten.')
-            process(chain.get())
-            chain.task_done()
-            print(f'Anfrage fertig.')
-        # print('Warteschlange leer.')
-        sleep(0.05)
+def get(table):
+    i = uuid.uuid1().hex
+    queue.append(i)
+    while queue[0] != i:
+        sleep(0.1)
+    result = dict(tables.get(table, None).items())
+    sync(table)
+    queue.popleft()
+    return result
+
+
+def set(table, key, value):
+    i = uuid.uuid1().hex
+    queue.append(i)
+    while queue[0] != i:
+        sleep(0.1)
+    tables.get(table, None)[key] = value
+    sync(table)
+    queue.popleft()
+
+
+def update(table, dict_):
+    i = uuid.uuid1().hex
+    queue.append(i)
+    while queue[0] != i:
+        sleep(0.1)
+    tables.get(table, {}).update(dict_)
+    sync(table)
+    queue.popleft()
+
+
+def delete(table, key):
+    i = uuid.uuid1().hex
+    queue.append(i)
+    while queue[0] != i:
+        sleep(0.1)
+    del tables.get(table, None)[key]
+    sync(table)
+    queue.popleft()
