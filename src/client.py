@@ -100,7 +100,9 @@ class Keyboard(BoxLayout):
                 if instance.text not in ('DEL', 'SPEICHERN'):
                     focused.text += instance.text
                 elif instance.text == 'DEL':
-                    focused.text = focused.text[:-1]
+                    if focused.cursor_col > 0:
+                        focused.text = focused.text[:focused.cursor_col -
+                                                    1] + focused.text[focused.cursor_col:]
                 elif instance.text == 'SPEICHERN':
                     firstname = self.parent.parent.ids.firstname
                     lastname = self.parent.parent.ids.lastname
