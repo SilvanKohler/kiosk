@@ -64,7 +64,7 @@ def edit(table, filters, properties=None):
         parameters = {
             key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in (filters.items() if properties is None else dict(
-                tuple(filters.items()) + tuple(properties.items())))
+                tuple(filters.items()) + tuple(properties.items())).items())
         }
         try:
             pos = tuple(parameters.keys()).index(specs[table][0])
