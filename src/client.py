@@ -183,11 +183,11 @@ class Item(Button):
 
     def on_press(self):
         if time.time() - times2.get(self.id, time.time() - 100) > 2:
+            disable_items()
+            Clock.schedule_once(enable_items, 3)
             times2.update({self.id: time.time()})
             user.buy(self.did)
             refresh('balance')
-            disable_items()
-            Clock.schedule_once(enable_items, 2)
 
 
 
