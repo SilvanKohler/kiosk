@@ -12,7 +12,10 @@ class API:
         return f'{self.protocol}://{self.ip}:{self.port}/api'
 
     def get(self, table, filters):
-        return requests.post(f'{self.url}/{table}/get', data=filters).json()
+        print(table, filters)
+        r = requests.post(f'{self.url}/{table}/get', data=filters)
+        print(r)
+        return r.json()
 
     def create(self, table, properties):
         print(table, properties)
