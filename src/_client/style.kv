@@ -12,7 +12,9 @@
                 id: balance
                 size_hint_x: 0.5
                 text: 'Fehler'
-            FloatLayout:
+            Button:
+                text: 'Abmelden'
+                on_press: root.logout
             Label:
                 id: otp
                 text: 'OTP\n12345'
