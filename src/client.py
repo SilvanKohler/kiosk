@@ -185,6 +185,7 @@ class Item(Button):
         self.price = 0
         self.id = uuid.uuid1().hex
         self.background_color = color.accent
+        self.color = color.accent
 
     def on_press(self):
         disable_items()
