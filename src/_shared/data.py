@@ -4,10 +4,10 @@ from _shared.api import API
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 
-# host = 'kassensystem.pythonanywhere.com'
+# host = '127.0.0.1'
 # port = 80
 # protocol = 'http'
-host = '127.0.0.1'
+host = 'kassensystem.pythonanywhere.com'
 port = 80
 protocol = 'http'
 proxies = {
