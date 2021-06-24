@@ -14,24 +14,27 @@ class API:
         return f'{self.protocol}://{self.ip}:{self.port}/api'
 
     def get(self, table, filters):
-        print(table, filters)
         r = self.session.post(f'{self.url}/{table}/get',
                               data=filters, proxies=self.proxies)
-        print(r.content)
+        r.raw.chunked = True
         return r.json()
 
     def create(self, table, properties):
-        print(table, properties)
         r = self.session.post(f'{self.url}/{table}/create', data=properties, proxies=self.proxies)
-        print(r.content)
+        r.raw.chunked = True
         return r.json()
 
     def edit(self, table, filters, properties):
-        return self.session.post(f'{self.url}/{table}/edit',
-                                 data=dict(tuple(filters.items()) + tuple(properties.items())), proxies=self.proxies).json()
+        r = self.session.post(f'{self.url}/{table}/edit',
+                                 data=dict(tuple(filters.items()) + tuple(properties.items())), proxies=self.proxies)
+        r.raw.chunked = True
+        return r.json()
+                                 
 
     def delete(self, table, filters):
-        return self.session.post(f'{self.url}/{table}/delete', data=filters, proxies=self.proxies).json()
+        r = self.session.post(f'{self.url}/{table}/delete', data=filters, proxies=self.proxies)
+        r.raw.chunked = True
+        return r.json()
 
 
 if __name__ == '__main__':
