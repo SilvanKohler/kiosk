@@ -1,4 +1,4 @@
-from client.pcprox import pcprox
+from _client.pcprox import pcprox
 import time
 
 # https://github.com/micolous/pcprox
