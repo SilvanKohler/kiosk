@@ -20,9 +20,13 @@ import _client.badge as badge
 import _shared.data as data
 import directories
 
+
 def print(*text):
-    if len(text) == 0: text = ['']
+    if len(text) == 0:
+        text = ['']
     Logger.debug(f'{__file__}: {" ".join(str(text))}')
+
+
 data.init('client')
 
 Config.read(os.path.join(directories.__client__, 'config.ini'))
@@ -40,12 +44,14 @@ badge_ = None
 user = None
 itemlayout = None
 
+
 class color:
     primary = ColorProperty('#3F51B5').defaultvalue
     accent = ColorProperty('#FF4081').defaultvalue
     background = ColorProperty('#FFFFFF').defaultvalue
     background_normal = 'atlas://data/images/defaulttheme/button'
     text = ColorProperty('#FFFFFF').defaultvalue
+
 
 def login(b):
     global user
@@ -148,6 +154,7 @@ class LoginScreen(Screen):
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
     def logout(self):
         logout()
     blank = data.default_avatar
@@ -169,14 +176,19 @@ class RegisterScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 items = []
+
+
 def enable_items(*args, **kwargs):
     for item in items:
         item.disabled = False
 
+
 def disable_items():
     for item in items:
         item.disabled = True
+
 
 class Item(Button):
     def __init__(self, *args, **kwargs):
@@ -187,13 +199,14 @@ class Item(Button):
         self.price = 0
         self.id = uuid.uuid1().hex
         self.background_color = color.accent
+        self.color = color.text
         self.background_normal = color.background_normal
+
     def on_press(self):
         disable_items()
         user.buy(self.did)
         refresh('balance')
         Clock.schedule_once(enable_items, 2)
-
 
 
 class ItemLayout(GridLayout):
