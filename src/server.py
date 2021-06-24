@@ -15,7 +15,6 @@ app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 
 
-
 @app.route('/')
 def root():
     return render_template('index.html')
@@ -174,6 +173,7 @@ def root_api_edit(table):
 def root_api_delete(table):
     content = core.get(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
+
 
 if __name__ == "__main__":
     app.run("0.0.0.0", 80)
