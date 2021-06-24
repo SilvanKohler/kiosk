@@ -142,7 +142,7 @@ class LoginScreen(Screen):
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    def logout(self, instance):
+    def logout(self):
         print('logout')
         logout()
     blank = data.default_avatar
