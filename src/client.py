@@ -182,8 +182,8 @@ class Item(Button):
 
     def on_press(self):
         disable_items()
+        Clock.schedule_once(enable_items, 2)
         user.buy(self.did)
-        Clock.schedule_once(enable_items, 3)
         refresh('balance')
 
 
