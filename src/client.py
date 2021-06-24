@@ -14,7 +14,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import NoTransition, Screen, ScreenManager
 from kivy.uix.textinput import TextInput
-
+from kivy.properties import ColorProperty
 
 import _client.badge as badge
 import _shared.data as data
@@ -41,11 +41,11 @@ user = None
 itemlayout = None
 
 class color:
-    primary = (63/255, 81/255, 181/255, 255/255)
-    accent = (255/255, 64/255, 129/255, 255/255)
-    background = (255/255, 255/255, 255/255, 255/255)
-    background_normal = ''
-    text = (255/255, 255/255, 255/255, 255/255)
+    primary = ColorProperty('#3F51B5')
+    accent = ColorProperty('#FF4081')
+    background = ColorProperty('#FFFFFF')
+    background_normal = 'atlas://data/images/defaulttheme/button'
+    text = ColorProperty('#FFFFFF')
 
 def login(b):
     global user
