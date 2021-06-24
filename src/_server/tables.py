@@ -3,7 +3,7 @@ import uuid
 from collections import deque
 from os import getcwd, mkdir, path
 from time import sleep
-
+print(getcwd())
 data_directory = path.join(getcwd(), 'data/')
 if not path.exists(data_directory):
     mkdir(data_directory)
