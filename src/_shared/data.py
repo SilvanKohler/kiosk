@@ -10,7 +10,11 @@ default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public
 host = '127.0.0.1'
 port = 80
 protocol = 'http'
-api = API(host, port, protocol)
+proxies = {
+    'http': 'http://proxy.server:3128',
+    'https': 'https://proxy.server:3128'
+}
+api = API(host, port, protocol, proxies)
 
 
 class User:
