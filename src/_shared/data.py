@@ -1,20 +1,17 @@
 import datetime
-import os
-from _shared.api import API
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
-
-# host = '127.0.0.1'
-# port = 80
-# protocol = 'http'
-host = 'kassensystem.pythonanywhere.com'
-port = 80
-protocol = 'http'
-proxies = {
-    'http': 'http://proxy.server:3128',
-    'https': 'https://proxy.server:3128'
-}
-api = API(host, port, protocol, proxies)
+api = None
+def init(type_):
+    global api
+    if type_ == 'client':
+        from _shared.api import API
+        host = 'kassensystem.pythonanywhere.com'
+        port = 80
+        protocol = 'http'
+        api = API(host, port, protocol)
+    elif type_ == 'server':
+        import _server.core as api
 
 
 class User:

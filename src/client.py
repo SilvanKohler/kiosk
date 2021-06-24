@@ -1,21 +1,25 @@
+import time
+import uuid
+from threading import Thread
+
 from kivy.app import App
+from kivy.config import Config
 from kivy.lang import Builder
+from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
-from kivy.uix.button import Button
+from kivy.uix.screenmanager import NoTransition, Screen, ScreenManager
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
-from kivy.logger import Logger
-from kivy.config import Config
-from threading import Thread
-from _client.badge import run
-import time
-from _shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
-import uuid
+
+import _client.badge as badge
+import _shared.data as data
+
+data.init('client')
 
 Config.read('client/config.ini')
 style = Builder.load_file('client/style.kv')
@@ -37,7 +41,7 @@ itemlayout = None
 
 def login(b):
     global user
-    user = login_user(b)
+    user = data.login_user(b)
     sm.current = 'Kiosk'
     refresh()
 
@@ -70,7 +74,7 @@ def on_badge(b):
     print(b, badge)
     if b != badge:
         badge = b
-        if user_exists(b):
+        if data.user_exists(b):
             login(b)
         else:
             sm.current = 'Register'
@@ -119,7 +123,7 @@ class Keyboard(BoxLayout):
                         p.open()
                         return
                     # Create user
-                    user = register_user(
+                    user = data.register_user(
                         firstname.text, lastname.text, email.text, badge)
                     # Clear fields
                     firstname.text = ''
@@ -137,7 +141,7 @@ class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    blank = default_avatar
+    blank = data.default_avatar
 
     def get_balance(self):
         if user is not None:
@@ -149,7 +153,7 @@ class KioskScreen(Screen):
         if user is not None:
             return user.avatar
         else:
-            return default_avatar
+            return data.default_avatar
 
 
 class RegisterScreen(Screen):
@@ -183,7 +187,7 @@ class ItemLayout(GridLayout):
 
     def refresh(self):
         self.clear_widgets()
-        for drink in get_drinks().items():
+        for drink in data.get_drinks().items():
             b = Item()
             b.did = drink[0]
             b.name = drink[1]['name']
@@ -219,7 +223,7 @@ class KioskApp(App):
 
 
 # try:
-badgesensor = Thread(target=run, args=[on_badge, ])
+badgesensor = Thread(target=badge.run, args=[on_badge, ])
 badgesensor.start()
 
 app = KioskApp()

@@ -7,6 +7,7 @@ class API:
         self.port = port
         self.protocol = protocol
         self.proxies = proxies
+        self.session = requests
 
     @property
     def url(self):
@@ -14,20 +15,21 @@ class API:
 
     def get(self, table, filters):
         print(table, filters)
-        r = requests.post(f'{self.url}/{table}/get', data=filters, proxies=self.proxies)
+        r = self.session.post(f'{self.url}/{table}/get',
+                              data=filters, proxies=self.proxies)
         print(r.content)
         return r.json()
 
     def create(self, table, properties):
         print(table, properties)
-        return requests.post(f'{self.url}/{table}/create', data=properties, proxies=self.proxies).json()
+        return self.session.post(f'{self.url}/{table}/create', data=properties, proxies=self.proxies).json()
 
     def edit(self, table, filters, properties):
-        return requests.post(f'{self.url}/{table}/edit',
-                             data=dict(tuple(filters.items()) + tuple(properties.items())), proxies=self.proxies).json()
+        return self.session.post(f'{self.url}/{table}/edit',
+                                 data=dict(tuple(filters.items()) + tuple(properties.items())), proxies=self.proxies).json()
 
     def delete(self, table, filters):
-        return requests.post(f'{self.url}/{table}/delete', data=filters, proxies=self.proxies).json()
+        return self.session.post(f'{self.url}/{table}/delete', data=filters, proxies=self.proxies).json()
 
 
 if __name__ == '__main__':

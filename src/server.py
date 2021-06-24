@@ -1,27 +1,19 @@
 import random
-import re
 import uuid
 import datetime
 
 from flask import Flask, render_template, request, jsonify, redirect
 
 import _shared.data as data
-import _server.tables as tables
+import _server.core as core
 
+data.init('server')
 
 app = Flask(__name__)
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 
-specs = {
-    'user': ('uid', ('firstname', 'lastname', 'email', 'avatar')),
-    'badge': ('bid', ('badgenumber', 'uid')),
-    'drink': ('did', ('name', 'stock', 'price')),
-    'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
-    'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason'))
-}
-floats = ['amount', 'price']
-ints = ['stock', 'badgenumber']
+
 
 
 @app.route('/')
@@ -162,89 +154,25 @@ def root_billing():
 
 @app.route('/api/<table>/get', methods=['POST'])
 def root_api_get(table):
-    content = {'success': False}
-    if table in tables.tables.keys():
-        parameters = {
-            key: (float(value) if key in floats else int(value) if key in ints else value) for
-            key, value in request.form.items()
-        }
-        result = tables.get(table)
-        for entry in dict(result).items():
-            try:
-                for parameter in parameters.items():
-                    if not ((parameter[0] == specs[table][0] and str(parameter[1]).lower() == str(entry[0]).lower()) or (parameter[0] in specs[table][1] and str(
-                            parameter[1]).lower() == str(entry[1][parameter[0]]).lower())):
-                        break
-                else:
-                    content.update({
-                        entry[0]: {
-                            key: value for key, value in entry[1].items()
-                        }
-                    })
-                    content['success'] = True
-            except (KeyError, re.error):
-                pass
+    content = core.get(table, request.form.items())
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/create', methods=['POST'])
 def root_api_create(table):
-    content = {'success': False}
-    if table in tables.tables.keys():
-        parameters = {
-            key: (float(value) if key in floats else int(value) if key in ints else value) for
-            key, value in request.form.items()
-        }
-        try:
-            i = uuid.uuid1().hex
-            tables.update(table, {
-                i: {
-                    spec: parameters[spec] for spec in specs[table][1]
-                }
-            })
-            content[specs[table][0]] = i
-            content['success'] = True
-        except KeyError:
-            pass
+    content = core.get(table, request.form.items())
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/edit', methods=['POST'])
 def root_api_edit(table):
-    content = {'success': False}
-    if table in tables.tables.keys():
-        parameters = {
-            key: (float(value) if key in floats else int(value) if key in ints else value) for
-            key, value in request.form.items()
-        }
-        try:
-            pos = tuple(parameters.keys()).index(specs[table][0])
-            d = tables.get(table)
-            d[parameters[specs[table][0]]].update({
-                parameter[0]: parameter[1] for parameter in
-                tuple(parameters.items())[:pos] +
-                tuple(parameters.items())[pos + 1:]
-            })
-            tables.update(table, d)
-            content['success'] = True
-        except KeyError:
-            pass
+    content = core.get(table, request.form.items())
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/delete', methods=['POST'])
 def root_api_delete(table):
-    content = {'success': False}
-    if table in tables.tables.keys():
-        parameters = {
-            key: (float(value) if key in floats else int(value) if key in ints else value) for
-            key, value in request.form.items()
-        }
-        try:
-            tables.delete(table, parameters[specs[table][0]])
-            content['success'] = True
-        except:
-            pass
+    content = core.get(table, request.form.items())
     return jsonify(content), 200 if content['success'] else 406
 
 if __name__ == "__main__":
