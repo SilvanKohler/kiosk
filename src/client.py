@@ -1,7 +1,7 @@
 import time
 import uuid
 from threading import Thread
-
+import os
 from kivy.app import App
 from kivy.config import Config
 from kivy.lang import Builder
@@ -18,11 +18,12 @@ from kivy.uix.textinput import TextInput
 
 import _client.badge as badge
 import _shared.data as data
+import directories
 
 data.init('client')
 
-Config.read('client/config.ini')
-style = Builder.load_file('client/style.kv')
+Config.read(os.path.join(directories.__client__, 'config.ini'))
+style = Builder.load_file(os.path.join(directories.__client__, 'style.kv'))
 sm = ScreenManager(transition=NoTransition())
 keys = [
     '1,2,3,4,5,6,7,8,9,0',

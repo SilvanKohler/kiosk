@@ -2,17 +2,17 @@ import random
 import uuid
 import datetime
 
-from flask import Flask, render_template, request, jsonify, redirect
-
+from flask import Flask, render_template, request, jsonify, redirect, config
+import os
 import _shared.data as data
 import _server.core as core
+import directories
 
 data.init('server')
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=os.path.join(directories.__templates__))
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
-
 
 
 
