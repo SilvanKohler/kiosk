@@ -40,6 +40,10 @@ badge_ = None
 user = None
 itemlayout = None
 
+class color:
+    primary = (63/255, 81/255, 181/255)
+    accent = (255/255, 64/255, 129/255)
+    background = (255/255, 255/255, 255/255)
 
 def login(b):
     global user
@@ -180,6 +184,7 @@ class Item(Button):
         self.stock = 0
         self.price = 0
         self.id = uuid.uuid1().hex
+        self.background_color = color.accent
 
     def on_press(self):
         disable_items()
