@@ -9,12 +9,10 @@ from kivy.lang import Builder
 from kivy.logger import Logger
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import NoTransition, Screen, ScreenManager
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 
 
@@ -22,17 +20,19 @@ import _client.badge as badge
 import _shared.data as data
 import directories
 
+def print(*text):
+    if len(text) = 0: text = ['']
+    Logger.debug(f'{__file__}: {" ".join(text)}')
 data.init('client')
 
 Config.read(os.path.join(directories.__client__, 'config.ini'))
 style = Builder.load_file(os.path.join(directories.__client__, 'style.kv'))
 sm = ScreenManager(transition=NoTransition())
 keys = [
-    '1,2,3,4,5,6,7,8,9,0',
     'q,w,e,r,t,z,u,i,o,p',
     'a,s,d,f,d,g,h,j,k,l',
     'y,x,c,v,b,n,m',
-    '.,@,-,del,SPEICHERN'
+    '.,-,@,del,SPEICHERN'
 ]
 focused = None
 times = {}
@@ -44,8 +44,8 @@ itemlayout = None
 def login(b):
     global user
     user = data.login_user(b)
-    sm.current = 'Kiosk'
     refresh()
+    sm.current = 'Kiosk'
 
 
 def logout():
@@ -143,7 +143,6 @@ class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
     def logout(self):
-        print('logout')
         logout()
     blank = data.default_avatar
 
@@ -239,6 +238,7 @@ class KioskApp(App):
 
 
 # try:
+badge.Logger = Logger
 badgesensor = Thread(target=badge.run, args=[on_badge, ])
 badgesensor.start()
 
