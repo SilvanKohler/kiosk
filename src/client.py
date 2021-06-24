@@ -35,7 +35,7 @@ keys = [
 focused = None
 times = {}
 times2 = {}
-badge = None
+badge_ = None
 user = None
 itemlayout = None
 
@@ -48,9 +48,9 @@ def login(b):
 
 
 def logout():
-    global user, badge
+    global user, badge_
     user = None
-    badge = None
+    badge_ = None
     sm.current = 'Login'
 
 
@@ -70,11 +70,11 @@ def refresh(content='all'):
 
 
 def on_badge(b):
-    global badge
+    global badge_
     logout()
-    print(b, badge)
-    if b != badge:
-        badge = b
+    print(b, badge_)
+    if b != badge_:
+        badge_ = b
         if data.user_exists(b):
             login(b)
         else:
@@ -125,7 +125,7 @@ class Keyboard(BoxLayout):
                         return
                     # Create user
                     user = data.register_user(
-                        firstname.text, lastname.text, email.text, badge)
+                        firstname.text, lastname.text, email.text, badge_)
                     # Clear fields
                     firstname.text = ''
                     lastname.text = ''
