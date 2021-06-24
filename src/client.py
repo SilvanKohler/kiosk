@@ -41,11 +41,11 @@ user = None
 itemlayout = None
 
 class color:
-    primary = ColorProperty('#3F51B5')
-    accent = ColorProperty('#FF4081')
-    background = ColorProperty('#FFFFFF')
+    primary = ColorProperty('#3F51B5').defaultvalue
+    accent = ColorProperty('#FF4081').defaultvalue
+    background = ColorProperty('#FFFFFF').defaultvalue
     background_normal = 'atlas://data/images/defaulttheme/button'
-    text = ColorProperty('#FFFFFF')
+    text = ColorProperty('#FFFFFF').defaultvalue
 
 def login(b):
     global user
