@@ -8,7 +8,7 @@ import _shared.data as data
 import _server.core as core
 import directories
 
-data.init('server')
+data.init('
 
 app = Flask(__name__, template_folder=os.path.join(directories.__templates__))
 app.secret_key = bytes(random.randrange(4096))
@@ -154,25 +154,25 @@ def root_billing():
 
 @app.route('/api/<table>/get', methods=['POST'])
 def root_api_get(table):
-    content = core.get(table, request.form.items())
+    content = core.get(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/create', methods=['POST'])
 def root_api_create(table):
-    content = core.get(table, request.form.items())
+    content = core.get(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/edit', methods=['POST'])
 def root_api_edit(table):
-    content = core.get(table, request.form.items())
+    content = core.get(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/delete', methods=['POST'])
 def root_api_delete(table):
-    content = core.get(table, request.form.items())
+    content = core.get(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 if __name__ == "__main__":
