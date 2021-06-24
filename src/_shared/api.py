@@ -7,7 +7,7 @@ class API:
         self.port = port
         self.protocol = protocol
         self.proxies = proxies
-        self.session = requests
+        self.session = requests.Session()
 
     @property
     def url(self):
