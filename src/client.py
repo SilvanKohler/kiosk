@@ -22,7 +22,7 @@ import directories
 
 def print(*text):
     if len(text) == 0: text = ['']
-    Logger.debug(f'{__file__}: {" ".join(text)}')
+    Logger.debug(f'{__file__}: {" ".join(str(text))}')
 data.init('client')
 
 Config.read(os.path.join(directories.__client__, 'config.ini'))

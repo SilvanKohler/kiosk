@@ -4,7 +4,7 @@ import time
 Logger = None
 def print(*text):
     if len(text) == 0: text = ['']
-    Logger.debug(f'{__file__}: {" ".join(text)}')
+    Logger.debug(f'{__file__}: {" ".join(str(text))}')
 
 # https://github.com/micolous/pcprox
 
