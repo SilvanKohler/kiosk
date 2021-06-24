@@ -22,7 +22,9 @@ class API:
 
     def create(self, table, properties):
         print(table, properties)
-        return self.session.post(f'{self.url}/{table}/create', data=properties, proxies=self.proxies).json()
+        r = self.session.post(f'{self.url}/{table}/create', data=properties, proxies=self.proxies)
+        print(r.content)
+        return r.json()
 
     def edit(self, table, filters, properties):
         return self.session.post(f'{self.url}/{table}/edit',
