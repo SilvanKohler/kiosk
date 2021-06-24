@@ -3,6 +3,7 @@ import uuid
 from threading import Thread
 import os
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.config import Config
 from kivy.lang import Builder
 from kivy.logger import Logger
@@ -15,6 +16,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import NoTransition, Screen, ScreenManager
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
+
 
 import _client.badge as badge
 import _shared.data as data
@@ -161,6 +163,14 @@ class RegisterScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+items = []
+def enable_items():
+    for item in items:
+        item.disabled = False
+
+def disable_items():
+    for item in items:
+        item.disabled = True
 
 class Item(Button):
     def __init__(self, *args, **kwargs):
@@ -172,10 +182,13 @@ class Item(Button):
         self.id = uuid.uuid1().hex
 
     def on_press(self):
-        if time.time() - times2.get(self.id, time.time() - 100) > 1:
+        if time.time() - times2.get(self.id, time.time() - 100) > 2:
             times2.update({self.id: time.time()})
             user.buy(self.did)
             refresh('balance')
+            disable_items()
+            Clock.schedule_once(enable_items, 2)
+
 
 
 class ItemLayout(GridLayout):
@@ -187,7 +200,9 @@ class ItemLayout(GridLayout):
         itemlayout = self
 
     def refresh(self):
+        global items
         self.clear_widgets()
+        items.clear()
         for drink in data.get_drinks().items():
             b = Item()
             b.did = drink[0]
@@ -196,6 +211,7 @@ class ItemLayout(GridLayout):
             b.price = drink[1]['price']
             b.text = f'''{b.name}\n{b.price} CHF'''
             self.add_widget(b)
+            items.append(b)
 
 
 class DetailInput(TextInput):

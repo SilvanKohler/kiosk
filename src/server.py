@@ -159,19 +159,19 @@ def root_api_get(table):
 
 @app.route('/api/<table>/create', methods=['POST'])
 def root_api_create(table):
-    content = core.get(table, request.form)
+    content = core.create(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/edit', methods=['POST'])
 def root_api_edit(table):
-    content = core.get(table, request.form)
+    content = core.edit(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 
 @app.route('/api/<table>/delete', methods=['POST'])
 def root_api_delete(table):
-    content = core.get(table, request.form)
+    content = core.delete(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
 

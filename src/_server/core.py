@@ -58,7 +58,7 @@ def create(table, properties):
     return content
 
 
-def edit(self, table, filters, properties=None):
+def edit(table, filters, properties=None):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
@@ -81,7 +81,7 @@ def edit(self, table, filters, properties=None):
     return content
 
 
-def delete(self, table, filters):
+def delete(table, filters):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
