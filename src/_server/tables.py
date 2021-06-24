@@ -1,9 +1,9 @@
 import shelve
 import uuid
 from collections import deque
-from os import getcwd, mkdir, path
+from os import getcwd, mkdir, path 
 from time import sleep
-print(getcwd())
+
 data_directory = path.join(getcwd(), 'data/')
 if not path.exists(data_directory):
     mkdir(data_directory)
@@ -36,8 +36,10 @@ def sync(table):
 
 def get(table):
     i = uuid.uuid1().hex
+    print(i)
     queue.append(i)
     while queue[0] != i:
+        print(queue)
         sleep(0.1)
     result = dict(tables.get(table, None).items())
     sync(table)

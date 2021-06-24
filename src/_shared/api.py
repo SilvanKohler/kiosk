@@ -31,7 +31,15 @@ class API:
 
 if __name__ == '__main__':
     import datetime
-    api = API('localhost', 80, 'http')
+    # host = 'kassensystem.pythonanywhere.com'
+    # port = 443
+    # protocol = 'https'
+    host = 'localhost'
+    port = 80
+    protocol = 'http'
+    api = API(host, port, protocol)
+    drinks = api.get('drink', {})
+    print(dict(filter(lambda x: x[0] != 'success', drinks.items())))
     for x in range(1000):
         print(x)
         date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
