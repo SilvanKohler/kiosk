@@ -44,6 +44,7 @@ class color:
     primary = (63/255, 81/255, 181/255, 255/255)
     accent = (255/255, 64/255, 129/255, 255/255)
     background = (255/255, 255/255, 255/255, 255/255)
+    background_normal = ''
     text = (255/255, 255/255, 255/255, 255/255)
 
 def login(b):
@@ -186,9 +187,7 @@ class Item(Button):
         self.price = 0
         self.id = uuid.uuid1().hex
         self.background_color = color.accent
-        self.color = color.accent
-        self.text_color = color.text
-
+        self.background_normal = color.background_normal
     def on_press(self):
         disable_items()
         user.buy(self.did)
