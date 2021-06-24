@@ -49,7 +49,8 @@ class color:
     primary = ColorProperty('#3F51B5').defaultvalue
     accent = ColorProperty('#FF4081').defaultvalue
     background = ColorProperty('#FFFFFF').defaultvalue
-    background_normal = 'atlas://data/images/defaulttheme/button'
+    # background_normal = 'atlas://data/images/defaulttheme/button'
+    background_normal = ''
     text = ColorProperty('#FFFFFF').defaultvalue
 
 
