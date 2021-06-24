@@ -7,8 +7,8 @@ def init(type_):
     if type_ == 'client':
         from _shared.api import API
         host = 'kassensystem.pythonanywhere.com'
-        port = 80
-        protocol = 'http'
+        port = 443
+        protocol = 'https'
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api

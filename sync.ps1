@@ -1,1 +1,0 @@
-scp -l 65536 -o StrictHostKeyChecking=no -r ./src pi@raspberrypi:/home/pi/kiosk
