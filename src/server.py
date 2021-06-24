@@ -8,7 +8,8 @@ from flask import Flask, render_template, request, jsonify, redirect
 import _shared.data as data
 import _server.tables as tables
 
-data.host = '127.0.0.1'
+data.host = 'Kassensystem.pythonanywhere.com'
+data.port = 443
 data.protocol = 'https'
 
 app = Flask(__name__)
