@@ -9,9 +9,9 @@ def init(type_):
         host = 'kassensystem.pythonanywhere.com'
         port = 443
         protocol = 'https'
-        host = '192.168.137.1'
-        port = 80
-        protocol = 'http'
+        # host = '192.168.137.1'
+        # port = 80
+        # protocol = 'http'
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api
