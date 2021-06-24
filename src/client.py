@@ -164,7 +164,7 @@ class RegisterScreen(Screen):
         super().__init__(*args, **kwargs)
 
 items = []
-def enable_items():
+def enable_items(*args, **kwargs):
     for item in items:
         item.disabled = False
 
