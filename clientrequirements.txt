@@ -1,3 +1,4 @@
 kivy~=2.0.0
 requests~=2.25.1
 hidapi~=0.10.1
+kivymd~=0.104.2

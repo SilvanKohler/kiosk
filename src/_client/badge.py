@@ -18,7 +18,7 @@ def run(callback):
 
         # Dump the configuration from the device.
         config = dev.get_config()
-        config.print_config()
+        # config.print_config()
 
         # Disable sending keystrokes, as we want direct control
         config.bHaltKBSnd = True
@@ -40,7 +40,6 @@ def run(callback):
         time.sleep(.5)
         # Turn off the green LED
         config.iGrnLEDState = False
-        print('Waiting for a card... (red light should pulse)')
         x = 0
         last_tag = None
         last_time = 0
