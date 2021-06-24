@@ -21,7 +21,7 @@ import _shared.data as data
 import directories
 
 def print(*text):
-    if len(text) = 0: text = ['']
+    if len(text) == 0: text = ['']
     Logger.debug(f'{__file__}: {" ".join(text)}')
 data.init('client')
 

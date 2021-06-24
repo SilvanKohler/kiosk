@@ -3,7 +3,7 @@ import time
 
 Logger = None
 def print(*text):
-    if len(text) = 0: text = ['']
+    if len(text) == 0: text = ['']
     Logger.debug(f'{__file__}: {" ".join(text)}')
 
 # https://github.com/micolous/pcprox
