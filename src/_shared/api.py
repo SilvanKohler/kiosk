@@ -14,7 +14,7 @@ class API:
     def get(self, table, filters):
         print(table, filters)
         r = requests.post(f'{self.url}/{table}/get', data=filters)
-        print(r)
+        print(r.content)
         return r.json()
 
     def create(self, table, properties):
