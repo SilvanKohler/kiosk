@@ -4,9 +4,9 @@ from _shared.api import API
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 
-host = '127.0.0.1'
-port = 80
-protocol = 'http'
+host = 'Kassensystem.pythonanywhere.com'
+port = 443
+protocol = 'https'
 api = API(host, port, protocol)
 
 

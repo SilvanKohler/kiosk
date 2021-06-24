@@ -14,10 +14,8 @@ from kivy.config import Config
 from threading import Thread
 from _client.badge import run
 import time
-from _shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink, host
+from _shared.data import register_user, login_user, user_exists, default_avatar, get_drinks, get_drink
 import uuid
-
-host = '192.168.137.1'
 
 Config.read('client/config.ini')
 style = Builder.load_file('client/style.kv')

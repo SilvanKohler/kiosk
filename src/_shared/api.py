@@ -2,7 +2,7 @@ import requests
 
 
 class API:
-    def __init__(self, ip, port, protocol='https'):
+    def __init__(self, ip, port=443, protocol='https'):
         self.ip = ip
         self.port = port
         self.protocol = protocol
