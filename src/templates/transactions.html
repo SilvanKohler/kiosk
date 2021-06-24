@@ -31,7 +31,7 @@
             <thead>
                 <tr>
                     <th>Zeit</th>
-                    <th>Person</th>
+                    <th>Benutzer</th>
                     <th>Betrag</th>
                     <th>Methode</th>
                 </tr>
@@ -41,8 +41,12 @@
                 {% for transaction in transactions[:number_of_transactions] %}
                 <tr>
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['datetime'] }}</td>
+                    {% if transaction[1]['uid'] in users %}
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{
                         users[transaction[1]['uid']]['firstname'] }} {{ users[transaction[1]['uid']]['lastname'] }}</td>
+                    {% else %}
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Benutzer nicht gefunden</td>
+                    {% endif %}
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['amount'] }}</td>
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['reason'] }}</td>
                 </tr>
