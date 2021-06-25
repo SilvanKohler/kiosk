@@ -105,12 +105,9 @@ class Keyboard(BoxLayout):
             # logger.debug('Application: '+instance.text)
             if focused is not None:
                 if instance.text not in ('DEL', 'SPEICHERN'):
-                    focused.text += instance.text
+                    focused.insert_text(instance.text)
                 elif instance.text == 'DEL':
-                    col = focused.cursor_col
-                    if col > 0:
-                        focused.text = focused.text[:col - 1] + focused.text[col:]
-                        focused. = col - 1
+                    focused.do_backspace()
                 elif instance.text == 'SPEICHERN':
                     firstname = self.parent.parent.ids.firstname
                     lastname = self.parent.parent.ids.lastname
