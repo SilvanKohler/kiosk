@@ -19,7 +19,7 @@ def init(type_):
 
 class User:
     def __init__(self, badgenumber=None, firstname=None, lastname=None, email=None, usid=None):
-        self._uid = None
+        self._usid = None
         if firstname is not None:
             self.register(firstname, lastname, email, badgenumber)
         elif badgenumber is not None:
@@ -102,12 +102,12 @@ class User:
 
     @property
     def usid(self):
-        if self._uid:
-            return self._uid
+        if self._usid:
+            return self._usid
 
     @usid.setter
     def usid(self, usid):
-        self._uid = usid
+        self._usid = usid
 
     def get_purchases(self):
         purchases = api.get('purchase', {
