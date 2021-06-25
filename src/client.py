@@ -93,6 +93,7 @@ def on_badge(b):
 
 class Keyboard(BoxLayout):
     def __init__(self, *args, **kwargs):
+        global registration_fields
         super().__init__(*args, **kwargs)
         self.orientation = 'vertical'
         for y in keys:
@@ -102,6 +103,10 @@ class Keyboard(BoxLayout):
                 row.add_widget(
                     Button(text=x, font_size=30, on_press=self.on_press))
             self.add_widget(row)
+        firstname = self.parent.parent.ids.firstname
+        lastname = self.parent.parent.ids.lastname
+        email = self.parent.parent.ids.email
+        registration_fields = (firstname, lastname, email)
 
     def on_press(self, instance):
         renew_timeout()
@@ -119,11 +124,8 @@ class Keyboard(BoxLayout):
                 elif instance.text == 'DEL':
                     focused.do_backspace()
                 elif instance.text == 'SPEICHERN':
-                    firstname = self.parent.parent.ids.firstname
-                    lastname = self.parent.parent.ids.lastname
-                    email = self.parent.parent.ids.email
-                    registration_fields = (firstname, lastname, email)
-                    if '' in (firstname.text, lastname.text, email.text):
+                    
+                    if '' in map(lambda x: x.text, registration_fields):
                         b = BoxLayout()
                         b.orientation = 'vertical'
                         b.add_widget(
