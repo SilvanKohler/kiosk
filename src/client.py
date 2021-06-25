@@ -46,7 +46,7 @@ def renew_timeout():
     global timeout
     if timeout is not None:
         Clock.unschedule(timeout)
-        timeout = Clock.schedule_once(logout, 10)
+    timeout = Clock.schedule_once(logout, 10)
 
 def login(b):
     global user
