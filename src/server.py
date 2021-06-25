@@ -25,7 +25,7 @@ def root_settings():
     return render_template('settings.html')
 
 
-@app.route('/drinks', methods=['GET', 'POST'])
+@app.route('/products', methods=['GET', 'POST'])
 def root_management():
     if request.args:
         changes = {}
@@ -34,28 +34,28 @@ def root_management():
             if key == 'select-all' or value == '':
                 pass
             elif 'select-' in key:
-                did = key.replace('select-', '')
-                if not did == 'new' and value == 'on':
-                    deletions.append(did)
+                prid = key.replace('select-', '')
+                if not prid == 'new' and value == 'on':
+                    deletions.append(prid)
             elif 'name-' in key:
-                did = key.replace('name-', '')
-                if not changes.get(did):
-                    changes[did] = {}
-                changes[did].update({'name': value})
+                prid = key.replace('name-', '')
+                if not changes.get(prid):
+                    changes[prid] = {}
+                changes[prid].update({'name': value})
             elif 'stock-' in key:
-                did = key.replace('stock-', '')
-                if not changes.get(did):
-                    changes[did] = {}
+                prid = key.replace('stock-', '')
+                if not changes.get(prid):
+                    changes[prid] = {}
                 try:
-                    changes[did].update({'stock': int(value)})
+                    changes[prid].update({'stock': int(value)})
                 except ValueError as e:
                     break
             elif 'price-' in key:
-                did = key.replace('price-', '')
-                if not changes.get(did):
-                    changes[did] = {}
+                prid = key.replace('price-', '')
+                if not changes.get(prid):
+                    changes[prid] = {}
                 try:
-                    changes[did].update({'price': float(value)})
+                    changes[prid].update({'price': float(value)})
                 except ValueError:
                     break
                 finally:
@@ -63,17 +63,17 @@ def root_management():
                     if float(value) + abs(float(value)) == 0:
                         break
         else:
-            for did, values in changes.items():
-                if did == 'new':
-                    data.create_drink(
+            for prid, values in changes.items():
+                if prid == 'new':
+                    data.create_product(
                         values['name'], values['stock'], values['price'])
                 else:
-                    data.update_drink(
-                        did, values['name'], values['stock'], values['price'])
-            for did in deletions:
-                data.delete_drink(did)
-        return redirect('/drinks')
-    return render_template('drinks.html', drinks=data.get_drinks())
+                    data.update_product(
+                        prid, values['name'], values['stock'], values['price'])
+            for prid in deletions:
+                data.delete_product(prid)
+        return redirect('/products')
+    return render_template('products.html', products=data.get_products())
 
 
 @app.route('/transactions', methods=['GET', 'POST'])
@@ -101,15 +101,15 @@ def root_purchases():
         deletions = []
         for key, value in request.args.items():
             if 'select-' in key:
-                pid = key.replace('select-', '')
+                puid = key.replace('select-', '')
                 if value == 'on':
-                    deletions.append(pid)
+                    deletions.append(puid)
         else:
-            for pid in deletions:
-                data.revert_purchase(pid)
+            for puid in deletions:
+                data.revert_purchase(puid)
         return redirect(f'/purchases?number_of_purchases={number_of_purchases}')
     return render_template('purchases.html', purchases=sorted(data.get_purchases().items(), key=lambda d: datetime.datetime.strptime(d[1]['datetime'], "%d-%m-%Y_%H:%M:%S").timestamp(), reverse=True),
-                           number_of_purchases=number_of_purchases, list=list, users=data.get_users(), drinks=data.get_drinks())
+                           number_of_purchases=number_of_purchases, list=list, users=data.get_users(), products=data.get_products())
 
 
 @app.route('/billing', methods=['GET', 'POST'])
@@ -119,26 +119,26 @@ def root_billing():
         print(list(request.args.items()))
         for key, value in request.args.items():
             if 'action-' in key:
-                uid = key.replace('action-', '')
-                if not changes.get(uid):
-                    changes[uid] = {}
-                changes[uid].update({'action': value})
+                usid = key.replace('action-', '')
+                if not changes.get(usid):
+                    changes[usid] = {}
+                changes[usid].update({'action': value})
             elif 'value-' in key:
-                uid = key.replace('value-', '')
-                if not changes.get(uid):
-                    changes[uid] = {}
+                usid = key.replace('value-', '')
+                if not changes.get(usid):
+                    changes[usid] = {}
                 try:
-                    changes[uid].update({'value': float(value)})
+                    changes[usid].update({'value': float(value)})
                 except ValueError:
                     if value == '':
-                        changes[uid].update({'value': float(0)})
+                        changes[usid].update({'value': float(0)})
                     else:
                         break
         else:
-            for uid, values in changes.items():
+            for usid, values in changes.items():
                 if str(values['action']).lower() in ('twint', 'bar', 'korrektur', 'sonstig') and values['value'] != 0:
                     data.create_transaction(
-                        uid, values['value'], values['action'])
+                        usid, values['value'], values['action'])
         return redirect('/billing')
     users = data.get_users()
     for user in users.keys():

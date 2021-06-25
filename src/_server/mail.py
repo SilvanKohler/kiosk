@@ -3,15 +3,15 @@ import smtplib
 from email.message import EmailMessage
 from multiprocessing import Pool, Process
 from threading import Thread
-from shared.data import User
+from _shared.data import User
 import time
 
 
 sender = 'Kassensystem@Kassensystem'
 
 
-def sendmail(UID):
-    u = User(UID=UID)
+def sendmail(usid):
+    u = User(usid=usid)
     msg = EmailMessage()
     msg.set_content(
         f'''

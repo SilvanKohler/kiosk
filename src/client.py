@@ -62,12 +62,12 @@ def refresh(content='all'):
         KS.ids['balance'].text = str(user.balance) + ' CHF'
         KS.ids['name'].text = user.firstname + '\n' + user.lastname
         KS.ids['avatar'].source = user.avatar
-    elif content == 'drinks':
+    elif content == 'products':
         itemlayout.refresh()
     elif content == 'all':
         refresh('balance')
         refresh('userinformation')
-        refresh('drinks')
+        refresh('products')
 
 
 def on_badge(b):
@@ -175,7 +175,7 @@ def disable_items():
 class Item(Button):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.did = 0
+        self.prid = 0
         self.name = ""
         self.stock = 0
         self.price = 0
@@ -183,7 +183,7 @@ class Item(Button):
 
     def on_press(self):
         disable_items()
-        user.buy(self.did)
+        user.buy(self.prid)
         refresh('balance')
         Clock.schedule_once(enable_items, 2)
 
@@ -201,12 +201,12 @@ class ItemLayout(GridLayout):
         global items
         self.clear_widgets()
         items.clear()
-        for drink in data.get_drinks().items():
+        for product in data.get_products().items():
             b = Item()
-            b.did = drink[0]
-            b.name = drink[1]['name']
-            b.stock = drink[1]['stock']
-            b.price = drink[1]['price']
+            b.prid = product[0]
+            b.name = product[1]['name']
+            b.stock = product[1]['stock']
+            b.price = product[1]['price']
             b.text = f'''{b.name}\n{b.price} CHF'''
             self.add_widget(b)
             items.append(b)

@@ -9,7 +9,7 @@ if not path.exists(directories.__data__):
     mkdir(directories.__data__)
 user_table = shelve.open(path.join(directories.__data__, 'user'), writeback=True)
 badge_table = shelve.open(path.join(directories.__data__, 'badge'), writeback=True)
-drink_table = shelve.open(path.join(directories.__data__, 'drink'), writeback=True)
+product_table = shelve.open(path.join(directories.__data__, 'product'), writeback=True)
 purchase_table = shelve.open(
     path.join(directories.__data__, 'purchase'), writeback=True)
 transaction_table = shelve.open(
@@ -18,7 +18,7 @@ transaction_table = shelve.open(
 tables = {
     'user': user_table,
     'badge': badge_table,
-    'drink': drink_table,
+    'product': product_table,
     'purchase': purchase_table,
     'transaction': transaction_table,
 }

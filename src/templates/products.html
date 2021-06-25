@@ -23,7 +23,7 @@
     </div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form id="drinks" class="drinks-form" action="/purchases" onsubmit="loading()">
+        <form id="products" class="products-form" action="/purchases" onsubmit="loading()">
             <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
                 id="number_of_purchases" value="{{ number_of_purchases }}">
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
@@ -51,8 +51,8 @@
                         </td>
                         <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['datetime'] }}</td>
                         <td class="mdl-data-table__cell--non-numeric min-width-25">{{
-                            users[purchase[1]['uid']]['firstname'] }} {{ users[purchase[1]['uid']]['lastname'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ drinks[purchase[1]['did']]['name']
+                            users[purchase[1]['usid']]['firstname'] }} {{ users[purchase[1]['usid']]['lastname'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ products[purchase[1]['prid']]['name']
                             }}</td>
                         <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['amount'] }}</td>
                     </tr>

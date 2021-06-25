@@ -18,7 +18,7 @@ def init(type_):
 
 
 class User:
-    def __init__(self, badgenumber=None, firstname=None, lastname=None, email=None, uid=None):
+    def __init__(self, badgenumber=None, firstname=None, lastname=None, email=None, usid=None):
         self._uid = None
         if firstname is not None:
             self.register(firstname, lastname, email, badgenumber)
@@ -26,46 +26,46 @@ class User:
             badges = api.get('badge', {
                 'badgenumber': badgenumber
             })
-            self.uid = list(dict(
-                filter(lambda x: x[0] != 'success', dict(badges).items())).values())[0]['uid']
-        elif uid is not None:
-            self.uid = uid
+            self.usid = list(dict(
+                filter(lambda x: x[0] != 'success', dict(badges).items())).values())[0]['usid']
+        elif usid is not None:
+            self.usid = usid
 
     def register(self, firstname, lastname, email, badgenumber):
         users = get_users()
         for user in users.items():
             if user[1]['firstname'] == firstname and user[1]['lastname'] == lastname and user[1]['email'] == email:
-                self.uid = user[0]
+                self.usid = user[0]
                 break
         else:
-            self.uid = api.create('user', {
+            self.usid = api.create('user', {
                 'firstname': firstname,
                 'lastname': lastname,
                 'email': email,
                 'avatar': default_avatar
-            })['uid']
+            })['usid']
         api.create('badge', {
             'badgenumber': badgenumber,
-            'uid': self.uid
+            'usid': self.usid
         })
 
     @property
     def firstname(self):
         return api.get('user', {
-            'uid': self.uid
-        })[self.uid]['firstname']
+            'usid': self.usid
+        })[self.usid]['firstname']
 
     @property
     def lastname(self):
         return api.get('user', {
-            'uid': self.uid
-        })[self.uid]['lastname']
+            'usid': self.usid
+        })[self.usid]['lastname']
 
     @property
     def email(self):
         return api.get('user', {
-            'uid': self.uid
-        })[self.uid]['email']
+            'usid': self.usid
+        })[self.usid]['email']
 
     @property
     def balance(self):
@@ -81,13 +81,13 @@ class User:
     @property
     def avatar(self):
         return api.get('user', {
-            'uid': self.uid
-        })[self.uid]['avatar']
+            'usid': self.usid
+        })[self.usid]['avatar']
 
     @property
     def badges(self):
         badges = api.get('badge', {
-            'uid': self.uid
+            'usid': self.usid
         })
         return [x['badgenumber'] for x in dict(filter(lambda x: x[0] != 'success', badges.items())).values()]
 
@@ -97,41 +97,41 @@ class User:
             if not badgenumber in self.badges:
                 api.create('badge', {
                     'badgenumber': badgenumber,
-                    'uid': self.uid
+                    'usid': self.usid
                 })
 
     @property
-    def uid(self):
+    def usid(self):
         if self._uid:
             return self._uid
 
-    @uid.setter
-    def uid(self, uid):
-        self._uid = uid
+    @usid.setter
+    def usid(self, usid):
+        self._uid = usid
 
     def get_purchases(self):
         purchases = api.get('purchase', {
-            'uid': self.uid
+            'usid': self.usid
         })
         return dict(filter(lambda x: x[0] != 'success', purchases.items()))
 
     def get_transactions(self):
         transactions = api.get('transaction', {
-            'uid': self.uid
+            'usid': self.usid
         })
         return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
-    def buy(self, did):
-        drink = get_drink(did)[did]
-        price = drink['price']
+    def buy(self, prid):
+        product = get_product(prid)[prid]
+        price = product['price']
         date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
         api.create('purchase', {
             'datetime': date,
-            'did': did,
-            'uid': self.uid,
+            'prid': prid,
+            'usid': self.usid,
             'amount': price
         })
-        update_drink(did, drink['name'], drink['stock']-1, drink['price'])
+        update_product(prid, product['name'], product['stock']-1, product['price'])
 
 
 def register_user(firstname, lastname, email, badgenumber):
@@ -145,14 +145,14 @@ def login_user(badgenumber):
     return user
 
 
-def get_transactions(uid=None):
+def get_transactions(usid=None):
     transactions = api.get(
-        'transaction', {'uid': uid} if uid is not None else {})
+        'transaction', {'usid': usid} if usid is not None else {})
     return dict(filter(lambda x: x[0] != 'success', transactions.items()))
 
 
-def get_purchases(uid=None):
-    purchases = api.get('purchase', {'uid': uid} if uid is not None else {})
+def get_purchases(usid=None):
+    purchases = api.get('purchase', {'usid': usid} if usid is not None else {})
     return dict(filter(lambda x: x[0] != 'success', purchases.items()))
 
 
@@ -166,77 +166,77 @@ def get_badges():
     return dict(filter(lambda x: x[0] != 'success', badges.items()))
 
 
-def get_drinks():
-    drinks = api.get('drink', {})
-    return dict(filter(lambda x: x[0] != 'success', drinks.items()))
+def get_products():
+    products = api.get('product', {})
+    return dict(filter(lambda x: x[0] != 'success', products.items()))
 
 
-def get_purchase(pid):
-    purchase = api.get('purchase', {'pid': pid})
+def get_purchase(puid):
+    purchase = api.get('purchase', {'puid': puid})
     return purchase
 
 
-def get_transaction(tid):
-    transaction = api.get('transaction', {'tid': tid})
+def get_transaction(trid):
+    transaction = api.get('transaction', {'trid': trid})
     return transaction
 
 
-def add_drink(name, stock, price):
-    api.create('drink', {
+def add_product(name, stock, price):
+    api.create('product', {
         'name': name,
         'stock': stock,
         'price': price
     })
 
 
-def get_drink(did):
-    drink = api.get('drink', {
-        'did': did
+def get_product(prid):
+    product = api.get('product', {
+        'prid': prid
     })
-    return drink
+    return product
 
 
-def update_drink(did, name, stock, price):
-    api.edit('drink', {'did': did}, {
+def update_product(prid, name, stock, price):
+    api.edit('product', {'prid': prid}, {
         'name': name,
         'stock': stock,
         'price': price
     })
 
 
-def create_drink(name, stock, price):
-    api.create('drink', {
+def create_product(name, stock, price):
+    api.create('product', {
         'name': name,
         'stock': stock,
         'price': price
     })
 
 
-def create_transaction(uid, amount, reason):
+def create_transaction(usid, amount, reason):
     date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
 
     api.create('transaction', {
         'datetime': date,
-        'uid': uid,
+        'usid': usid,
         'amount': amount,
         'reason': reason
     })
 
 
-def delete_drink(did):
-    api.delete('drink', {'did': did})
+def delete_product(prid):
+    api.delete('product', {'prid': prid})
 
 
-def revert_purchase(pid):
-    purchase = get_purchase(pid)[pid]
-    api.edit('drink', {'did': purchase['did']}, {
-        'stock': get_drink(purchase['did'])[purchase['did']]['stock'] + 1
+def revert_purchase(puid):
+    purchase = get_purchase(puid)[puid]
+    api.edit('product', {'prid': purchase['prid']}, {
+        'stock': get_product(purchase['prid'])[purchase['prid']]['stock'] + 1
     })
-    delete_purchase(pid)
+    delete_purchase(puid)
 
 
-def delete_purchase(pid):
-    api.delete('purchase', {'pid': pid})
+def delete_purchase(puid):
+    api.delete('purchase', {'puid': puid})
 
 
 def user_exists(badgenumber):

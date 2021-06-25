@@ -1,11 +1,11 @@
 import _server.tables as tables
 import uuid
 specs = {
-    'user': ('uid', ('firstname', 'lastname', 'email', 'avatar')),
-    'badge': ('bid', ('badgenumber', 'uid')),
-    'drink': ('did', ('name', 'stock', 'price')),
-    'purchase': ('pid', ('datetime', 'did', 'uid', 'amount')),
-    'transaction': ('tid', ('datetime', 'uid', 'amount', 'reason'))
+    'user': ('usid', ('firstname', 'lastname', 'email', 'avatar')),
+    'badge': ('baid', ('badgenumber', 'usid')),
+    'product': ('prid', ('name', 'stock', 'price')),
+    'purchase': ('puid', ('datetime', 'prid', 'usid', 'amount')),
+    'transaction': ('trid', ('datetime', 'usid', 'amount', 'reason'))
 }
 floats = ['amount', 'price']
 ints = ['stock', 'badgenumber']

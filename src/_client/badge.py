@@ -64,9 +64,9 @@ def run(callback):
                 dev.end_config()
 
                 # Print the tag ID on screen
-                bid = int(''.join(['%02x' % c for c in tag[0]]), 16)
-                # print(bid)
-                callback(bid)
+                baid = int(''.join(['%02x' % c for c in tag[0]]), 16)
+                # print(baid)
+                callback(baid)
                 for x in range(20):
                     config.iGrnLEDState = x & 0x01 == 0
                     config.iRedLEDState = x & 0x02 > 0

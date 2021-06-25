@@ -23,7 +23,7 @@
     </div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form id="drinks" class="drinks-form" action="/transactions" onsubmit="loading()">
+        <form id="products" class="products-form" action="/transactions" onsubmit="loading()">
             <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions"
                 id="number_of_transactions" value="{{ number_of_transactions }}">
         </form>
@@ -41,9 +41,9 @@
                 {% for transaction in transactions[:number_of_transactions] %}
                 <tr>
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['datetime'] }}</td>
-                    {% if transaction[1]['uid'] in users %}
+                    {% if transaction[1]['usid'] in users %}
                     <td class="mdl-data-table__cell--non-numeric min-width-25">{{
-                        users[transaction[1]['uid']]['firstname'] }} {{ users[transaction[1]['uid']]['lastname'] }}</td>
+                        users[transaction[1]['usid']]['firstname'] }} {{ users[transaction[1]['usid']]['lastname'] }}</td>
                     {% else %}
                     <td class="mdl-data-table__cell--non-numeric min-width-25">Benutzer nicht gefunden</td>
                     {% endif %}

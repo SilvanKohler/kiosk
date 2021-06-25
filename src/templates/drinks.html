@@ -11,7 +11,7 @@
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form id="drinks" class="drinks-form" action="/drinks" onsubmit="loading()">
+        <form id="products" class="products-form" action="/products" onsubmit="loading()">
             <!-- Accent-colored raised button -->
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
                 value="Speichern und ausgewählte löschen" style="margin-bottom: 1%" />
@@ -60,28 +60,28 @@
                             </div>
                         </td>
                     </tr>
-                    {% for drink in drinks.items() %}
+                    {% for product in products.items() %}
                     <tr>
                         <td class="mdl-data-table__cell--non-numeric">
                             <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select"
-                                for="select-{{ drink[0] }}">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ drink[0] }}"
-                                    id="select-{{ drink[0] }}" />
+                                for="select-{{ product[0] }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ product[0] }}"
+                                    id="select-{{ product[0] }}" />
                             </label>
                         </td>
                         <td class="mdl-data-table__cell--non-numeric">
                             <div class="mdl-textfield mdl-js-textfield min-width-25">
-                                <input class="mdl-textfield__input" type="text" name="name-{{ drink[0] }}"
-                                    id="name-{{ drink[0] }}" value="{{ drink[1]['name'] }}">
-                                <label class="mdl-textfield__label" for="name-{{ drink[0] }}">{{ drink[1]['name']
+                                <input class="mdl-textfield__input" type="text" name="name-{{ product[0] }}"
+                                    id="name-{{ product[0] }}" value="{{ product[1]['name'] }}">
+                                <label class="mdl-textfield__label" for="name-{{ product[0] }}">{{ product[1]['name']
                                     }}</label>
                             </div>
                         </td>
                         <td class="mdl-data-table__cell">
                             <div class="mdl-textfield mdl-js-textfield min-width-25">
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]+?"
-                                    name="stock-{{ drink[0] }}" id="stock-{{ drink[0] }}" value={{ drink[1]['stock'] }}>
-                                <label class="mdl-textfield__label" for="stock-{{ drink[0] }}">{{ drink[1]['stock']
+                                    name="stock-{{ product[0] }}" id="stock-{{ product[0] }}" value={{ product[1]['stock'] }}>
+                                <label class="mdl-textfield__label" for="stock-{{ product[0] }}">{{ product[1]['stock']
                                     }}</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine ganze Zahl!</span>
                             </div>
@@ -89,8 +89,8 @@
                         <td class="mdl-data-table__cell">
                             <div class="mdl-textfield mdl-js-textfield min-width-25">
                                 <input class="mdl-textfield__input" type="text" pattern="[0-9]*(\.[0-9]+)?"
-                                    name="price-{{ drink[0] }}" id="price-{{ drink[0] }}" value={{ drink[1]['price'] }}>
-                                <label class="mdl-textfield__label" for="price-{{ drink[0] }}">{{ drink[1]['price']
+                                    name="price-{{ product[0] }}" id="price-{{ product[0] }}" value={{ product[1]['price'] }}>
+                                <label class="mdl-textfield__label" for="price-{{ product[0] }}">{{ product[1]['price']
                                     }}</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine postive Zahl!</span>
                             </div>
