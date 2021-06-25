@@ -39,7 +39,7 @@ times = {}
 badge_ = None
 user = None
 itemlayout = None
-registration_fields = ()
+registration_fields = None
 timeout = None
 
 def renew_timeout():
