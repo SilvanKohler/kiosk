@@ -107,9 +107,10 @@ class Keyboard(BoxLayout):
                     focused.text += instance.text
                     focused.focus = True
                 elif instance.text == 'DEL':
-                    if focused.cursor_col > 0:
-                        focused.text = focused.text[:focused.cursor_col -
-                                                    1] + focused.text[focused.cursor_col:]
+                    col = focused.cursor_col
+                    if col > 0:
+                        focused.text = focused.text[:col - 1] + focused.text[col:]
+                        focused.cursor_col = col - 1
                 elif instance.text == 'SPEICHERN':
                     firstname = self.parent.parent.ids.firstname
                     lastname = self.parent.parent.ids.lastname
@@ -224,7 +225,6 @@ class DetailInput(TextInput):
         if value:
             focused = instance
         super()._on_focus(instance, value)
-
 
 LS = LoginScreen(name='Login')
 KS = KioskScreen(name='Kiosk')
