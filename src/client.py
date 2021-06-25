@@ -39,7 +39,14 @@ times = {}
 badge_ = None
 user = None
 itemlayout = None
+registration_fields = ()
+timeout = None
 
+def renew_timeout():
+    global timeout
+    if timeout is not None:
+        Clock.unschedule(timeout)
+        timeout = Clock.schedule_once(logout, 10)
 
 def login(b):
     global user
@@ -52,8 +59,10 @@ def logout():
     global user, badge_
     user = None
     badge_ = None
+    for field in registration_fields:
+        field.text = ''
+    Clock.schedule_once(registration_fields[0].refocus, 0.1)
     sm.current = 'Login'
-
 
 def refresh(content='all'):
     if content == 'balance':
@@ -95,7 +104,8 @@ class Keyboard(BoxLayout):
             self.add_widget(row)
 
     def on_press(self, instance):
-        global times, user
+        renew_timeout()
+        global times, user, registration_fields
         if focused is not None:
             Clock.schedule_once(focused.refocus, 0.1)
             
@@ -112,6 +122,7 @@ class Keyboard(BoxLayout):
                     firstname = self.parent.parent.ids.firstname
                     lastname = self.parent.parent.ids.lastname
                     email = self.parent.parent.ids.email
+                    registration_fields = (firstname, lastname, email)
                     if '' in (firstname.text, lastname.text, email.text):
                         b = BoxLayout()
                         b.orientation = 'vertical'
@@ -128,12 +139,8 @@ class Keyboard(BoxLayout):
                     # Create user
                     user = data.register_user(
                         firstname.text, lastname.text, email.text, badge_)
-                    # Clear fields
-                    firstname.text = ''
-                    lastname.text = ''
-                    email.text = ''
-                    Clock.schedule_once(firstname.refocus, 0.1)
-                    sm.current = 'Login'
+                    logout()
+                    
 
 
 class LoginScreen(Screen):
@@ -184,6 +191,7 @@ class Item(Button):
         self.id = uuid.uuid1().hex
 
     def on_press(self):
+        renew_timeout()
         disable_items()
         user.buy(self.prid)
         refresh('balance')
