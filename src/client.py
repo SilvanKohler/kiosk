@@ -97,7 +97,8 @@ class Keyboard(BoxLayout):
     def on_press(self, instance):
         global times, user
         if focused is not None:
-            focused.focus = True
+            Clock.schedule_once(focused.refocus, 0.1)
+            
         # logger.debug('Application: '+time.time() - times.get(instance.text, time.time() - 100))
         if time.time() - times.get(instance.text, time.time() - 100) > .05:
             times.update({instance.text: time.time()})
@@ -105,12 +106,11 @@ class Keyboard(BoxLayout):
             if focused is not None:
                 if instance.text not in ('DEL', 'SPEICHERN'):
                     focused.text += instance.text
-                    focused.focus = True
                 elif instance.text == 'DEL':
                     col = focused.cursor_col
                     if col > 0:
                         focused.text = focused.text[:col - 1] + focused.text[col:]
-                        focused.cursor_col = col - 1
+                        focused. = col - 1
                 elif instance.text == 'SPEICHERN':
                     firstname = self.parent.parent.ids.firstname
                     lastname = self.parent.parent.ids.lastname
@@ -225,6 +225,8 @@ class DetailInput(TextInput):
         if value:
             focused = instance
         super()._on_focus(instance, value)
+    def refocus(self):
+        self.focus = True
 
 LS = LoginScreen(name='Login')
 KS = KioskScreen(name='Kiosk')
