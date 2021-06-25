@@ -55,7 +55,7 @@ def login(b):
     sm.current = 'Kiosk'
 
 
-def logout():
+def logout(*args):
     global user, badge_
     user = None
     badge_ = None
