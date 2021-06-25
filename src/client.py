@@ -96,6 +96,8 @@ class Keyboard(BoxLayout):
 
     def on_press(self, instance):
         global times, user
+        if focused is not None:
+            focused.focus()
         # logger.debug('Application: '+time.time() - times.get(instance.text, time.time() - 100))
         if time.time() - times.get(instance.text, time.time() - 100) > .05:
             times.update({instance.text: time.time()})
