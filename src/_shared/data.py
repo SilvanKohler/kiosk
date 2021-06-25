@@ -1,7 +1,10 @@
 import datetime
+import random
 
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 api = None
+
+
 def init(type_):
     global api
     if type_ == 'client':
@@ -108,6 +111,18 @@ class User:
     @usid.setter
     def usid(self, usid):
         self._usid = usid
+    @property
+    def otp(self):
+        date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+        otid = api.create('otp', {
+            'datetime': date,
+            'otp': random.randint(999999),
+            'usid': self.usid
+        })
+        otp = api.get('otp', {
+            'otid': otid
+        })
+        return dict(filter(lambda x: x[0] != 'success', otp.items()))
 
     def get_purchases(self):
         purchases = api.get('purchase', {
@@ -131,7 +146,8 @@ class User:
             'usid': self.usid,
             'amount': price
         })
-        update_product(prid, product['name'], product['stock']-1, product['price'])
+        update_product(prid, product['name'],
+                       product['stock']-1, product['price'])
 
 
 def register_user(firstname, lastname, email, badgenumber):
@@ -180,15 +196,6 @@ def get_transaction(trid):
     transaction = api.get('transaction', {'trid': trid})
     return transaction
 
-
-def add_product(name, stock, price):
-    api.create('product', {
-        'name': name,
-        'stock': stock,
-        'price': price
-    })
-
-
 def get_product(prid):
     product = api.get('product', {
         'prid': prid
@@ -222,7 +229,6 @@ def create_transaction(usid, amount, reason):
         'reason': reason
     })
 
-
 def delete_product(prid):
     api.delete('product', {'prid': prid})
 
@@ -244,3 +250,13 @@ def user_exists(badgenumber):
         'badgenumber': badgenumber
     })
     return badge['success']
+
+
+def check_otp(pin):
+    otp = api.get('otp', {'otp': pin})
+    if otp['success']:
+        user = api.get('user', {'usid': list(dict(
+            filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']})
+        return list(dict(filter(lambda x: x[0] != 'success', dict(user).items())).values())[0]['level']
+    else:
+        return 0

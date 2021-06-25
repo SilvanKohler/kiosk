@@ -1,19 +1,23 @@
 import shelve
 import uuid
 from collections import deque
-from os import getcwd, mkdir, path 
+from os import getcwd, mkdir, path
 from time import sleep
 import directories
 
 if not path.exists(directories.__data__):
     mkdir(directories.__data__)
-user_table = shelve.open(path.join(directories.__data__, 'user'), writeback=True)
-badge_table = shelve.open(path.join(directories.__data__, 'badge'), writeback=True)
-product_table = shelve.open(path.join(directories.__data__, 'product'), writeback=True)
+user_table = shelve.open(
+    path.join(directories.__data__, 'user'), writeback=True)
+badge_table = shelve.open(
+    path.join(directories.__data__, 'badge'), writeback=True)
+product_table = shelve.open(
+    path.join(directories.__data__, 'product'), writeback=True)
 purchase_table = shelve.open(
     path.join(directories.__data__, 'purchase'), writeback=True)
 transaction_table = shelve.open(
     path.join(directories.__data__, 'transaction'), writeback=True)
+otp_table = {}
 
 tables = {
     'user': user_table,
@@ -21,6 +25,7 @@ tables = {
     'product': product_table,
     'purchase': purchase_table,
     'transaction': transaction_table,
+    'otp': otp_table,
 }
 for table in tables.items():
     print(table[0] + ':')

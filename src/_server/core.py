@@ -1,11 +1,12 @@
 import _server.tables as tables
 import uuid
 specs = {
-    'user': ('usid', ('firstname', 'lastname', 'email', 'avatar')),
+    'user': ('usid', ('firstname', 'lastname', 'email', 'avatar', 'level')),
     'badge': ('baid', ('badgenumber', 'usid')),
     'product': ('prid', ('name', 'stock', 'price')),
     'purchase': ('puid', ('datetime', 'prid', 'usid', 'amount')),
-    'transaction': ('trid', ('datetime', 'usid', 'amount', 'reason'))
+    'transaction': ('trid', ('datetime', 'usid', 'amount', 'reason')),
+    'otp': ('onid', ('datetime', 'otp', 'usid'))
 }
 floats = ['amount', 'price']
 ints = ['stock', 'badgenumber']
@@ -44,6 +45,8 @@ def create(table, properties):
             key: (float(value) if key in floats else int(value) if key in ints else value) for
             key, value in properties.items()
         }
+        if table == 'user':
+            parameters.update({'level': 1})
         try:
             i = uuid.uuid1().hex
             tables.update(table, {

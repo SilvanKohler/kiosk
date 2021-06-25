@@ -20,9 +20,13 @@ import _client.badge as badge
 import _shared.data as data
 import directories
 
+
 def print(*text):
-    if len(text) == 0: text = ['']
+    if len(text) == 0:
+        text = ['']
     Logger.debug(f'{__file__}: {" ".join(str(text))}')
+
+
 data.init('client')
 
 Config.read(os.path.join(directories.__client__, 'config.ini'))
@@ -42,11 +46,13 @@ itemlayout = None
 registration_fields = None
 timeout = None
 
+
 def renew_timeout():
     global timeout
     if timeout is not None:
         Clock.unschedule(timeout)
     timeout = Clock.schedule_once(logout, 30)
+
 
 def login(b):
     global user
@@ -59,11 +65,12 @@ def logout(*args):
     global user, badge_
     user = None
     badge_ = None
-    if registration_fields is not None:
-        for field in registration_fields:
-            field.text = ''
-        Clock.schedule_once(registration_fields[0].refocus, 0.1)
+    RS.ids['firstname'].text = ''
+    RS.ids['lastname'].text = ''
+    RS.ids['email'].text = ''
+    Clock.schedule_once(RS.ids['firstname'].refocus, 0.1)
     sm.current = 'Login'
+
 
 def refresh(content='all'):
     if content == 'balance':
@@ -72,6 +79,7 @@ def refresh(content='all'):
         KS.ids['balance'].text = str(user.balance) + ' CHF'
         KS.ids['name'].text = user.firstname + '\n' + user.lastname
         KS.ids['avatar'].source = user.avatar
+        KS.ids['otp'].text = 'OTP\n' + str(user.otp)
     elif content == 'products':
         itemlayout.refresh()
     elif content == 'all':
@@ -110,7 +118,7 @@ class Keyboard(BoxLayout):
         global times, user, registration_fields
         if focused is not None:
             Clock.schedule_once(focused.refocus, 0.1)
-            
+
         # logger.debug('Application: '+time.time() - times.get(instance.text, time.time() - 100))
         if time.time() - times.get(instance.text, time.time() - 100) > .05:
             times.update({instance.text: time.time()})
@@ -121,11 +129,7 @@ class Keyboard(BoxLayout):
                 elif instance.text == 'DEL':
                     focused.do_backspace()
                 elif instance.text == 'SPEICHERN':
-                    firstname = self.parent.parent.ids.firstname
-                    lastname = self.parent.parent.ids.lastname
-                    email = self.parent.parent.ids.email
-                    registration_fields = (firstname, lastname, email)
-                    if '' in (firstname.text, lastname.text, email.text):
+                    if '' in (RS.ids['firstname'].text, RS.ids['lastname'].text, RS.ids['email'].text):
                         b = BoxLayout()
                         b.orientation = 'vertical'
                         b.add_widget(
@@ -140,9 +144,8 @@ class Keyboard(BoxLayout):
                         return
                     # Create user
                     user = data.register_user(
-                        firstname.text, lastname.text, email.text, badge_)
+                        RS.ids['firstname'].text, RS.ids['lastname'].text, RS.ids['email'].text, badge_)
                     logout()
-                    
 
 
 class LoginScreen(Screen):
@@ -153,6 +156,7 @@ class LoginScreen(Screen):
 class KioskScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
     def logout(self):
         logout()
     blank = data.default_avatar
@@ -174,14 +178,19 @@ class RegisterScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 items = []
+
+
 def enable_items(*args, **kwargs):
     for item in items:
         item.disabled = False
 
+
 def disable_items():
     for item in items:
         item.disabled = True
+
 
 class Item(Button):
     def __init__(self, *args, **kwargs):
@@ -198,7 +207,6 @@ class Item(Button):
         user.buy(self.prid)
         refresh('balance')
         Clock.schedule_once(enable_items, 2)
-
 
 
 class ItemLayout(GridLayout):
@@ -233,8 +241,10 @@ class DetailInput(TextInput):
         if value:
             focused = instance
         super()._on_focus(instance, value)
+
     def refocus(self, *args):
         self.focus = True
+
 
 LS = LoginScreen(name='Login')
 KS = KioskScreen(name='Kiosk')
