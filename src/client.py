@@ -105,6 +105,7 @@ class Keyboard(BoxLayout):
             if focused is not None:
                 if instance.text not in ('DEL', 'SPEICHERN'):
                     focused.text += instance.text
+                    focused.focus = True
                 elif instance.text == 'DEL':
                     if focused.cursor_col > 0:
                         focused.text = focused.text[:focused.cursor_col -
