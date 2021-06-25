@@ -1,75 +1,107 @@
 {% extends 'base.html' %}
 
-<title>{% block title %}Kiosk WebGUI - Käufe{% endblock %}</title>
+<title>{% block title %}Kiosk WebGUI - Getränke{% endblock %}</title>
 
 {% block content %}
 <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__title" style="width: 100%;">
-        <h3>Käufe</h3>
+        <h3>Getränke</h3>
     </div>
     <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <form class="purchases-form" action="/purchases" onsubmit="loading()">
-            <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
-                    id="number_of_purchases" value="{{ number_of_purchases }}">
-                <label class="mdl-textfield__label" for="number_of_purchases">Anzahl</label>
-                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
-            </div>
-        </form>
-        <div class="mdl-layout-spacer"></div>
-    </div>
-    <div class="mdl-card__supporting-text mdl-grid">
-        <div class="mdl-layout-spacer"></div>
-        <form id="products" class="products-form" action="/purchases" onsubmit="loading()">
-            <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
-                id="number_of_purchases" value="{{ number_of_purchases }}">
+        <form id="products" class="products-form" action="/products" onsubmit="loading()">
+            <!-- Accent-colored raised button -->
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Ausgewählte löschen" style="margin-bottom: 1%" />
+                value="Speichern und ausgewählte löschen" style="margin-bottom: 1%" />
             <table class="mdl-data-table mdl-shadow--2dp">
                 <thead>
                     <tr>
-                        <th>Auswahl</th>
-                        <th>Zeit</th>
-                        <th>Person</th>
-                        <th>Artikel</th>
+                        <th>
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-data-table__select"
+                                for="select-all-checkbox">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-all"
+                                    id="select-all-checkbox" />
+                            </label>
+                        </th>
+                        <th>Name</th>
+                        <th>Lager</th>
                         <th>Preis (CHF)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% if purchases: %}
-                    {% for purchase in purchases[:number_of_purchases] %}
                     <tr>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select"
-                                for="select-{{ purchase[0] }}">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ purchase[0] }}"
-                                    id="select-{{ purchase[0] }}" />
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-new">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-new" id="select-new" />
                             </label>
                         </td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['datetime'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{
-                            users[purchase[1]['usid']]['firstname'] }} {{ users[purchase[1]['usid']]['lastname'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ products[purchase[1]['prid']]['name']
-                            }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['amount'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" name="name-new" id="name-new">
+                                <label class="mdl-textfield__label" for="name-new">Name</label>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                    name="stock-new" id="stock-new">
+                                <label class="mdl-textfield__label" for="stock-new">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                    name="price-new" id="price-new">
+                                <label class="mdl-textfield__label" for="price-new">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% for product in products.items() %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select"
+                                for="select-{{ product[0] }}">
+                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ product[0] }}"
+                                    id="select-{{ product[0] }}" />
+                            </label>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" name="name-{{ product[0] }}"
+                                    id="name-{{ product[0] }}" value="{{ product[1]['name'] }}">
+                                <label class="mdl-textfield__label" for="name-{{ product[0] }}">{{ product[1]['name']
+                                    }}</label>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]+?"
+                                    name="stock-{{ product[0] }}" id="stock-{{ product[0] }}" value={{ product[1]['stock'] }}>
+                                <label class="mdl-textfield__label" for="stock-{{ product[0] }}">{{ product[1]['stock']
+                                    }}</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine ganze Zahl!</span>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="[0-9]*(\.[0-9]+)?"
+                                    name="price-{{ product[0] }}" id="price-{{ product[0] }}" value={{ product[1]['price'] }}>
+                                <label class="mdl-textfield__label" for="price-{{ product[0] }}">{{ product[1]['price']
+                                    }}</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine postive Zahl!</span>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                    </tr>
-                    {% endif %}
                 </tbody>
             </table>
+            <!-- Accent-colored raised button -->
             <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Ausgewählte löschen" style="margin-top: 1%" />
+                value="Speichern und ausgewählte löschen" style="margin-top: 1%" />
         </form>
         <div class="mdl-layout-spacer"></div>
     </div>
