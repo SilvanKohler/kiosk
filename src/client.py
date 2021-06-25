@@ -85,6 +85,7 @@ def on_badge(b):
     logout()
     print(b, badge_)
     if b != badge_:
+        renew_timeout()
         badge_ = b
         if data.user_exists(b):
             login(b)
