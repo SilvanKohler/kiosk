@@ -132,6 +132,7 @@ class Keyboard(BoxLayout):
                     firstname.text = ''
                     lastname.text = ''
                     email.text = ''
+                    Clock.schedule_once(firstname.refocus, 0.1)
                     sm.current = 'Login'
 
 
