@@ -222,7 +222,7 @@ class DetailInput(TextInput):
         if value:
             focused = instance
         super()._on_focus(instance, value)
-    def refocus(self):
+    def refocus(self, *args):
         self.focus = True
 
 LS = LoginScreen(name='Login')
