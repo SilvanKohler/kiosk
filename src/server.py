@@ -22,8 +22,11 @@ def authentification(level):
 
 @app.route('/login', methods=['POST'])
 def root_login():
-    level = data.check_otp(request.args.get('otp', -1))
-    session['level'] = level
+    if request.form.get('otp'):
+        level = data.check_otp(request.form.get('otp'))
+        session['level'] = level
+    else:
+        session['level'] = 0
     return redirect(url_parse(request.referrer).path)
 
 
@@ -143,7 +146,6 @@ def root_billing():
     if authentification(2):
         if request.args:
             changes = {}
-            print(list(request.args.items()))
             for key, value in request.args.items():
                 if 'action-' in key:
                     usid = key.replace('action-', '')

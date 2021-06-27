@@ -6,17 +6,17 @@ specs = {
     'product': ('prid', ('name', 'stock', 'price')),
     'purchase': ('puid', ('datetime', 'prid', 'usid', 'amount')),
     'transaction': ('trid', ('datetime', 'usid', 'amount', 'reason')),
-    'otp': ('onid', ('datetime', 'otp', 'usid'))
+    'otp': ('otid', ('datetime', 'otp', 'usid'))
 }
 floats = ['amount', 'price']
-ints = ['stock', 'badgenumber']
+ints = ['stock', 'badgenumber', 'otp', 'level']
 
 
 def get(table, filters):
     content = {'success': False}
     if table in tables.tables.keys():
         parameters = {
-            key: (float(value) if key in floats else int(value) if key in ints else value) for
+            key: (float(value) if (key in floats and value != '') else int(value) if (key in ints and value != '') else value) for
             key, value in filters.items()
         }
         result = tables.get(table)

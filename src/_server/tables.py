@@ -41,10 +41,8 @@ def sync(table):
 
 def get(table):
     i = uuid.uuid1().hex
-    print(i)
     queue.append(i)
     while queue[0] != i:
-        print(queue)
         sleep(0.1)
     result = dict(tables.get(table, None).items())
     sync(table)

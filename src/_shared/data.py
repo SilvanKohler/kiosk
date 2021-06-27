@@ -12,7 +12,7 @@ def init(type_):
         # host = 'kassensystem.pythonanywhere.com'
         # port = 80
         # protocol = 'http'
-        host = '192.168.137.1'
+        host = '127.0.0.1'
         port = 80
         protocol = 'http'
         api = API(host, port, protocol)
@@ -111,18 +111,19 @@ class User:
     @usid.setter
     def usid(self, usid):
         self._usid = usid
+
     @property
     def otp(self):
         date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
         otid = api.create('otp', {
             'datetime': date,
-            'otp': random.randint(999999),
+            'otp': random.randint(100000, 999999),
             'usid': self.usid
-        })
+        })['otid']
         otp = api.get('otp', {
             'otid': otid
         })
-        return dict(filter(lambda x: x[0] != 'success', otp.items()))
+        return dict(filter(lambda x: x[0] != 'success', otp.items()))[otid]['otp']
 
     def get_purchases(self):
         purchases = api.get('purchase', {
@@ -196,6 +197,7 @@ def get_transaction(trid):
     transaction = api.get('transaction', {'trid': trid})
     return transaction
 
+
 def get_product(prid):
     product = api.get('product', {
         'prid': prid
@@ -229,6 +231,7 @@ def create_transaction(usid, amount, reason):
         'reason': reason
     })
 
+
 def delete_product(prid):
     api.delete('product', {'prid': prid})
 
@@ -255,8 +258,17 @@ def user_exists(badgenumber):
 def check_otp(pin):
     otp = api.get('otp', {'otp': pin})
     if otp['success']:
-        user = api.get('user', {'usid': list(dict(
-            filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']})
-        return list(dict(filter(lambda x: x[0] != 'success', dict(user).items())).values())[0]['level']
+        api.delete('otp', {'otid': list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).keys())[0]})
+        if datetime.datetime.now() - datetime.datetime.strptime(list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['datetime'], "%d-%m-%Y_%H:%M:%S") <= datetime.timedelta(minutes=10):
+            user = api.get('user', {'usid': list(dict(
+                filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']})
+            return list(dict(filter(lambda x: x[0] != 'success', dict(user).items())).values())[0]['level']
+        else:
+            return 0
     else:
         return 0
+
+def test():
+    init('client')
+    user = User(0, 'Silvan', 'Kohler', 's.kohler@sro.ch')
+    print(user.otp)
