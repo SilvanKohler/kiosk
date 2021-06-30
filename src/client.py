@@ -90,13 +90,14 @@ def refresh(content='all'):
 
 def on_badge(b):
     global badge_
-    logout()
-    renew_timeout()
-    badge_ = b
-    if data.user_exists(b):
-        login(b)
-    else:
-        sm.current = 'Register'
+    if b != badge_:
+        logout()
+        renew_timeout()
+        badge_ = b
+        if data.user_exists(b):
+            login(b)
+        else:
+            sm.current = 'Register'
 
 
 class Keyboard(BoxLayout):
