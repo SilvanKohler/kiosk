@@ -10,8 +10,8 @@ def init(type_):
     if type_ == 'client':
         from _shared.api import API
         host = 'kassensystem.pythonanywhere.com'
-        port = 443
-        protocol = 'https'
+        port = 80
+        protocol = 'http'
         # host = '127.0.0.1'
         # port = 80
         # protocol = 'http'
