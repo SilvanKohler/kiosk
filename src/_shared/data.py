@@ -113,6 +113,12 @@ class User:
         self._usid = usid
 
     @property
+    def level(self):
+        return api.get('user', {
+            'usid': self.usid
+        })[self.usid]['level']
+
+    @property
     def otp(self):
         date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
         otid = api.create('otp', {
@@ -260,13 +266,11 @@ def check_otp(pin):
     if otp['success']:
         api.delete('otp', {'otid': list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).keys())[0]})
         if datetime.datetime.now() - datetime.datetime.strptime(list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['datetime'], "%d-%m-%Y_%H:%M:%S") <= datetime.timedelta(minutes=10):
-            user = api.get('user', {'usid': list(dict(
-                filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']})
-            return list(dict(filter(lambda x: x[0] != 'success', dict(user).items())).values())[0]['level']
+            return list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']
         else:
-            return 0
+            return None
     else:
-        return 0
+        return None
 
 def test():
     init('client')

@@ -18,17 +18,21 @@ app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 
 
-def authentification(level):
-    return session.get('level', 0) >= level
+def authentification(level_requirement):
+    usid = session.get('usid')
+    level = 0
+    if usid is not None:
+        user = data.User(usid=usid)
+        level = user.level
+    return level >= level_requirement
 
 
 @app.route('/login', methods=['POST'])
 def root_login():
     if request.form.get('otp'):
-        level = data.check_otp(request.form.get('otp'))
-        session['level'] = level
+        session['usid'] = data.check_otp(request.form.get('otp'))
     else:
-        session['level'] = 0
+        session['usid'] = None
     return redirect(url_parse(request.referrer).path)
 
 
@@ -217,6 +221,6 @@ def send_mails():
 
 if __name__ == "__main__":
     sched = BackgroundScheduler()
-    sched.add_job(send_mails, 'interval', seconds=20)
+    sched.add_job(send_mails, 'interval', seconds=60)
     sched.start()
     app.run("0.0.0.0", 80)
