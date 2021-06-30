@@ -12,3 +12,6 @@ linuxvenv/
 
 #Cache files
 *.pyc
+
+#Credentials
+src/_server/credentials.py

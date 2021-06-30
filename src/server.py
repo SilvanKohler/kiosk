@@ -2,12 +2,14 @@ import random
 import uuid
 import datetime
 from werkzeug.urls import url_parse
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask import Flask, render_template, request, jsonify, redirect, config, session
 import os
 import _shared.data as data
 import _server.core as core
 import directories
+import _server.mail as mail
 
 data.init('server')
 
@@ -206,6 +208,15 @@ def root_api_delete(table):
     content = core.delete(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
+############## MAIL #################
+def send_mails():
+    print('Sending Mails.')
+    for user in data.get_users().items():
+        print('Mail an', user[1]['email'])
+        mail.send(user[0])
 
 if __name__ == "__main__":
+    sched = BackgroundScheduler()
+    sched.add_job(send_mails, 'interval', seconds=20)
+    sched.start()
     app.run("0.0.0.0", 80)
