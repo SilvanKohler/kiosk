@@ -4,17 +4,19 @@ import random
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 api = None
 
+print('import')
+
 
 def init(type_):
     global api
     if type_ == 'client':
         from _shared.api import API
-        # host = 'kassensystem.pythonanywhere.com'
-        # port = 443
-        # protocol = 'https'
-        host = '192.168.78.216'
-        port = 80
-        protocol = 'http'
+        host = 'kassensystem.pythonanywhere.com'
+        port = 443
+        protocol = 'https'
+        # host = '192.168.78.216'
+        # port = 80
+        # protocol = 'http'
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api
@@ -194,6 +196,11 @@ def get_products():
     return dict(filter(lambda x: x[0] != 'success', products.items()))
 
 
+def get_mails(prid):
+    mails = api.get('mails', {'prid': prid})
+    return dict(filter(lambda x: x[0] != 'success', mails.items()))
+
+
 def get_purchase(puid):
     purchase = api.get('purchase', {'puid': puid})
     return purchase
@@ -211,30 +218,40 @@ def get_product(prid):
     return product
 
 
-def update_product(prid, name, stock, price):
+def update_product(prid, name, stock, warning, price):
     api.edit('product', {'prid': prid}, {
         'name': name,
         'stock': stock,
+        'warning': warning,
         'price': price
     })
 
 
-def create_product(name, stock, price):
+def create_product(name, stock, warning, price):
     api.create('product', {
         'name': name,
         'stock': stock,
+        'warning': warning,
         'price': price
     })
 
 
 def create_transaction(usid, amount, reason):
     date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-
     api.create('transaction', {
         'datetime': date,
         'usid': usid,
         'amount': amount,
         'reason': reason
+    })
+
+
+def create_mail(prid, stock):
+    date = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+    api.create('mail', {
+        'datetime': date,
+        'prid': prid,
+        'stock': stock
     })
 
 
@@ -264,13 +281,15 @@ def user_exists(badgenumber):
 def check_otp(pin):
     otp = api.get('otp', {'otp': pin})
     if otp['success']:
-        api.delete('otp', {'otid': list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).keys())[0]})
+        api.delete('otp', {'otid': list(
+            dict(filter(lambda x: x[0] != 'success', dict(otp).items())).keys())[0]})
         if datetime.datetime.now() - datetime.datetime.strptime(list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['datetime'], "%d-%m-%Y_%H:%M:%S") <= datetime.timedelta(minutes=10):
             return list(dict(filter(lambda x: x[0] != 'success', dict(otp).items())).values())[0]['usid']
         else:
             return None
     else:
         return None
+
 
 def test():
     init('client')

@@ -3,13 +3,13 @@ import uuid
 specs = {
     'user': ('usid', ('firstname', 'lastname', 'email', 'avatar', 'level')),
     'badge': ('baid', ('badgenumber', 'usid')),
-    'product': ('prid', ('name', 'stock', 'price')),
+    'product': ('prid', ('name', 'stock', 'price', 'warning')),
     'purchase': ('puid', ('datetime', 'prid', 'usid', 'amount')),
     'transaction': ('trid', ('datetime', 'usid', 'amount', 'reason')),
-    'otp': ('otid', ('datetime', 'otp', 'usid'))
+    'otp': ('otid', ('datetime', 'otp', 'usid')),
 }
 floats = ['amount', 'price']
-ints = ['stock', 'badgenumber', 'otp', 'level']
+ints = ['stock', 'badgenumber', 'otp', 'level', 'warning']
 
 
 def get(table, filters):

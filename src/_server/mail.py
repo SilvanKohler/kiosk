@@ -5,11 +5,12 @@ import _shared.data as data
 import ssl
 
 
-def send(usid):
+def send_expenses(usid):
     u = data.User(usid=usid)
     msg = EmailMessage()
-    msg.set_content(f'''Hallo {u.firstname} {u.lastname}\nDu hast im letzten Monat {u.balance} CHF ausgegeben.''')
-    msg['Subject'] = f'Ausgaben des letzten Monats'
+    msg.set_content(
+        f'''Hallo {u.firstname} {u.lastname}\nDu hast eine Balance von {u.balance} CHF.''')
+    msg['Subject'] = f'Ausgabenbenachrichtigung'
     msg['From'] = credentials.sender
     msg['To'] = u.email
     context = ssl.create_default_context()
@@ -19,12 +20,14 @@ def send(usid):
         s.send_message(msg)
         s.quit()
 
-def test():
+
+def send_stock(product):
     msg = EmailMessage()
-    msg.set_content(f'''Hallo Silvan Kohler\nDu hast im letzten Monat 100.00 CHF ausgegeben.''')
-    msg['Subject'] = f'Ausgaben des letzten Monats'
+    msg.set_content(
+        f'''Hallo\nVom Produkt "{product['name']}" hat es noch {product['stock']} an Lager.''')
+    msg['Subject'] = f'Lagerwarnung'
     msg['From'] = credentials.sender
-    msg['To'] = 'silvankohler@protonmail.com'
+    msg['To'] = credentials.sender
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(credentials.smtp_host, port=credentials.smtp_port, context=context) as s:
         # s.starttls()

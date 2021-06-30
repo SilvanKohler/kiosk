@@ -28,6 +28,7 @@
                         <th>Name</th>
                         <th>Lager</th>
                         <th>Preis (CHF)</th>
+                        <th>Warnung</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +57,14 @@
                                 <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
                                     name="price-new" id="price-new">
                                 <label class="mdl-textfield__label" for="price-new">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                    name="warning-new" id="warning-new">
+                                <label class="mdl-textfield__label" for="warning-new">0</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                             </div>
                         </td>
@@ -93,6 +102,15 @@
                                 <label class="mdl-textfield__label" for="price-{{ product[0] }}">{{ product[1]['price']
                                     }}</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine postive Zahl!</span>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]+?"
+                                    name="warning-{{ product[0] }}" id="warning-{{ product[0] }}" value={{ product[1]['warning'] }}>
+                                <label class="mdl-textfield__label" for="warning-{{ product[0] }}">{{ product[1]['warning']
+                                    }}</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine ganze Zahl!</span>
                             </div>
                         </td>
                     </tr>

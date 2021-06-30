@@ -43,6 +43,7 @@ def root():
     else:
         return render_template('login.html')
 
+
 @app.route('/settings')
 def root_settings():
     if authentification(1):
@@ -77,6 +78,14 @@ def root_management():
                         changes[prid].update({'stock': int(value)})
                     except ValueError as e:
                         break
+                elif 'warning-' in key:
+                    prid = key.replace('warning-', '')
+                    if not changes.get(prid):
+                        changes[prid] = {}
+                    try:
+                        changes[prid].update({'warning': int(value)})
+                    except ValueError as e:
+                        break
                 elif 'price-' in key:
                     prid = key.replace('price-', '')
                     if not changes.get(prid):
@@ -93,10 +102,10 @@ def root_management():
                 for prid, values in changes.items():
                     if prid == 'new':
                         data.create_product(
-                            values['name'], values['stock'], values['price'])
+                            values['name'], values['stock'], values['warning'], values['price'])
                     else:
                         data.update_product(
-                            prid, values['name'], values['stock'], values['price'])
+                            prid, values['name'], values['stock'], values['warning'], values['price'])
                 for prid in deletions:
                     data.delete_product(prid)
             return redirect('/products')
@@ -213,14 +222,24 @@ def root_api_delete(table):
     return jsonify(content), 200 if content['success'] else 406
 
 ############## MAIL #################
-def send_mails():
+
+
+def send_expense_mails():
     print('Sending Mails.')
     for user in data.get_users().items():
         print('Mail an', user[1]['email'])
-        mail.send(user[0])
+        mail.send_expenses(user[0])
+
+
+def send_stock_mails():
+    for product in data.get_products().items():
+        if product[1]['stock'] <= product[1]['warning']:
+            mail.send_stock(product[1])
+
 
 if __name__ == "__main__":
     sched = BackgroundScheduler()
-    sched.add_job(send_mails, 'interval', seconds=60)
+    sched.add_job(send_expense_mails, 'interval', days=30)
+    sched.add_job(send_stock_mails, 'interval', days=7)
     sched.start()
     app.run("0.0.0.0", 80)
