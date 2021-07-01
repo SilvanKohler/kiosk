@@ -11,12 +11,12 @@ def init(type_):
     global api
     if type_ == 'client':
         from _shared.api import API
-        host = 'kassensystem.pythonanywhere.com'
-        port = 443
-        protocol = 'https'
-        # host = '192.168.78.216'
-        # port = 80
-        # protocol = 'http'
+        # host = 'kassensystem.pythonanywhere.com'
+        # port = 443
+        # protocol = 'https'
+        host = '192.168.78.216'
+        port = 80
+        protocol = 'http'
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api
