@@ -156,7 +156,7 @@ class User:
             'amount': price
         })
         update_product(prid, product['name'],
-                       product['stock']-1, product['price'])
+                       product['stock']-1, product['warning'], product['price'])
 
 
 def register_user(firstname, lastname, email, badgenumber):
