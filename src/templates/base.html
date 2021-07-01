@@ -29,21 +29,25 @@
                 <span class="mdl-layout-title">Kiosk WebGUI</span>
                 <!-- Add spacer, to align navigation to the right -->
                 <div class="mdl-layout-spacer"></div>
-                <!-- Navigation. We hide it in small screens. -->
+                <!-- Navigations. -->
                 <nav class="mdl-navigation mdl-layout--large-screen-only">
                     {% if level >= 0 %}
-                        <a class="mdl-navigation__link" href="/" onclick="loading()">Start</a>
-                    {% elif level >= 1 %}
-                        <a class="mdl-navigation__link" href="/settings" onclick="loading()">Einstellungen</a>
-                    {% elif level >= 2 %}
-                        <a class="mdl-navigation__link" href="/products" onclick="loading()">Produkte</a>
-                        <a class="mdl-navigation__link" href="/purchases" onclick="loading()">Käufe</a>
-                        <a class="mdl-navigation__link" href="/transactions" onclick="loading()">Transaktionen</a>
-                        <a class="mdl-navigation__link" href="/billing" onclick="loading()">Abrechnung</a>
+                    <a class="mdl-navigation__link" href="/" onclick="loading()">Start</a>
                     {% endif %}
+                    {% if level >= 1 %}
+                    <a class="mdl-navigation__link" href="/settings" onclick="loading()">Einstellungen</a>
+                    {% endif %}
+                    {% if level >= 2 %}
+                    <a class="mdl-navigation__link" href="/products" onclick="loading()">Produkte</a>
+                    <a class="mdl-navigation__link" href="/purchases" onclick="loading()">Käufe</a>
+                    <a class="mdl-navigation__link" href="/transactions" onclick="loading()">Transaktionen</a>
+                    <a class="mdl-navigation__link" href="/billing" onclick="loading()">Abrechnung</a>
+                    {% endif %}
+                    {% if level == 0%}
                     <a class="mdl-navigation__link" href="/login" onclick="loading()">Login</a>
+                    {% endif %}
                 </nav>
-            </div>
+        </div>
         </header>
         <div id="loadingbar" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"
             style="width: 100%; visibility: hidden !important;"></div>

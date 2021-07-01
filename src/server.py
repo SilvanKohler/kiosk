@@ -19,7 +19,7 @@ app.jinja_env.filters['zip'] = zip
 
 
 @app.before_request
-def pre_request():
+def before_request():
     usid = session.get('usid')
     g.level = 0
     if usid is not None:
