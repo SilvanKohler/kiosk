@@ -226,6 +226,11 @@ def update_product(prid, name, stock, warning, price):
         'price': price
     })
 
+def authorize_user(usid, level):
+    api.edit('user', {
+        'usid': usid,
+        'level': level
+    })
 
 def create_product(name, stock, warning, price):
     api.create('product', {

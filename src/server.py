@@ -182,12 +182,26 @@ def root_billing():
                             changes[usid].update({'value': float(0)})
                         else:
                             break
+                elif 'level-' in key:
+                    usid = key.replace('level-', '')
+                    if not changes.get(usid):
+                        changes[usid] = {}
+                    try:
+                        changes[usid].update({'level': int(value)})
+                    except ValueError:
+                        if value == '':
+                            changes[usid].update({'level': int(0)})
+                        else:
+                            break
             else:
                 for usid, values in changes.items():
-                    if str(values['action']).lower() in ('twint', 'bar', 'korrektur', 'sonstig') and values['value'] != 0:
-                        data.create_transaction(
-                            usid, values['value'], values['action'])
-            return redirect('/billing', level=g.level)
+                    if values.get('action') and values.get('value'):
+                        if str(values['action']).lower() in ('twint', 'bar', 'korrektur', 'sonstig') and values['value'] != 0:
+                            data.create_transaction(
+                                usid, values['value'], values['action'])
+                    if values.get('level'):
+                        data.authorize_user(usid, values['level'])
+            return redirect('/billing')
         users = data.get_users()
         for user in users.keys():
             transactions = data.get_transactions(user)

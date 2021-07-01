@@ -59,9 +59,9 @@
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
                                 <select class="mdl-textfield__input" id="level-{{ user[0] }}"
                                     name="level-{{ user[0] }}">
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
+                                    <option value="0" {% if user[1]['level'] == 0 %}selected="selected"{% endif %}>0</option>
+                                    <option value="1" {% if user[1]['level'] == 1 %}selected="selected"{% endif %}>1</option>
+                                    <option value="2" {% if user[1]['level'] == 2 %}selected="selected"{% endif %}>2</option>
                                 </select>
                             </div>
                         </td>
