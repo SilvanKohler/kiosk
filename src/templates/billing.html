@@ -23,6 +23,7 @@
                         <th>Guthaben</th>
                         <th>Aktion</th>
                         <th>Wert</th>
+                        <th>Autorisierung</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +53,16 @@
                                     name="value-{{ user[0] }}" id="value-{{ user[0] }}">
                                 <label class="mdl-textfield__label" for="value-{{ user[0] }}">0</label>
                                 <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>c
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
+                                <select class="mdl-textfield__input" id="level-{{ user[0] }}"
+                                    name="level-{{ user[0] }}">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
                             </div>
                         </td>
                     </tr>
