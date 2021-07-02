@@ -5,7 +5,7 @@ default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public
 api = None
 
 cparser = configparser.ConfigParser()
-cparser.read('config.ini')
+cparser.read(['default_config.ini', 'config.ini'])
 
 def init(type_):
     global api
