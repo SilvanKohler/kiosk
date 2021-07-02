@@ -13,7 +13,7 @@ import configparser
 data.init('server')
 
 cparser = configparser.ConfigParser()
-cparser.read('config.ini')
+cparser.read(['default_config.ini', 'config.ini'])
 
 app = Flask(__name__, template_folder=os.path.abspath(cparser.get('directories', 'templates')))
 app.secret_key = bytes(random.randrange(4096))

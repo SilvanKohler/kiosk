@@ -5,7 +5,7 @@ import ssl
 import configparser
 
 cparser = configparser.ConfigParser()
-cparser.read('config.ini')
+cparser.read(['default_config.ini', 'config.ini'])
 
 
 def send(msg):

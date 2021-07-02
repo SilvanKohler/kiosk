@@ -21,7 +21,7 @@ import _shared.data as data
 import configparser
 
 cparser = configparser.ConfigParser()
-cparser.read('default_config.ini', 'config.ini')
+cparser.read(['default_config.ini', 'config.ini'])
 
 def print(*text):
     if len(text) == 0:

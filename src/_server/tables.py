@@ -6,7 +6,7 @@ from time import sleep
 import configparser
 
 cparser = configparser.ConfigParser()
-cparser.read('config.ini')
+cparser.read(['default_config.ini', 'config.ini'])
 
 
 data_directory = os.path.abspath(cparser.get('directories', 'data'))
