@@ -9,7 +9,7 @@ cparser = configparser.ConfigParser()
 cparser.read('config.ini')
 
 
-data_directory = os.path.abspath(cparser.get('directories', 'data', fallback='data/'))
+data_directory = os.path.abspath(cparser.get('directories', 'data'))
 
 if not os.path.exists(data_directory):
     os.mkdir(data_directory)

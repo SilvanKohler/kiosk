@@ -15,7 +15,7 @@ data.init('server')
 cparser = configparser.ConfigParser()
 cparser.read('config.ini')
 
-app = Flask(__name__, template_folder=os.path.abspath(cparser.get('directories', 'templates', fallback='templates/')))
+app = Flask(__name__, template_folder=os.path.abspath(cparser.get('directories', 'templates')))
 app.secret_key = bytes(random.randrange(4096))
 app.jinja_env.filters['zip'] = zip
 

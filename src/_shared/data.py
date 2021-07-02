@@ -11,9 +11,9 @@ def init(type_):
     global api
     if type_ == 'client':
         from _shared.api import API
-        host = cparser.get('client', 'host', fallback='127.0.0.1')
-        port = cparser.getint('client', 'port', fallback=80)
-        protocol = cparser.get('client', 'protocol', fallback='http')
+        host = cparser.get('client', 'host')
+        port = cparser.getint('client', 'port')
+        protocol = cparser.get('client', 'protocol')
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api

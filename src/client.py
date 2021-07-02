@@ -18,8 +18,10 @@ from kivy.uix.textinput import TextInput
 
 import _client.badge as badge
 import _shared.data as data
-import directories
+import configparser
 
+cparser = configparser.ConfigParser()
+cparser.read('default_config.ini', 'config.ini')
 
 def print(*text):
     if len(text) == 0:
@@ -29,8 +31,8 @@ def print(*text):
 
 data.init('client')
 
-Config.read(os.path.join(directories.__client__, 'kivy.ini'))
-style = Builder.load_file(os.path.join(directories.__client__, 'style.kv'))
+Config.read(os.path.join(cparser.get('directories', 'client'), 'kivy.ini'))
+style = Builder.load_file(os.path.join(cparser.get('directories', 'client'), 'style.kv'))
 sm = ScreenManager(transition=NoTransition())
 keys = [
     'q,w,e,r,t,z,u,i,o,p',
