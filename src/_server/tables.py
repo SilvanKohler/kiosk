@@ -1,22 +1,28 @@
 import shelve
 import uuid
 from collections import deque
-from os import getcwd, mkdir, path
+import os
 from time import sleep
-import directories
+import configparser
 
-if not path.exists(directories.__data__):
-    mkdir(directories.__data__)
+cparser = configparser.ConfigParser()
+cparser.read('config.ini')
+
+
+data_directory = os.path.abspath(cparser.get('directories', 'data', fallback='data/'))
+
+if not os.path.exists(data_directory):
+    os.mkdir(data_directory)
 user_table = shelve.open(
-    path.join(directories.__data__, 'user'), writeback=True)
+    os.path.join(data_directory, 'user'), writeback=True)
 badge_table = shelve.open(
-    path.join(directories.__data__, 'badge'), writeback=True)
+    os.path.join(data_directory, 'badge'), writeback=True)
 product_table = shelve.open(
-    path.join(directories.__data__, 'product'), writeback=True)
+    os.path.join(data_directory, 'product'), writeback=True)
 purchase_table = shelve.open(
-    path.join(directories.__data__, 'purchase'), writeback=True)
+    os.path.join(data_directory, 'purchase'), writeback=True)
 transaction_table = shelve.open(
-    path.join(directories.__data__, 'transaction'), writeback=True)
+    os.path.join(data_directory, 'transaction'), writeback=True)
 otp_table = {}
 
 tables = {

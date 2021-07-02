@@ -1,22 +1,19 @@
 import datetime
 import random
-
+import configparser
 default_avatar = 'https://www.sro.ch/typo3conf/ext/sro_template/Resources/Public/Images/favicon.ico'
 api = None
 
-print('import')
-
+cparser = configparser.ConfigParser()
+cparser.read('config.ini')
 
 def init(type_):
     global api
     if type_ == 'client':
         from _shared.api import API
-        # host = 'kassensystem.pythonanywhere.com'
-        # port = 443
-        # protocol = 'https'
-        host = '192.168.78.216'
-        port = 80
-        protocol = 'http'
+        host = cparser.get('client', 'host', fallback='127.0.0.1')
+        port = cparser.getint('client', 'port', fallback=80)
+        protocol = cparser.get('client', 'protocol', fallback='http')
         api = API(host, port, protocol)
     elif type_ == 'server':
         import _server.core as api

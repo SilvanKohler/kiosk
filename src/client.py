@@ -29,7 +29,7 @@ def print(*text):
 
 data.init('client')
 
-Config.read(os.path.join(directories.__client__, 'config.ini'))
+Config.read(os.path.join(directories.__client__, 'kivy.ini'))
 style = Builder.load_file(os.path.join(directories.__client__, 'style.kv'))
 sm = ScreenManager(transition=NoTransition())
 keys = [
@@ -266,5 +266,3 @@ badgesensor.start()
 
 app = KioskApp()
 app.run()
-# except Exception as e:
-#     logger.exception('Application: '+e)
