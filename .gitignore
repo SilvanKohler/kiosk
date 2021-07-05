@@ -1,4 +1,17 @@
+#Environment
 .idea
+.vscode
 venv/
+linuxvenv/
+
+#Database files
 *.dat
 *.db
+*.bak
+*.dir
+
+#Cache files
+*.pyc
+
+#Config
+config.ini

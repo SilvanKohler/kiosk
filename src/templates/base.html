@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer="" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script>
+        function loading() {
+            document.getElementById("loadingbar").style = "width: 100%; visibility: visible !important;"
+        }
+    </script>
+    <style>
+        .min-width-25 {
+            min-width: 25%;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">Kiosk WebGUI</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigations. -->
+                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    {% if level >= 0 %}
+                    <a class="mdl-navigation__link" href="/" onclick="loading()">Start</a>
+                    {% endif %}
+                    {% if level >= 1 %}
+                    <a class="mdl-navigation__link" href="/settings" onclick="loading()">Einstellungen</a>
+                    {% endif %}
+                    {% if level >= 2 %}
+                    <a class="mdl-navigation__link" href="/products" onclick="loading()">Produkte</a>
+                    <a class="mdl-navigation__link" href="/purchases" onclick="loading()">Käufe</a>
+                    <a class="mdl-navigation__link" href="/transactions" onclick="loading()">Transaktionen</a>
+                    <a class="mdl-navigation__link" href="/billing" onclick="loading()">Abrechnung</a>
+                    {% endif %}
+                    {% if level == 0%}
+                    <a class="mdl-navigation__link" href="/login" onclick="loading()">Login</a>
+                    {% endif %}
+                </nav>
+        </div>
+        </header>
+        <div id="loadingbar" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"
+            style="width: 100%; visibility: hidden !important;"></div>
+        <main class="mdl-layout__content">
+            <div class="page-content mdl-grid">
+                <div class="mdl-layout-spacer"></div>
+                {% block content %} {% endblock %}
+                <div class="mdl-layout-spacer"></div>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

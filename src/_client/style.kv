@@ -8,15 +8,20 @@
             orientation: 'horizontal'
             size: (800, 70)
             size_hint_y: 0.2
-            Button:
+            Label:
                 id: balance
                 size_hint_x: 0.5
-                text: 'Fehler'
-                on_press: root.transactions()
-            FloatLayout:
+                text: 'Laden'
+            Button:
+                text: 'Abmelden'
+                on_press: root.logout()
+            Label:
+                id: otp
+                text: 'OTP\nLaden'
+                halign: 'right'
             Label:
                 id: name
-                text: 'Fehler'
+                text: 'Laden'
                 halign: 'right'
             AsyncImage:
                 id: avatar
@@ -49,11 +54,13 @@
                 id: lastname
                 multiline: False
                 font_size: 35
+                focus: False
             Label:
                 text: 'E-Mail'
             DetailInput:
                 id: email
                 multiline: False
                 font_size: 30
+                focus: False
         Keyboard:
             size: (800, 200)

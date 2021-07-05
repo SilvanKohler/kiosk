@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+<title>{% block title %}Kiosk WebGUI - Transaktionen{% endblock %}</title>
+
+{% block content %}
+<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__title" style="width: 100%;">
+        <h3>Transaktionen</h3>
+    </div>
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__supporting-text mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <form class="transactions-form" action="/transactions" onsubmit="loading()">
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                    name="number_of_transactions" id="number_of_transactions" value="{{ number_of_transactions }}">
+                <label class="mdl-textfield__label" for="number_of_transactions">Anzahl</label>
+                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+            </div>
+        </form>
+        <div class="mdl-layout-spacer"></div>
+    </div>
+    <div class="mdl-card__supporting-text mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <form id="products" class="products-form" action="/transactions" onsubmit="loading()">
+            <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions"
+                id="number_of_transactions" value="{{ number_of_transactions }}">
+        </form>
+        <table class="mdl-data-table mdl-shadow--2dp">
+            <thead>
+                <tr>
+                    <th>Zeit</th>
+                    <th>Benutzer</th>
+                    <th>Betrag</th>
+                    <th>Methode</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if transactions: %}
+                {% for transaction in transactions[:number_of_transactions] %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['datetime'] }}</td>
+                    {% if transaction[1]['usid'] in users %}
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{
+                        users[transaction[1]['usid']]['firstname'] }} {{ users[transaction[1]['usid']]['lastname'] }}</td>
+                    {% else %}
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Benutzer nicht gefunden</td>
+                    {% endif %}
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['amount'] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['reason'] }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                    <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="mdl-layout-spacer"></div>
+    </div>
+</div>
+{% endblock %}

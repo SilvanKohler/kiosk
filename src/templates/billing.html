@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+<title>{% block title %}Kiosk WebGUI - Abrechnung{% endblock %}</title>
+
+{% block content %}
+<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__title" style="width: 100%;">
+        <h3>Abrechnung</h3>
+    </div>
+    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-card__supporting-text mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <form id="billing" class="billing-form" action="/billing" onsubmit="loading()">
+            <!-- Accent-colored raised button -->
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                value="Speichern" style="margin-bottom: 1%" />
+            <table class="mdl-data-table mdl-shadow--2dp">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Guthaben</th>
+                        <th>Aktion</th>
+                        <th>Wert</th>
+                        <th>Autorisierung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if users: %}
+                    {% for user in users.items() %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['firstname'] }} {{
+                            user[1]['lastname']
+                            }}</td>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['email'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['balance'] }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
+                                <select class="mdl-textfield__input" id="action-{{ user[0] }}"
+                                    name="action-{{ user[0] }}">
+                                    <option value="KEINE">Keine</option>
+                                    <option value="TWINT">Twint</option>
+                                    <option value="BAR">Bar</option>
+                                    <option value="KORREKTUR">Korrektur</option>
+                                    <option value="SONSTIG">Sonstig</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell">
+                            <div class="mdl-textfield mdl-js-textfield min-width-25">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                    name="value-{{ user[0] }}" id="value-{{ user[0] }}">
+                                <label class="mdl-textfield__label" for="value-{{ user[0] }}">0</label>
+                                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
+                            </div>
+                        </td>c
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
+                                <select class="mdl-textfield__input" id="level-{{ user[0] }}"
+                                    name="level-{{ user[0] }}">
+                                    <option value="0" {% if user[1]['level'] == 0 %}selected="selected"{% endif %}>0</option>
+                                    <option value="1" {% if user[1]['level'] == 1 %}selected="selected"{% endif %}>1</option>
+                                    <option value="2" {% if user[1]['level'] == 2 %}selected="selected"{% endif %}>2</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                        <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <!-- Accent-colored raised button -->
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+                value="Speichern" style="margin-top: 1%" />
+        </form>
+        <div class="mdl-layout-spacer"></div>
+    </div>
+</div>
+{% endblock %}
