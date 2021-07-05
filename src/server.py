@@ -254,6 +254,7 @@ def send_expense_mails():
 def send_stock_mails():
     for product in data.get_products().items():
         if product[1]['stock'] <= product[1]['warning']:
+            print(product[1]['name'])
             mail.send_stock(product[1])
 
 

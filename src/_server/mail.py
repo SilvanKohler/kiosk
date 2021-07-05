@@ -22,8 +22,8 @@ def send_expenses(usid):
     u = data.User(usid=usid)
     msg = EmailMessage()
     msg.set_content(
-        f'''Hallo {u.firstname} {u.lastname}\nDu hast eine Balance von {u.balance} CHF.''')
-    msg['Subject'] = f'Ausgabenbenachrichtigung'
+        f'''Hallo {u.firstname} {u.lastname}\nDein Guthaben beträgt {u.balance} CHF.\nDein Guthaben kannst Du via TWINT ({cparser.get('contact', 'twint_number')}) oder Bar an {cparser.get('contact', 'name')} aufladen.\n\nVielen Dank.\n\nAntworten werden an {cparser.get('contact', 'name')} weitergeleitet.''')
+    msg['Subject'] = f'Guthabenbenachrichtigung'
     msg['From'] = cparser.get('credentials', 'smtp_sender')
     msg['To'] = u.email
     send(msg)
@@ -32,7 +32,7 @@ def send_expenses(usid):
 def send_stock(product):
     msg = EmailMessage()
     msg.set_content(
-        f'''Hallo\nVom Produkt "{product['name']}" hat es noch {product['stock']} an Lager.''')
+        f'''Hallo\nVom Produkt "{product['name']}" hat es noch {product['stock']} an Lager.\nAlle Produkte: {cparser.get('client', 'protocol')}://{cparser.get('client', 'host')}:{cparser.get('client', 'port')}/products''')
     msg['Subject'] = f'Lagerwarnung'
     msg['From'] = cparser.get('credentials', 'smtp_sender')
     msg['To'] = cparser.get('credentials', 'smtp_sender')

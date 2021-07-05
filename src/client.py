@@ -38,7 +38,7 @@ keys = [
     'q,w,e,r,t,z,u,i,o,p',
     'a,s,d,f,d,g,h,j,k,l',
     'y,x,c,v,b,n,m',
-    '.,-,@,del,SPEICHERN'
+    '.,@,del,SPEICHERN'
 ]
 focused = None
 times = {}
