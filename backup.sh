@@ -1,1 +1,1 @@
-zip -r -9 ../backup/data_$(date).zip src/data/*
+zip -r -9 ../backup/$(date +"%d-%m-%Y").zip src/data/*
