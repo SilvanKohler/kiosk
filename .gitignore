@@ -15,3 +15,6 @@ linuxvenv/
 
 #Config
 config.ini
+
+#Backup
+backup_*

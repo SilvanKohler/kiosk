@@ -2,7 +2,8 @@ import random
 import datetime
 from werkzeug.urls import url_parse
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from apscheduler.triggers.cron import CronTrigger
+import shutil
 from flask import Flask, render_template, request, jsonify, redirect, config, session, g
 import os
 import _shared.data as data
@@ -258,9 +259,22 @@ def send_stock_mails():
             mail.send_stock(product[1])
 
 
+def backup_data():
+    data_directory = os.path.abspath(cparser.get('directories', 'data'))
+    date = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+    if not os.path.exists(os.path.abspath(cparser.get('directories', 'backup'))):
+        os.mkdir(os.path.abspath(cparser.get('directories', 'backup')))
+    backup_directory = os.path.join(os.path.abspath(cparser.get('directories', 'backup')), 'backup_data_'+date)
+    for backup in os.listdir(os.path.abspath(cparser.get('directories', 'backup')))[:-cparser.getint('server', 'max_backups')]:
+        os.remove(os.path.join(os.path.abspath(cparser.get('directories', 'backup')), backup))
+    shutil.copytree(data_directory, backup_directory)
+    shutil.make_archive(backup_directory, 'zip', backup_directory)
+    shutil.rmtree(backup_directory)
+
 if __name__ == "__main__":
     sched = BackgroundScheduler()
-    sched.add_job(send_expense_mails, 'interval', days=30)
-    sched.add_job(send_stock_mails, 'interval', days=7)
+    sched.add_job(send_expense_mails, 'cron', day=1)
+    sched.add_job(send_stock_mails, 'cron', day_of_week=5)
+    sched.add_job(backup_data, CronTrigger.from_crontab(cparser.get('server', 'backup_crontab')))
     sched.start()
     app.run("0.0.0.0", 80)
