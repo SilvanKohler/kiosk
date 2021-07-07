@@ -271,10 +271,12 @@ def backup_data():
     shutil.make_archive(backup_directory, 'zip', backup_directory)
     shutil.rmtree(backup_directory)
 
+sched = BackgroundScheduler()
+sched.add_job(send_expense_mails, 'cron', day=1)
+sched.add_job(send_stock_mails, 'cron', day_of_week=5)
+sched.add_job(backup_data, CronTrigger.from_crontab(cparser.get('server', 'backup_crontab')))
+
+sched.start()
+
 if __name__ == "__main__":
-    sched = BackgroundScheduler()
-    sched.add_job(send_expense_mails, 'cron', day=1)
-    sched.add_job(send_stock_mails, 'cron', day_of_week=5)
-    sched.add_job(backup_data, CronTrigger.from_crontab(cparser.get('server', 'backup_crontab')))
-    sched.start()
     app.run("0.0.0.0", 80)
