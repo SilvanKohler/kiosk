@@ -1,8 +1,9 @@
 import random
 import datetime
 from werkzeug.urls import url_parse
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+# from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.triggers.cron import CronTrigger
+from flask_apscheduler import APScheduler
 import shutil
 from flask import Flask, render_template, request, jsonify, redirect, config, session, g
 import os
@@ -242,9 +243,11 @@ def root_api_delete(table):
     content = core.delete(table, request.form)
     return jsonify(content), 200 if content['success'] else 406
 
-############## MAIL #################
+############## TASK ################
 
+sched = APScheduler()
 
+@sched.task('cron', id='send_expense_mails', day=1)
 def send_expense_mails():
     print('Sending Mails.')
     for user in data.get_users().items():
@@ -252,13 +255,14 @@ def send_expense_mails():
         mail.send_expenses(user[0])
 
 
+@sched.task('cron', id='send_stock_mails', day_of_week=5)
 def send_stock_mails():
     for product in data.get_products().items():
         if product[1]['stock'] <= product[1]['warning']:
             print(product[1]['name'])
             mail.send_stock(product[1])
 
-
+@sched.task('cron', id='backup_data', second=0)
 def backup_data():
     data_directory = os.path.abspath(cparser.get('directories', 'data'))
     date = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
@@ -271,11 +275,8 @@ def backup_data():
     shutil.make_archive(backup_directory, 'zip', backup_directory)
     shutil.rmtree(backup_directory)
 
-sched = BackgroundScheduler()
-sched.add_job(send_expense_mails, 'cron', day=1)
-sched.add_job(send_stock_mails, 'cron', day_of_week=5)
-sched.add_job(backup_data, CronTrigger.from_crontab(cparser.get('server', 'backup_crontab')))
 
+sched.init_app(app)
 sched.start()
 
 if __name__ == "__main__":
