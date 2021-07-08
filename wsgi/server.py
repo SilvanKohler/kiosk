@@ -269,6 +269,7 @@ def backup_data():
     if not os.path.exists(os.path.abspath(cparser.get('directories', 'backup'))):
         os.mkdir(os.path.abspath(cparser.get('directories', 'backup')))
     backup_directory = os.path.join(os.path.abspath(cparser.get('directories', 'backup')), 'backup_data_'+date)
+    print('creating backup:', backup_directory)
     for backup in os.listdir(os.path.abspath(cparser.get('directories', 'backup')))[:-cparser.getint('server', 'max_backups')]:
         os.remove(os.path.join(os.path.abspath(cparser.get('directories', 'backup')), backup))
     shutil.copytree(data_directory, backup_directory)

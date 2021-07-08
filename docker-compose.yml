@@ -1,20 +1,15 @@
 version: "3.7"
 
-volumes:
-  data: kiosk_data
-  backup: kiosk_backup
-
 services:
-
   wsgi:
     build: ./wsgi
     container_name: kiosk-wsgi
-    volumes:
-      - kiosk_data:/data
-      - kiosk_backup:/backup
     restart: always
     expose:
       - 5000
+    volumes:
+      - ./data:/data
+      - ./backup:/backup
 
   nginx:
     build: ./nginx
