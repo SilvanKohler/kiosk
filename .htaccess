@@ -1,4 +1,0 @@
-RewriteEngine On
-RewriteBase /
-RewriteRule ^(kiosk\.wsgi/.*)$ - [L]
-RewriteRule ^(.*)$ kiosk/kiosk.wsgi/$1 [QSA,PT,L]
