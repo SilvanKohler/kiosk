@@ -9,12 +9,6 @@ RUN export PYTHON=python3.8
 
 RUN useradd -ms /bin/bash uwsgi
 
-COPY src src
-RUN chmod -R 777 src
-WORKDIR /kiosk/src
-CMD [ "uwsgi", "--http", "0.0.0.0:80", \
-               "--uid", "uwsgi", \
-               "--plugins", "python3", \
-               "--protocol", "uwsgi", \
-               "--wsgi-file", "server.py", \
-               "--enable-threads" ]
+COPY . .
+RUN chmod -R 777 *
+CMD [ "uwsgi", "wsgi.ini", "--uid", "uwsgi", "--gid", "uwsgi"]
