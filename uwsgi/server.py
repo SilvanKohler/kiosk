@@ -9,6 +9,7 @@ import _shared.data as data
 import _server.core as core
 import _server.mail as mail
 import configparser
+import requests
 
 data.init('server')
 
@@ -45,7 +46,8 @@ def root_login():
 @app.route('/')
 def root():
     if g.level >= 0:
-        return render_template('index.html', level=g.level)
+        releases = requests.get('https://api.github.com/repos/SilvanKohler/kiosk/releases').json()
+        return render_template('index.html', level=g.level, releases=sorted(releases, key=lambda d: d['tag_name'], reverse=True), enumerate=enumerate)
     else:
         return render_template('login.html', level=g.level)
 
@@ -260,7 +262,7 @@ def send_stock_mails():
             print(product[1]['name'])
             mail.send_stock(product[1])
 
-@sched.task('cron', id='backup_data', second=0)
+@sched.task('cron', id='backup_data', hour='*/12')
 def backup_data():
     data_directory = os.path.abspath(cparser.get('directories', 'data'))
     date = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
