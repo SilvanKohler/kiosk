@@ -1,8 +1,6 @@
 import random
 import datetime
 from werkzeug.urls import url_parse
-# from apscheduler.schedulers.background import BackgroundScheduler
-# from apscheduler.triggers.cron import CronTrigger
 from flask_apscheduler import APScheduler
 import shutil
 from flask import Flask, render_template, request, jsonify, redirect, config, session, g
