@@ -9,6 +9,8 @@ linuxvenv/
 *.db
 *.bak
 *.dir
+data/
+backup/
 
 #Cache files
 *.pyc
@@ -18,3 +20,6 @@ config.ini
 
 #Backup
 backup_*
+
+#Certificates
+letsencrypt/
