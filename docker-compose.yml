@@ -1,19 +1,21 @@
 version: "3.7"
 
 services:
-  wsgi:
-    build: ./wsgi
-    container_name: kiosk-wsgi
+  uwsgi:
+    build: ./uwsgi
+    container_name: kiosk-uwsgi
     restart: always
     expose:
       - 5000
     volumes:
-      - ./data:/data
-      - ./backup:/backup
+      - ./data:/kiosk/data
+      - ./backup:/kiosk/backup
 
   nginx:
     build: ./nginx
     container_name: kiosk-nginx
     restart: always
+    depends_on:
+      - uwsgi
     ports:
-      - "80:80"
+      - 80:80
