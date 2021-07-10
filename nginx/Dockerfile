@@ -13,4 +13,5 @@ RUN apt install -y python3 python3-venv python3-pip libaugeas0 python3-certbot p
 RUN apt install -y cron
 RUN echo "0 0,12 * * * root certbot renew -q" >> /etc/crontab
 
+RUN chmod +x entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
