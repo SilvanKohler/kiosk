@@ -1,12 +1,20 @@
-FROM rust
+FROM rust AS python3-cryptography
 RUN apt update
-RUN apt install -y python3 python3-pip python3-gdbm
+RUN apt install -y python3 python3-pip
+WORKDIR /wheels
+RUN python3 -m pip wheel cryptography
 
-RUN python3 -m pip install uwsgi
+FROM python:3.9
 
 COPY . /kiosk
 WORKDIR /kiosk
 
+COPY --from=python3-cryptography /wheels /wheels
+RUN python3 -m pip install /wheels/*
+
+
+RUN apt install python3-gdbm
+RUN python3 -m pip install uwsgi
 RUN python3 -m pip install $(cat serverrequirements.txt) 
 RUN export PYTHON=python3
 
