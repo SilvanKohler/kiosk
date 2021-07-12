@@ -1,6 +1,5 @@
 FROM rust AS python3-cryptography
 
-RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt update
 
 RUN apt install -y python3 python3-pip
@@ -8,14 +7,14 @@ RUN apt install -y python3 python3-pip
 WORKDIR /wheels
 RUN python3 -m pip wheel cryptography
 
-FROM python:3.9 AS uwsgi
+FROM python:3.7 AS uwsgi
 
 COPY . /kiosk
 WORKDIR /kiosk
 
 
 
-RUN apt install python3-gdbm
+
 RUN python3 -m pip install uwsgi
 
 RUN export PYTHON=python3
