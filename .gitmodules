@@ -1,3 +1,3 @@
-[submodule "wsgi/_client/pcprox"]
-path = wsgi/_client/pcprox
+[submodule "uwsgi/_client/pcprox"]
+path = uwsgi/_client/pcprox
 url = https://github.com/micolous/pcprox
