@@ -249,9 +249,8 @@ sched = APScheduler()
 
 @sched.task('cron', id='send_expense_mails', day=1)
 def send_expense_mails():
-    print('Sending Mails.')
     for user in data.get_users().items():
-        print('Mail an', user[1]['email'])
+        print('sending expense mail:', user[1]['email'])
         mail.send_expenses(user[0])
 
 
@@ -259,7 +258,7 @@ def send_expense_mails():
 def send_stock_mails():
     for product in data.get_products().items():
         if product[1]['stock'] <= product[1]['warning']:
-            print(product[1]['name'])
+            print('sending stock mail:', product[1]['name'])
             mail.send_stock(product[1])
 
 @sched.task('cron', id='backup_data', hour='*/12')

@@ -32,7 +32,7 @@ def send_expenses(usid):
 def send_stock(product):
     msg = EmailMessage()
     msg.set_content(
-        f'''Hallo\nVom Produkt "{product['name']}" hat es noch {product['stock']} an Lager.\nAlle Produkte: {cparser.get('client', 'protocol')}://{cparser.get('client', 'host')}:{cparser.get('client', 'port')}/products''')
+        f'''Hallo\nVom Produkt "{product['name']}" hat es noch {product['stock']} an Lager.\nAlle Produkte: {cparser.get('server', 'protocol')}://{cparser.get('server', 'host')}:{cparser.get('server', 'port')}/products''')
     msg['Subject'] = f'Lagerwarnung'
     msg['From'] = cparser.get('credentials', 'smtp_sender')
     msg['To'] = cparser.get('credentials', 'smtp_sender')
