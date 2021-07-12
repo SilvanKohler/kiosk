@@ -14,5 +14,3 @@ RUN chmod +x cert.sh
 
 RUN apt install -y cron
 RUN echo "0 0,12 * * * root certbot renew -q" >> /etc/crontab
-
-# CMD [ "certbot", "--nginx", "--non-interactive", "--agree-tos", "-m", "silvankohler@protonmail.com", "-d", "kiosk.silvankohler.live" ]
