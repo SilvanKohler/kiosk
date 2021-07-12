@@ -52,14 +52,22 @@
         </header>
         <main class="mdl-layout__content">
             <div class="page-content mdl-grid">
-                <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-                    <div class="mdl-card mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="width: 100%;">
-                        <div class="mdl-card__title" style="width: 100%;">
-                            <h3>{% block pagetitle %}{% endblock %}</h3>
-                        </div>
-                    </div>
+                <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" style="padding: 1%">
+                    <section
+                        class="section--center mdl-grid mdl-grid--no-spacing mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                        <div class="mdl-layout-spacer"></div>
+                        <h3>{% block pagetitle %}{% endblock %}</h3>
+                        <div class="mdl-layout-spacer"></div>
+                    </section>
+                    <section
+                        class="section--center mdl-grid mdl-grid--no-spacing mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                        <div class="mdl-layout-spacer"></div>
+                        <section class="mdl-cell mdl-cell--9-col-desktop mdl-cell--8-col-tablet mdl-cell--6-col-phone">
+                            {% block content %}{% endblock %}
+                        </section>
+                        <div class="mdl-layout-spacer"></div>
+                    </section>
                 </section>
-                {% block content %}{% endblock %}
             </div>
         </main>
     </div>
