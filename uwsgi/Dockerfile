@@ -1,10 +1,14 @@
 FROM rust AS python3-cryptography
+
+RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt update
+
 RUN apt install -y python3 python3-pip
+
 WORKDIR /wheels
 RUN python3 -m pip wheel cryptography
 
-FROM python:3.9
+FROM python:3.9 AS uwsgi
 
 COPY . /kiosk
 WORKDIR /kiosk
