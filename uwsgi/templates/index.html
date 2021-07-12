@@ -1,32 +1,28 @@
 {% extends 'base.html' %}
 
-<title>{% block title %}Kiosk WebGUI - Start{% endblock %}</title>
+{% block pagetitle %}{% block title %}Start{% endblock %}{% endblock %}
+
 
 {% block content %}
-<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title" style="width: 100%;">
-        <h3>Start</h3>
+{% for i, release in enumerate(releases) %}
+<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone"
+    style="margin-bottom: 1%;">
+    <div class="mdl-card__title">
+        <a href="{{ release['html_url'] }}" target="_blank">
+            <h3>{{release['tag_name']}} - {{ release['name'] }}</h3>
+        </a>
     </div>
-    <div class="mdl-layout-spacer"></div>
     <div class="mdl-card__supporting-text mdl-grid">
-        {% for i, release in enumerate(releases) %}
-        <div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 100%;">
-            <div class="mdl-layout-spacer"></div>
-            <div class="mdl-card__title" style="width: 100%;">
-                <a href="{{ release['html_url'] }}" target="_blank"><h3>{{release['tag_name']}} - {{ release['name'] }}</h3></a>
-            </div>
-            <div class="mdl-layout-spacer"></div>
-            <div class="mdl-card__supporting-text mdl-grid">
-                <p>{{release['body']}}</p>
-            </div>
-            {% if i == 0 %}
-                <div class="mdl-card__menu"><span class="material-icons">update</span></div>
-            {% endif %}
-            <div class="mdl-layout-spacer"></div>
-        </div>
-        <div class="mdl-layout-spacer"></div>
-        {% endfor %}
+        <p>
+            {% for line in release['body'].split('\r\n') %}
+            {{ line }}
+            <br>
+            {% endfor %}
+        </p>
     </div>
+    {% if i == 0 %}
+    <div class="mdl-card__menu"><span class="material-icons">update</span></div>
+    {% endif %}
 </div>
+{% endfor %}
 {% endblock %}

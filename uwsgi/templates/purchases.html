@@ -1,77 +1,60 @@
 {% extends 'base.html' %}
 
-<title>{% block title %}Kiosk WebGUI - Käufe{% endblock %}</title>
+{% block pagetitle %}{% block title %}Käufe{% endblock %}{% endblock %}
 
 {% block content %}
-<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title" style="width: 100%;">
-        <h3>Käufe</h3>
+<form class="purchases-form mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone" action="/purchases" onsubmit="loading()">
+    <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-textfield mdl-js-textfield">
+        <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
+            id="number_of_purchases" value="{{ number_of_purchases }}">
+        <label class="mdl-textfield__label" for="number_of_purchases">Anzahl</label>
+        <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
     </div>
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__supporting-text mdl-grid">
-        <div class="mdl-layout-spacer"></div>
-        <form class="purchases-form" action="/purchases" onsubmit="loading()">
-            <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
-                    id="number_of_purchases" value="{{ number_of_purchases }}">
-                <label class="mdl-textfield__label" for="number_of_purchases">Anzahl</label>
-                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
-            </div>
-        </form>
-        <div class="mdl-layout-spacer"></div>
-    </div>
-    <div class="mdl-card__supporting-text mdl-grid">
-        <div class="mdl-layout-spacer"></div>
-        <form id="products" class="products-form" action="/purchases" onsubmit="loading()">
-            <input class="" type="hidden" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_purchases"
-                id="number_of_purchases" value="{{ number_of_purchases }}">
-            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Ausgewählte löschen" style="margin-bottom: 1%" />
-            <table class="mdl-data-table mdl-shadow--2dp">
-                <thead>
-                    <tr>
-                        <th>Auswahl</th>
-                        <th>Zeit</th>
-                        <th>Person</th>
-                        <th>Artikel</th>
-                        <th>Preis (CHF)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if purchases: %}
-                    {% for purchase in purchases[:number_of_purchases] %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select"
-                                for="select-{{ purchase[0] }}">
-                                <input class="mdl-checkbox__input" type="checkbox" name="select-{{ purchase[0] }}"
-                                    id="select-{{ purchase[0] }}" />
-                            </label>
-                        </td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['datetime'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{
-                            users[purchase[1]['usid']]['firstname'] }} {{ users[purchase[1]['usid']]['lastname'] }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ products[purchase[1]['prid']]['name']
-                            }}</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">{{ purchase[1]['amount'] }}</td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                        <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
-                value="Ausgewählte löschen" style="margin-top: 1%" />
-        </form>
-        <div class="mdl-layout-spacer"></div>
-    </div>
-</div>
+</form>
+
+<form id="products" class="products-form mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-grid mdl-grid--no-spacing" action="/purchases" onsubmit="loading()">
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+        value="Ausgewählte löschen" style="margin-bottom: 1%" />
+    <table class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-data-table mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th>Auswahl</th>
+                <th>Zeit</th>
+                <th>Person</th>
+                <th>Artikel</th>
+                <th>Preis</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if purchases: %}
+            {% for purchase in purchases[:number_of_purchases] %}
+            <tr>
+                <td class="mdl-data-table__cell min-width-25">
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ purchase[0] }}">
+                        <input class="mdl-checkbox__input" type="checkbox" name="select-{{ purchase[0] }}"
+                            id="select-{{ purchase[0] }}" />
+                    </label>
+                </td>
+                <td class="mdl-data-table__cell min-width-25">{{ purchase[1]['datetime'] }}</td>
+                <td class="mdl-data-table__cell min-width-25">{{
+                    users[purchase[1]['usid']]['firstname'] }} {{ users[purchase[1]['usid']]['lastname'] }}</td>
+                <td class="mdl-data-table__cell min-width-25">{{ products[purchase[1]['prid']]['name']
+                    }}</td>
+                <td class="mdl-data-table__cell min-width-25">{{ purchase[1]['amount'] }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td class="mdl-data-table__cell min-width-25">Keine</td>
+                <td class="mdl-data-table__cell min-width-25">Keine</td>
+                <td class="mdl-data-table__cell min-width-25">Keine</td>
+                <td class="mdl-data-table__cell min-width-25">Keine</td>
+                <td class="mdl-data-table__cell min-width-25">Keine</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+        value="Ausgewählte löschen" style="margin-top: 1%" />
+</form>
 {% endblock %}

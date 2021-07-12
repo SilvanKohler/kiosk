@@ -1,29 +1,18 @@
 {% extends 'base.html' %}
 
-<title>{% block title %}Kiosk WebGUI - Login{% endblock %}</title>
+{% block pagetitle %}{% block title %}Login{% endblock %}{% endblock %}
+
 
 {% block content %}
-<div class="mdl-grid mdl-card-wide mdl-card mdl-shadow--2dp" style="width: 90%;">
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__title" style="width: 100%;">
-        <h3>Login</h3>
+<form id="login" class="login-form mdl-grid mdl-grid--no-spacing" action="/login" method="POST" onsubmit="loading()">
+    <div class="mdl-cell mdl-cell--8-col-desktop mdl-cell--8-col-tablet mdl-cell--12-col-phone mdl-textfield mdl-js-textfield min-width-25">
+        <input class="mdl-textfield__input" type="text" pattern="[0-9]*(\.[0-9]+)?" name="otp" id="otp">
+        <label class="mdl-textfield__label" for="otp">OTP</label>
+        <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
     </div>
-    <div class="mdl-layout-spacer"></div>
-    <div class="mdl-card__supporting-text mdl-grid">
-        <div class="mdl-layout-spacer"></div>
-        <form id="login" class="login-form" action="/login" method="POST" onsubmit="loading()">
-            <div class="mdl-textfield mdl-js-textfield min-width-25">
-                <input class="mdl-textfield__input" type="text" pattern="[0-9]*(\.[0-9]+)?" name="otp"
-                    id="otp">
-                <label class="mdl-textfield__label" for="otp">OTP</label>
-                <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
-            </div>
 
-            <!-- Accent-colored raised button -->
-            <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Login"
-                style="margin-top: 1%" />
-        </form>
-        <div class="mdl-layout-spacer"></div>
-    </div>
-</div>
+    <!-- Accent-colored raised button -->
+    <input class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Login"
+        style="margin-top: 1%" />
+</form>
 {% endblock %}
