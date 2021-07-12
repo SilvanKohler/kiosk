@@ -1,6 +1,7 @@
-FROM rust
+FROM python:3.9
+
 RUN apt update
-RUN apt install -y python3 python3-pip python3-gdbm
+RUN apt install -y python3 python3-pip python3-gdbm python3-cryptography
 
 RUN python3 -m pip install uwsgi
 
@@ -8,7 +9,7 @@ COPY . /kiosk
 WORKDIR /kiosk
 
 RUN python3 -m pip install -r serverrequirements.txt
-RUN export PYTHON=python3.8
+RUN export PYTHON=python3.9
 
 RUN useradd -ms /bin/bash uwsgi
 
