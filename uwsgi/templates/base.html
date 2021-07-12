@@ -22,44 +22,47 @@
 </head>
 
 <body class="mdl-base">
-    <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
-            <!-- Title -->
-            <span class="mdl-layout-title">Kiosk WebGUI</span>
-            <!-- Add spacer, to align navigation to the right -->
-            <div class="mdl-layout-spacer"></div>
-            <!-- Navigations. -->
-            <nav class="mdl-navigation mdl-layout--large-screen-only">
-                {% if level >= 0 %}
-                <a class="mdl-navigation__link" href="/" onclick="loading()">Start</a>
-                {% endif %}
-                {% if level >= 1 %}
-                <a class="mdl-navigation__link" href="/settings" onclick="loading()">Einstellungen</a>
-                {% endif %}
-                {% if level >= 2 %}
-                <a class="mdl-navigation__link" href="/products" onclick="loading()">Produkte</a>
-                <a class="mdl-navigation__link" href="/purchases" onclick="loading()">Käufe</a>
-                <a class="mdl-navigation__link" href="/transactions" onclick="loading()">Transaktionen</a>
-                <a class="mdl-navigation__link" href="/billing" onclick="loading()">Abrechnung</a>
-                {% endif %}
-                {% if level == 0%}
-                <a class="mdl-navigation__link" href="/login" onclick="loading()">Login</a>
-                {% endif %}
-            </nav>
-        </div>
-    </header>
-    <main class="mdl-layout__content">
-        <div class="page-content mdl-grid">
-            <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-                <div class="mdl-card mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="width: 100%;">
-                    <div class="mdl-card__title" style="width: 100%;">
-                        <h3>{% block pagetitle %}{% endblock %}</h3>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">Kiosk WebGUI</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigations. -->
+                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    {% if level >= 0 %}
+                    <a class="mdl-navigation__link" href="/" onclick="loading()">Start</a>
+                    {% endif %}
+                    {% if level >= 1 %}
+                    <a class="mdl-navigation__link" href="/settings" onclick="loading()">Einstellungen</a>
+                    {% endif %}
+                    {% if level >= 2 %}
+                    <a class="mdl-navigation__link" href="/products" onclick="loading()">Produkte</a>
+                    <a class="mdl-navigation__link" href="/purchases" onclick="loading()">Käufe</a>
+                    <a class="mdl-navigation__link" href="/transactions" onclick="loading()">Transaktionen</a>
+                    <a class="mdl-navigation__link" href="/billing" onclick="loading()">Abrechnung</a>
+                    {% endif %}
+                    {% if level == 0%}
+                    <a class="mdl-navigation__link" href="/login" onclick="loading()">Login</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content mdl-grid">
+                <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                    <div class="mdl-card mdl-cell mdl-cell--1-col-desktop mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="width: 100%;">
+                        <div class="mdl-card__title" style="width: 100%;">
+                            <h3>{% block pagetitle %}{% endblock %}</h3>
+                        </div>
                     </div>
-                </div>
-            </section>
-            {% block content %}{% endblock %}
-        </div>
-    </main>
+                </section>
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>
