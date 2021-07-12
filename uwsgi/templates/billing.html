@@ -3,11 +3,11 @@
 {% block pagetitle %}{% block title %}Abrechnung{% endblock %}{% endblock %}
 
 {% block content %}
-<form id="billing" class="billing-form" action="/billing" onsubmit="loading()">
+<form id="billing" class="billing-form mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone" action="/billing" onsubmit="loading()">
     <!-- Accent-colored raised button -->
-    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Speichern"
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Speichern"
         style="margin-bottom: 1%" />
-    <table class="mdl-data-table mdl-shadow--2dp">
+    <table class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-data-table mdl-shadow--2dp">
         <thead>
             <tr>
                 <th>Name</th>
@@ -22,12 +22,12 @@
             {% if users: %}
             {% for user in users.items() %}
             <tr>
-                <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['firstname'] }} {{
+                <td class="mdl-data-table__cell min-width-25">{{ user[1]['firstname'] }} {{
                     user[1]['lastname']
                     }}</td>
-                <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['email'] }}</td>
-                <td class="mdl-data-table__cell--non-numeric min-width-25">{{ user[1]['balance'] }}</td>
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell min-width-25">{{ user[1]['email'] }}</td>
+                <td class="mdl-data-table__cell min-width-25">{{ user[1]['balance'] }}</td>
+                <td class="mdl-data-table__cell">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
                         <select class="mdl-textfield__input" id="action-{{ user[0] }}" name="action-{{ user[0] }}">
                             <option value="KEINE">Keine</option>
@@ -46,7 +46,7 @@
                         <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
                     </div>
                 </td>c
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label min-width-25">
                         <select class="mdl-textfield__input" id="level-{{ user[0] }}" name="level-{{ user[0] }}">
                             <option value="0" {% if user[1]['level']==0 %}selected="selected" {% endif %}>0</option>
@@ -59,18 +59,18 @@
             {% endfor %}
             {% else %}
             <tr>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
-                <td class="mdl-data-table__cell--non-numeric">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
+                <td class="mdl-data-table__cell">Keine</td>
             </tr>
             {% endif %}
         </tbody>
     </table>
     <!-- Accent-colored raised button -->
-    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Speichern"
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" value="Speichern"
         style="margin-top: 1%" />
 </form>
 {% endblock %}

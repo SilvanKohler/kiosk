@@ -5,31 +5,26 @@
 {% block content %}
 <form id="products" class="products-form mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone" action="/products" onsubmit="loading()">
     <!-- Accent-colored raised button -->
-    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
         value="Speichern und ausgewählte löschen" style="margin-bottom: 1%" />
-    <table class="mdl-data-table mdl-shadow--2dp">
+    <table class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-data-table mdl-shadow--2dp">
         <thead>
             <tr>
-                <th>
-                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-data-table__select"
-                        for="select-all-checkbox">
-                        <input class="mdl-checkbox__input" type="checkbox" name="select-all" id="select-all-checkbox" />
-                    </label>
-                </th>
+                <th>Auswahl</th>
                 <th>Name</th>
                 <th>Lager</th>
-                <th>Preis (CHF)</th>
+                <th>Preis</th>
                 <th>Warnung</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell">
                     <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-new">
                         <input class="mdl-checkbox__input" type="checkbox" name="select-new" id="select-new" />
                     </label>
                 </td>
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell">
                     <div class="mdl-textfield mdl-js-textfield min-width-25">
                         <input class="mdl-textfield__input" type="text" name="name-new" id="name-new">
                         <label class="mdl-textfield__label" for="name-new">Name</label>
@@ -62,13 +57,13 @@
             </tr>
             {% for product in products.items() %}
             <tr>
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell">
                     <label class="mdl-checkbox mdl-js-checkbox mdl-data-table__select" for="select-{{ product[0] }}">
                         <input class="mdl-checkbox__input" type="checkbox" name="select-{{ product[0] }}"
                             id="select-{{ product[0] }}" />
                     </label>
                 </td>
-                <td class="mdl-data-table__cell--non-numeric">
+                <td class="mdl-data-table__cell">
                     <div class="mdl-textfield mdl-js-textfield min-width-25">
                         <input class="mdl-textfield__input" type="text" name="name-{{ product[0] }}"
                             id="name-{{ product[0] }}" value="{{ product[1]['name'] }}">
@@ -109,7 +104,7 @@
         </tbody>
     </table>
     <!-- Accent-colored raised button -->
-    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
+    <input class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit"
         value="Speichern und ausgewählte löschen" style="margin-top: 1%" />
 </form>
 {% endblock %}

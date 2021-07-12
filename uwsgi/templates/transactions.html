@@ -3,15 +3,18 @@
 {% block pagetitle %}{% block title %}Transaktionen{% endblock %}{% endblock %}
 
 {% block content %}
-<form class="transactions-form" action="/transactions" onsubmit="loading()">
-    <div class="mdl-textfield mdl-js-textfield">
+<form class="transactions-form mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone"
+    action="/transactions" onsubmit="loading()">
+    <div
+        class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-textfield mdl-js-textfield">
         <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" name="number_of_transactions"
             id="number_of_transactions" value="{{ number_of_transactions }}">
         <label class="mdl-textfield__label" for="number_of_transactions">Anzahl</label>
         <span class="mdl-textfield__error">Eingabe ist keine Zahl!</span>
     </div>
 </form>
-<table class="mdl-data-table mdl-shadow--2dp">
+<table
+    class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-data-table mdl-shadow--2dp">
     <thead>
         <tr>
             <th>Zeit</th>
@@ -24,23 +27,23 @@
         {% if transactions: %}
         {% for transaction in transactions[:number_of_transactions] %}
         <tr>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['datetime'] }}</td>
+            <td class="mdl-data-table__cell min-width-25">{{ transaction[1]['datetime'] }}</td>
             {% if transaction[1]['usid'] in users %}
-            <td class="mdl-data-table__cell--non-numeric min-width-25">{{
+            <td class="mdl-data-table__cell min-width-25">{{
                 users[transaction[1]['usid']]['firstname'] }} {{ users[transaction[1]['usid']]['lastname'] }}</td>
             {% else %}
-            <td class="mdl-data-table__cell--non-numeric min-width-25">Benutzer nicht gefunden</td>
+            <td class="mdl-data-table__cell min-width-25">Benutzer nicht gefunden</td>
             {% endif %}
-            <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['amount'] }}</td>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">{{ transaction[1]['reason'] }}</td>
+            <td class="mdl-data-table__cell min-width-25">{{ transaction[1]['amount'] }}</td>
+            <td class="mdl-data-table__cell min-width-25">{{ transaction[1]['reason'] }}</td>
         </tr>
         {% endfor %}
         {% else %}
         <tr>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
-            <td class="mdl-data-table__cell--non-numeric min-width-25">Keine</td>
+            <td class="mdl-data-table__cell min-width-25">Keine</td>
+            <td class="mdl-data-table__cell min-width-25">Keine</td>
+            <td class="mdl-data-table__cell min-width-25">Keine</td>
+            <td class="mdl-data-table__cell min-width-25">Keine</td>
         </tr>
         {% endif %}
     </tbody>
