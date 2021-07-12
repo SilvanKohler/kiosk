@@ -19,11 +19,11 @@ RUN useradd -ms /bin/bash uwsgi
 RUN mkdir data backup
 RUN chmod -R 777 data backup
 
-COPY serverrequirements.txt .
-RUN python3 -m pip install $(cat serverrequirements.txt) 
-
 COPY --from=python3-cryptography /wheels /wheels
 RUN python3 -m pip install /wheels/*
+
+COPY serverrequirements.txt .
+RUN python3 -m pip install $(cat serverrequirements.txt) 
 
 COPY . /kiosk
 WORKDIR /kiosk
