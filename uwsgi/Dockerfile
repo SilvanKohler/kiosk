@@ -8,7 +8,7 @@ RUN python3 -m pip install uwsgi
 COPY . /kiosk
 WORKDIR /kiosk
 
-RUN python3 -m pip install -r serverrequirements.txt
+RUN python3 -m pip install $(cat serverrequirements.txt) 
 RUN export PYTHON=python3.9
 
 RUN useradd -ms /bin/bash uwsgi
